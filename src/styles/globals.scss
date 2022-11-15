@@ -1,0 +1,81 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Space+Grotesk&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@layer base {
+  html {
+    /* Removes tap highlight on mobile */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+.call_bg {
+  background: linear-gradient(
+    103.45deg,
+    #90ff04 3.99%,
+    #0764d7 56.64%,
+    #5b10ff 90.75%
+  );
+}
+
+.put_bg {
+  background: linear-gradient(
+    259.61deg,
+    #ec008c 0%,
+    #5b10ff 84.61%,
+    #0468d6 100%
+  );
+}
+
+video {
+  clip-path: inset(1px 1px);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(129, 129, 129);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: rgb(55 47 71) 0px 0px 5px inset;
+  border-radius: 10px;
+}
+
+.blinking-cursor {
+  color: inherit;
+  animation: 1.5s blink step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: inherit;
+  }
+}
