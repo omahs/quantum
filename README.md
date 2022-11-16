@@ -5,6 +5,6 @@
 
 > https://bridge.defichain.com
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/2772718d-8a0b-4005-9962-cb4b69987376/deploy-status)](https://app.netlify.com/sites/birthday-dev/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4eaec04e-1416-4c65-843e-d7413fb81d2c/deploy-status)](https://app.netlify.com/sites/defichain-erc20-bridge/deploys)
 
 DeFiChain ERC-20 Bridge
