@@ -9,6 +9,18 @@ import {
 } from "@components/siteInfo";
 import clsx from "clsx";
 import { JSX } from "@babel/types";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { WagmiConfig, createClient } from "wagmi";
+import { ConnectKitProvider, getDefaultClient } from "connectkit";
+
+const metamask = new MetaMaskConnector();
+
+const client = createClient(
+  getDefaultClient({
+    appName,
+    connectors: [metamask],
+  })
+);
 
 function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
   const [mounted, setMounted] = useState(false);
@@ -66,7 +78,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         />
       </Head>
 
-      {mounted && <main className={clsx("flex-grow")}>{children}</main>}
+      <WagmiConfig client={client}>
+        <ConnectKitProvider>
+          <main className={clsx("flex-grow")}>{mounted && children}</main>
+        </ConnectKitProvider>
+      </WagmiConfig>
     </div>
   );
 }
