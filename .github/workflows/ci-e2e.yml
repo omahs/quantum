@@ -1,0 +1,66 @@
+name: CI E2E
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  main:
+    name: Cypress
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    strategy:
+      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      matrix:
+        containers: [1, 2]
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+
+      - name: Setup Playground
+        run: docker-compose -f docker-compose.yml up -d
+
+      - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3.5.1
+        with:
+          node-version: 16
+          cache: "npm"
+
+      # install specific version of chrome
+      - name: Install latest Google Chrome
+        run: |
+          wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+          sudo dpkg -i "google-chrome-stable_current_amd64.deb"
+
+      - run: npm ci
+
+      - run: .github/workflows/ci/wait-for http://localhost:3001/_actuator/probes/liveness -t 240
+      - run: .github/workflows/ci/wait-for http://localhost:3002/_actuator/probes/liveness -t 240
+      - run: .github/workflows/ci/wait-for http://localhost:19551/ping -t 240
+
+      - uses: cypress-io/github-action@30008f1458a5a2c97054bfe118fe33d75976c482 # tag=v4.2.0
+        with:
+          config-file: cypress.config.js
+          install: false
+          record: true
+          parallel: true
+          start: npm run start
+          wait-on: "http://localhost:5173"
+          browser: chrome
+          spec: cypress/e2e/**
+          tag: ${{ github.event_name }}
+        env:
+          CYPRESS_E2E: true
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # tag=v3.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
