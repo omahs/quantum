@@ -68,44 +68,6 @@ module.exports = {
         sm: "600px", // Tablet
         "3xl": "1920px", // Web - Extra large
       },
-      fontSize: {
-        "4xl": ["2.5rem", "3rem"],
-        "5xl": ["3rem", "3.5rem"],
-        "5.5xl": ["3.5rem", "4.5rem"],
-        "7.5xl": ["5.25rem", "6rem"],
-      },
-      typography: (theme) => ({
-        DEFAULT: {
-          css: {
-            "h5, h6": {
-              color: theme("colors.emerald.700"),
-              fontWeight: "bold",
-              fontFamily: theme("fontFamily.serif"),
-            },
-            "h1 strong": {
-              color: `${theme("colors.emerald.700")} !important`,
-            },
-          },
-        },
-      }),
-      keyframes: {
-        "slide-right": {
-          "0%": {
-            transform: "translateX(100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
-        "slide-left": {
-          "0%": {
-            transform: "translateX(-100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
-      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
