@@ -31,7 +31,7 @@ const SocialItems = [
 export default function Footer() {
   return (
     <footer className="w-full relative pb-8 md:pb-12 pt-4 md:pt-3 bg-dark-900 border-t md:border-t-0 border-dark-500">
-      <Container className="px-5 md:px-10 lg:px-[120px]">
+      <Container className="px-5 md:px-12 lg:px-[120px]">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row">
             <div className="text-xs font-semibold text-light-700">
