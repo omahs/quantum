@@ -10,14 +10,6 @@ module.exports = {
       sans: ['"Space Grotesk"', "sans-serif"],
       mono: ['"Raleway"'],
     },
-    container: {
-      screens: {
-        sm: "600px",
-        md: "768px",
-        lg: "984px",
-        xl: "1240px",
-      },
-    },
     colors: {
       dark: {
         50: "#737373",
@@ -72,8 +64,9 @@ module.exports = {
     },
     extend: {
       screens: {
-        "2xl": "1280px",
-        "3xl": "1440px",
+        xs: "390px", // Mobile - Large
+        sm: "600px", // Tablet
+        "3xl": "1920px", // Web - Extra large
       },
       fontSize: {
         "4xl": ["2.5rem", "3rem"],
