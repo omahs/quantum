@@ -12,6 +12,7 @@ import { JSX } from "@babel/types";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WagmiConfig, createClient } from "wagmi";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
+import Footer from "@components/Footer";
 
 const metamask = new MetaMaskConnector();
 
@@ -81,6 +82,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           <main className={clsx("flex-grow")}>{mounted && children}</main>
+          <Footer />
         </ConnectKitProvider>
       </WagmiConfig>
     </div>
