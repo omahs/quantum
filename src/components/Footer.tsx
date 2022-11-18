@@ -1,5 +1,5 @@
 import React from "react";
-import { FaYoutube, FaReddit, FaGithub, FaTwitter } from "react-icons/fa"
+import { FaYoutube, FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
 import Container from "./commons/Container";
 
 const SocialItems = [
@@ -14,7 +14,8 @@ const SocialItems = [
     testId: "reddit",
     label: "Reddit",
     href: "https://www.reddit.com/r/defiblockchain",
-  },{
+  },
+  {
     icon: FaGithub,
     testId: "gitHub",
     label: "GitHub",
@@ -26,7 +27,7 @@ const SocialItems = [
     label: "Twitter",
     href: "https://twitter.com/defichain",
   },
-]
+];
 
 export default function Footer() {
   return (
@@ -42,9 +43,9 @@ export default function Footer() {
             </div>
           </div>
           <div className="flex flex-row space-x-2 md:space-x-4">
-            {SocialItems.map(({href, testId, icon: Icon }) => (
+            {SocialItems.map(({ href, testId, icon: Icon }) => (
               <a
-                href={href} 
+                href={href}
                 key={testId}
                 target="_blank"
                 rel="noreferrer"
