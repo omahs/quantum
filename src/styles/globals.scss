@@ -4,12 +4,64 @@
 @tailwind components;
 @tailwind utilities;
 
-$gradient-1: linear-gradient(
-  72.57deg,
-  #ec008c 17.15%,
-  #5b10ff 89.41%,
-  #0468d6 102.56%
-);
+:root {
+  /* Dark mode UI colors */
+  --ui-dark-card-bg: linear-gradient(
+    144deg,
+    rgba(22, 22, 22, 0.5) -0.38%,
+    rgba(2, 2, 2, 0.5) 100.17%
+  );
+  --ui-dark-card-stroke: rgba(51, 51, 51, 0.5);
+  --ui-dark-card-section: linear-gradient(
+    144.57deg,
+    rgba(124, 124, 124, 0.1) -0.38%,
+    rgba(74, 74, 74, 0.1) 98.45%
+  );
+  --ui-dark-button-hover: linear-gradient(
+    144deg,
+    rgba(46, 46, 46, 0.5) -0.38%,
+    rgba(18, 18, 18, 0.5) 100.17%
+  );
+  --ui-dark-button-pressed: linear-gradient(
+    144deg,
+    rgba(46, 46, 46, 0.95) -0.38%,
+    rgba(18, 18, 18, 0.95) 100.17%
+  );
+
+  /* Light mode UI colors */
+  --ui-light-card-bg: linear-gradient(
+    144deg,
+    rgba(247, 247, 247, 0.5) -0.37%,
+    rgba(241, 239, 239, 0.5) 100.17%
+  );
+  --ui-light-card-stroke: rgba(204, 204, 204, 0.3);
+
+  /* Accent gradients */
+  --accent-gradient-1: linear-gradient(
+    72.57deg,
+    #ec008c 17.15%,
+    #5b10ff 89.41%,
+    #0468d6 102.56%
+  );
+  --accent-gradient-2: linear-gradient(
+    261.07deg,
+    #ec008c -0.26%,
+    #5b10ff 79.46%,
+    #082fd4 100%
+  );
+  --accent-gradient-3: linear-gradient(
+    90.66deg,
+    #42f9c2 -6.44%,
+    #082fd4 76.25%
+  );
+  --accent-gradient-4: linear-gradient(270deg, #7ff5c5 0%, #1530cc 100%);
+  --accent-gradient-5: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ),
+    linear-gradient(72.57deg, #ec008c 17.15%, #5b10ff 89.41%, #0468d6 102.56%);
+}
 
 body {
   overflow-x: hidden;
@@ -36,15 +88,31 @@ body {
   }
 
   .fill-bg-gradient-1 {
-    background: $gradient-1 border-box;
+    background: var(--accent-gradient-1) border-box;
+  }
+  .fill-bg-gradient-5 {
+    background: var(--accent-gradient-5) border-box;
+  }
+  .dark-card-bg {
+    background: var(--ui-dark-card-bg) border-box;
+  }
+  .dark-btn-hover {
+    background: var(--ui-dark-button-hover) border-box;
+  }
+  .dark-btn-pressed {
+    background: var(--ui-dark-button-pressed) border-box;
   }
   .dark-bg-gradient-1 {
     background: linear-gradient(#000000, #000000) padding-box,
-      $gradient-1 border-box;
+      var(--accent-gradient-1) border-box;
+  }
+
+  .light-card-bg {
+    background: var(--ui-light-card-bg) border-box;
   }
   .light-bg-gradient-1 {
     background: linear-gradient(#ffffff, #ffffff) padding-box,
-      $gradient-1 border-box;
+      var(--accent-gradient-1) border-box;
   }
 }
 

@@ -32,6 +32,8 @@ module.exports = {
         700: "#1A1A1A",
         800: "#0D0D0D",
         900: "#000000",
+        "card-bg": "var(--ui-dark-card-bg)",
+        "card-stroke": "var(--ui-dark-card-stroke)",
       },
       light: {
         50: "#FFFFFF",
@@ -44,6 +46,8 @@ module.exports = {
         700: "#A6A6A6",
         800: "#999999",
         900: "#8C8C8C",
+        "card-bg": "var(--ui-light-card-bg)",
+        "card-stroke": "var(--ui-light-card-stroke)",
       },
       primary: {
         50: "#E8DEFF",
@@ -71,6 +75,9 @@ module.exports = {
         800: "#262626",
         900: "#171717",
       },
+      error: "#E54545",
+      warning: "#D97B01",
+      valid: "#0CC72C",
     },
   },
   plugins: [require("@tailwindcss/typography")],

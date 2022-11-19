@@ -1,13 +1,28 @@
+import useResponsive from "@hooks/useResponsive";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { truncateTextFromMiddle } from "@utils/textHelper";
+import ThemedText from "./ThemedText";
+
+interface Wallet {
+  address: string;
+  token: string;
+}
 
 export default function Header(): JSX.Element {
-  const isLight = false;
+  // TODO: Replace test data here
+  const mockWallet = {
+    address: "0xaab27b150451726ecsds38aa1d0a94505c8729bd1",
+    token: "Ethereum",
+  };
+  const [wallet, setWallet] = useState<Wallet>();
+
   return (
-    <div className="flex items-center justify-between px-5 pt-8 pb-6 sm:px-12 sm:py-6 xl:px-[120px] xl:pt-10 xl:pb-12">
+    <div className="flex items-center justify-between px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
       <Link href="/">
-        <div className="relative cursor-pointer w-[140px] h-[32px] xl:w-[264px] xl:h-[60px]">
+        <div className="relative cursor-pointer w-[140px] h-[32px] lg:w-[264px] lg:h-[60px]">
           <Image
             fill
             data-testid="bridge-logo"
@@ -16,25 +31,67 @@ export default function Header(): JSX.Element {
           />
         </div>
       </Link>
-      <div>
-        <button
-          data-testid="connect-button"
-          type="button"
-          className={clsx(
-            "flex items-center justify-center border-[1.5px] border-transparent rounded-3xl px-4 py-2 group hover:fill-bg-gradient-1",
-            isLight ? "light-bg-gradient-1" : "dark-bg-gradient-1"
-          )}
-        >
-          <span
-            className={clsx(
-              "text-sm font-semibold",
-              isLight ? "text-dark-900" : "text-light-50"
-            )}
-          >
-            Connect
-          </span>
-        </button>
+      <div className="h-9 sm:h-10 lg:h-12 flex items-center">
+        {wallet ? (
+          <WalletDisplay wallet={wallet} onClick={() => setWallet(undefined)} />
+        ) : (
+          <ConnectButtonDisplay onClick={() => setWallet(mockWallet)} />
+        )}
       </div>
     </div>
+  );
+}
+
+function ConnectButtonDisplay({
+  onClick,
+}: {
+  onClick: () => void;
+}): JSX.Element {
+  const isLight = false; // TODO: Get mode from context
+  const { isSm } = useResponsive();
+  const btnLabel = isSm ? "Connect wallet" : "Connect";
+  return (
+    <button
+      data-testid="connect-button"
+      type="button"
+      className={clsx(
+        `flex items-center justify-center h-full border-[1.5px] border-transparent rounded-3xl  
+          px-4 py-2 sm:px-6 sm:py-2.5 lg:px-6 lg:py-3
+          hover:fill-bg-gradient-1 active:fill-bg-gradient-5`,
+        isLight ? "light-bg-gradient-1" : "dark-bg-gradient-1"
+      )}
+      onClick={onClick}
+    >
+      <ThemedText textStyle="text-sm font-semibold">{btnLabel}</ThemedText>
+    </button>
+  );
+}
+
+function WalletDisplay({
+  wallet,
+  onClick,
+}: {
+  wallet: Wallet;
+  onClick: () => void;
+}): JSX.Element {
+  const isLight = false; // TODO: Get mode from context
+  const { isLg } = useResponsive();
+  const truncatedWallet = truncateTextFromMiddle(wallet.address, isLg ? 5 : 4);
+  return (
+    <button
+      data-testid="wallet-button"
+      type="button"
+      onClick={onClick}
+      className={clsx(
+        `flex items-center rounded-[48px] border-[0.5px] h-8 sm:h-[52px] lg:h-12 px-3 py-2 lg:px-2.5 lg:py-1.5
+          hover:dark-btn-hover hover:border-transparent active:dark-btn-pressed`,
+        isLight
+          ? "border-light-card-stroke light-card-bg"
+          : "border-dark-card-stroke dark-card-bg"
+      )}
+    >
+      <div className="w-3 h-3 bg-valid rounded-full mr-2" />
+      <ThemedText textStyle="text-xs sm:text-sm">{truncatedWallet}</ThemedText>
+    </button>
   );
 }
