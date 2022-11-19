@@ -10,6 +10,15 @@ module.exports = {
       sans: ['"Space Grotesk"', "sans-serif"],
       mono: ['"Raleway"'],
     },
+    screens: {
+      xs: "390px", // Mobile - Large
+      sm: "600px", // Tablet
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px", // Web - Extra large
+    },
     colors: {
       dark: {
         50: "#737373",
@@ -60,13 +69,6 @@ module.exports = {
         700: "#404040",
         800: "#262626",
         900: "#171717",
-      },
-    },
-    extend: {
-      screens: {
-        xs: "390px", // Mobile - Large
-        sm: "600px", // Tablet
-        "3xl": "1920px", // Web - Extra large
       },
     },
   },
