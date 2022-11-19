@@ -20,6 +20,7 @@ module.exports = {
       "3xl": "1920px", // Web - Extra large
     },
     colors: {
+      transparent: "rgba(0, 0, 0 ,0)",
       dark: {
         50: "#737373",
         100: "#666666",

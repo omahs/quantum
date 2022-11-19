@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+$gradient-1: linear-gradient(
+  72.57deg,
+  #ec008c 17.15%,
+  #5b10ff 89.41%,
+  #0468d6 102.56%
+);
+
 body {
   overflow-x: hidden;
   width: 100%;
@@ -27,28 +34,18 @@ body {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-}
 
-.call_bg {
-  background: linear-gradient(
-    103.45deg,
-    #90ff04 3.99%,
-    #0764d7 56.64%,
-    #5b10ff 90.75%
-  );
-}
-
-.put_bg {
-  background: linear-gradient(
-    259.61deg,
-    #ec008c 0%,
-    #5b10ff 84.61%,
-    #0468d6 100%
-  );
-}
-
-video {
-  clip-path: inset(1px 1px);
+  .fill-bg-gradient-1 {
+    background: $gradient-1 border-box;
+  }
+  .dark-bg-gradient-1 {
+    background: linear-gradient(#000000, #000000) padding-box,
+      $gradient-1 border-box;
+  }
+  .light-bg-gradient-1 {
+    background: linear-gradient(#ffffff, #ffffff) padding-box,
+      $gradient-1 border-box;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -63,19 +60,4 @@ video {
 ::-webkit-scrollbar-track {
   box-shadow: rgb(55 47 71) 0px 0px 5px inset;
   border-radius: 10px;
-}
-
-.blinking-cursor {
-  color: inherit;
-  animation: 1.5s blink step-end infinite;
-}
-
-@keyframes blink {
-  from,
-  to {
-    color: transparent;
-  }
-  50% {
-    color: inherit;
-  }
 }
