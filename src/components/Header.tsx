@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { truncateTextFromMiddle } from "@utils/textHelper";
+import { useThemeContext } from "@contexts/ThemeProvider";
 import ThemedText from "./commons/ThemedText";
 import MetaMaskIcon from "./icons/MetaMaskIcon";
 
@@ -28,15 +29,21 @@ export default function Header(): JSX.Element {
     token: "Ethereum",
   };
   const [wallet, setWallet] = useState<Wallet>();
+  const { isLight } = useThemeContext();
+  const { isClient } = useResponsive();
 
   return (
-    <div className="flex items-center justify-between px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
+    <div className="flex items-center justify-between bg-light-00 dark:bg-dark-00 px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
       <Link href="/">
         <div className="relative cursor-pointer w-[140px] h-[32px] lg:w-[264px] lg:h-[60px]">
           <Image
             fill
             data-testid="bridge-logo"
-            src="/header-logo.svg"
+            src={
+              isClient && isLight
+                ? "/header-light-logo.svg"
+                : "/header-dark-logo.svg"
+            }
             alt="Bridge Logo"
           />
         </div>
@@ -57,7 +64,6 @@ function ConnectButtonDisplay({
 }: {
   onClick: () => void;
 }): JSX.Element {
-  const isLight = false; // TODO: Get mode from context
   const { isSm } = useResponsive();
   const btnLabel = isSm ? "Connect wallet" : "Connect";
   return (
@@ -67,8 +73,8 @@ function ConnectButtonDisplay({
       className={clsx(
         `flex items-center justify-center h-full border-[1.5px] border-transparent rounded-3xl  
           px-4 py-2 sm:px-6 sm:py-2.5 lg:px-6 lg:py-3
-          hover:fill-bg-gradient-1 active:fill-bg-gradient-5`,
-        isLight ? "light-bg-gradient-1" : "dark-bg-gradient-1"
+          light-bg-gradient-1 dark:dark-bg-gradient-1
+          hover:!fill-bg-gradient-1 active:!fill-bg-gradient-5`
       )}
       onClick={onClick}
     >
@@ -84,7 +90,6 @@ function WalletDisplay({
   wallet: Wallet;
   onClick: () => void;
 }): JSX.Element {
-  const isLight = false; // TODO: Get mode from context
   const { isXs, isSm, isLg } = useResponsive();
   const walletText = truncateTextFromMiddle(wallet.address, isLg ? 5 : 4);
   return (
@@ -95,10 +100,8 @@ function WalletDisplay({
       className={clsx(
         `flex items-center rounded-[48px] border-[0.5px] px-3 py-2 lg:px-2.5 lg:py-1.5
           h-8 sm:h-[52px] lg:h-12 sm:w-[156px] lg:w-[165px]
-          hover:dark-btn-hover hover:border-transparent active:dark-btn-pressed`,
-        isLight
-          ? "border-light-card-stroke light-card-bg"
-          : "border-dark-card-stroke dark-card-bg"
+          hover:!dark-btn-hover hover:!border-transparent active:!dark-btn-pressed
+          border-light-card-stroke light-card-bg dark:border-dark-card-stroke dark:dark-card-bg`
       )}
     >
       <TabletOrWebWallet wallet={wallet} walletText={walletText} show={isSm} />
@@ -124,7 +127,10 @@ function TabletOrWebWallet({ wallet, walletText, show }: TabletOrWebProps) {
       <div className="ml-2 text-left">
         <ThemedText textStyle="text-sm block">{walletText}</ThemedText>
         <div className="flex items-center">
-          <ThemedText color="text-dark-700" textStyle="text-xs">
+          <ThemedText
+            color="text-light-700 dark:text-dark-700"
+            textStyle="text-xs"
+          >
             {wallet.token}
           </ThemedText>
           <div className="w-2 h-2 bg-valid rounded-full ml-1" />

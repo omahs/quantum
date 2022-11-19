@@ -34,6 +34,7 @@ const useResponsive = () => {
    * More info: https://nextjs.org/docs/messages/react-hydration-error
    */
   return {
+    isClient,
     isMobile: isClient ? isMobile : false,
     isXs: isClient ? isXs : false,
     isSm: isClient ? isSm : false,
@@ -42,7 +43,7 @@ const useResponsive = () => {
     isXl: isClient ? isXl : true,
     is2xl: isClient ? is2xl : true,
     is3xl: isClient ? is3xl : true,
-  } as Record<Key | "isMobile", boolean>;
+  } as Record<Key | "isMobile" | "isClient", boolean>;
 };
 
 export default useResponsive;

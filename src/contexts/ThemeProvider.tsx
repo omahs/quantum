@@ -49,10 +49,10 @@ export function ThemeProvider({ children }: PropsWithChildren): JSX.Element {
     () => ({
       theme,
       changeCurrentTheme,
-      isLight: theme === "light",
+      isLight: theme === "light" || (theme === "system" && !isDarkOS),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme]
+    [theme, isDarkOS]
   );
 
   return (
