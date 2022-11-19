@@ -5,6 +5,7 @@ module.exports = {
     "./src/pages/**/*.{js,ts,jsx,tsx}",
     "./src/templates/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],

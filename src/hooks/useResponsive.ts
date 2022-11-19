@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { theme } from "../../tailwind.config";
 
 const useResponsive = () => {
+  const [isClient, setIsClient] = useState(false);
+
   const { screens } = theme;
 
   const isMobile = useMediaQuery({ maxWidth: screens.xs });
@@ -20,16 +23,25 @@ const useResponsive = () => {
 
   const is3xl = useMediaQuery({ minWidth: screens["3xl"] });
 
+  useEffect(() => {
+    if (typeof window !== "undefined") setIsClient(true);
+  }, []);
+
   type Key = `is${Capitalize<keyof typeof screens>}`;
+  /**
+   * useMediaQuery is using `window` fn that is only available on the client side,
+   * `isClient` condition is added below to prevent `hydration error`.
+   * More info: https://nextjs.org/docs/messages/react-hydration-error
+   */
   return {
-    isMobile,
-    isXs,
-    isSm,
-    isMd,
-    isLg,
-    isXl,
-    is2xl,
-    is3xl,
+    isMobile: isClient ? isMobile : false,
+    isXs: isClient ? isXs : false,
+    isSm: isClient ? isSm : false,
+    isMd: isClient ? isMd : false,
+    isLg: isClient ? isLg : true,
+    isXl: isClient ? isXl : true,
+    is2xl: isClient ? is2xl : true,
+    is3xl: isClient ? is3xl : true,
   } as Record<Key | "isMobile", boolean>;
 };
 
