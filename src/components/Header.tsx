@@ -7,6 +7,7 @@ import { truncateTextFromMiddle } from "@utils/textHelper";
 import { useThemeContext } from "@contexts/ThemeProvider";
 import ThemedText from "./commons/ThemedText";
 import MetaMaskIcon from "./icons/MetaMaskIcon";
+import ThemeSwitch from "./ThemeSwitch";
 
 interface Wallet {
   address: string;
@@ -30,7 +31,7 @@ export default function Header(): JSX.Element {
   };
   const [wallet, setWallet] = useState<Wallet>();
   const { isLight } = useThemeContext();
-  const { isClient } = useResponsive();
+  const { isClient, isLg } = useResponsive();
 
   return (
     <div className="flex items-center justify-between bg-light-00 dark:bg-dark-00 px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
@@ -53,6 +54,11 @@ export default function Header(): JSX.Element {
           <WalletDisplay wallet={wallet} onClick={() => setWallet(undefined)} />
         ) : (
           <ConnectButtonDisplay onClick={() => setWallet(mockWallet)} />
+        )}
+        {isLg && (
+          <div className="flex items-center ml-3">
+            <ThemeSwitch />
+          </div>
         )}
       </div>
     </div>
