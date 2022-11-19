@@ -9,10 +9,12 @@ interface Props {
 
 export default function ThemedText({
   children,
-  color = "1000",
+  color,
   textStyle = "",
 }: Props): JSX.Element {
   const isLight = false; // TODO: Get mode from context
-  const textColor = isLight ? `text-light-${color}` : `text-dark-${color}`;
-  return <span className={clsx(textColor, textStyle)}>{children}</span>;
+  const defaultColor = isLight ? "text-light-1000" : "text-dark-1000";
+  return (
+    <span className={clsx(color ?? defaultColor, textStyle)}>{children}</span>
+  );
 }

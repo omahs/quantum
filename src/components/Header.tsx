@@ -5,10 +5,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { truncateTextFromMiddle } from "@utils/textHelper";
 import ThemedText from "./ThemedText";
+import MetaMaskIcon from "./icons/MetaMaskIcon";
 
 interface Wallet {
   address: string;
   token: string;
+}
+
+interface MobileProps {
+  walletText: string;
+  show: boolean;
+}
+
+interface TabletOrWebProps extends MobileProps {
+  wallet: Wallet;
 }
 
 export default function Header(): JSX.Element {
@@ -75,23 +85,51 @@ function WalletDisplay({
   onClick: () => void;
 }): JSX.Element {
   const isLight = false; // TODO: Get mode from context
-  const { isLg } = useResponsive();
-  const truncatedWallet = truncateTextFromMiddle(wallet.address, isLg ? 5 : 4);
+  const { isXs, isSm, isLg } = useResponsive();
+  const walletText = truncateTextFromMiddle(wallet.address, isLg ? 5 : 4);
   return (
     <button
       data-testid="wallet-button"
       type="button"
       onClick={onClick}
       className={clsx(
-        `flex items-center rounded-[48px] border-[0.5px] h-8 sm:h-[52px] lg:h-12 px-3 py-2 lg:px-2.5 lg:py-1.5
+        `flex items-center rounded-[48px] border-[0.5px] px-3 py-2 lg:px-2.5 lg:py-1.5
+          h-8 sm:h-[52px] lg:h-12 sm:w-[156px] lg:w-[165px]
           hover:dark-btn-hover hover:border-transparent active:dark-btn-pressed`,
         isLight
           ? "border-light-card-stroke light-card-bg"
           : "border-dark-card-stroke dark-card-bg"
       )}
     >
-      <div className="w-3 h-3 bg-valid rounded-full mr-2" />
-      <ThemedText textStyle="text-xs sm:text-sm">{truncatedWallet}</ThemedText>
+      <TabletOrWebWallet wallet={wallet} walletText={walletText} show={isSm} />
+      <MobileWallet walletText={walletText} show={isXs && !isSm} />
     </button>
   );
+}
+
+function MobileWallet({ walletText, show }: MobileProps) {
+  return show ? (
+    <>
+      <div className="w-3 h-3 bg-valid rounded-full mr-2" />
+      <ThemedText textStyle="text-xs">{walletText}</ThemedText>
+    </>
+  ) : null;
+}
+
+function TabletOrWebWallet({ wallet, walletText, show }: TabletOrWebProps) {
+  return show ? (
+    <div className="flex items-center">
+      <MetaMaskIcon />
+
+      <div className="ml-2 text-left">
+        <ThemedText textStyle="text-sm block">{walletText}</ThemedText>
+        <div className="flex items-center">
+          <ThemedText color="text-dark-700" textStyle="text-xs">
+            {wallet.token}
+          </ThemedText>
+          <div className="w-2 h-2 bg-valid rounded-full ml-1" />
+        </div>
+      </div>
+    </div>
+  ) : null;
 }
