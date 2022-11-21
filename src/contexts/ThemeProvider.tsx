@@ -1,61 +1,77 @@
-import React, { useEffect, useState, useMemo, PropsWithChildren } from "react";
-import useLocalStorage from "@hooks/useLocalStorage";
-import useResponsive from "@hooks/useResponsive";
-import { useMediaQuery } from "react-responsive";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  PropsWithChildren,
+} from "react";
 
-type ColorScheme = "light" | "dark" | "system";
-interface Theme {
-  theme: ColorScheme;
-  changeCurrentTheme: (theme: ColorScheme) => void;
+type Theme = "dark" | "light";
+export interface ThemeContextProps {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   isLight: boolean;
 }
 
-const ThemeContext = React.createContext<Theme>(undefined as any);
+export function getInitialTheme(): Theme {
+  if (typeof window !== "undefined") {
+    const storedPref = window.localStorage.getItem("color-theme");
+    if (storedPref !== null) {
+      return storedPref as Theme;
+    }
 
-export function useThemeContext(): Theme {
-  return React.useContext(ThemeContext);
+    const systemPref = window.matchMedia("(prefers-color-scheme: dark)");
+    if (!systemPref.matches) {
+      return "light";
+    }
+  }
+  return "dark";
 }
 
-const COLOR_SCHEME_QUERY = "(prefers-color-scheme: dark)";
+const ThemeContext = createContext<ThemeContextProps>(undefined as any);
 
-export function ThemeProvider({ children }: PropsWithChildren): JSX.Element {
-  const { isLg: isDesktop } = useResponsive();
-  const isDarkOS = useMediaQuery({ query: COLOR_SCHEME_QUERY });
+export function ThemeProvider({
+  theme: initialTheme,
+  children,
+}: PropsWithChildren<{ theme: Theme }>): JSX.Element {
+  const [theme, setTheme] = useState<Theme>(initialTheme);
 
-  const [localStorageTheme, setLocalStorageTheme] =
-    useLocalStorage<ColorScheme>("theme", "dark");
-  const [theme, setTheme] = useState<ColorScheme>(localStorageTheme);
+  function rawSetTheme(rawTheme: Theme): void {
+    if (typeof window !== "undefined") {
+      const root = window.document.documentElement;
+      const isDark = rawTheme === "dark";
 
-  const changeCurrentTheme = (newTheme: ColorScheme) => {
-    setLocalStorageTheme(newTheme);
-    setTheme(newTheme);
-  };
+      root.classList.remove(isDark ? "light" : "dark");
+      root.classList.add(rawTheme);
 
-  useEffect(() => {
-    setTheme(!isDesktop ? "system" : localStorageTheme);
-  }, [isDesktop, localStorageTheme]);
-
-  useEffect(() => {
-    if (theme === "light") {
-      document.documentElement.classList.remove("dark");
-    } else if (theme === "system" && !isDarkOS) {
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
+      localStorage.setItem("color-theme", rawTheme);
     }
-  }, [theme, isDarkOS]);
+  }
 
-  const context: Theme = useMemo(
+  useEffect(() => {
+    setTheme(getInitialTheme);
+  }, []);
+
+  useEffect(() => {
+    rawSetTheme(theme);
+  }, [theme]);
+
+  const context: ThemeContextProps = useMemo(
     () => ({
       theme,
-      changeCurrentTheme,
-      isLight: theme === "light" || (theme === "system" && !isDarkOS),
+      setTheme,
+      isLight: theme === "light",
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme, isDarkOS]
+    [theme]
   );
 
   return (
     <ThemeContext.Provider value={context}>{children}</ThemeContext.Provider>
   );
+}
+
+export function useTheme(): ThemeContextProps {
+  return useContext(ThemeContext);
 }

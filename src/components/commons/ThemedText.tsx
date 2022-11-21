@@ -12,7 +12,7 @@ export default function ThemedText({
   color,
   textStyle = "",
 }: Props): JSX.Element {
-  const defaultColor = "text-light-1000 dark:text-dark-1000";
+  const defaultColor = "text-dark-1000";
   return (
     <span className={clsx(color ?? defaultColor, textStyle)}>{children}</span>
   );

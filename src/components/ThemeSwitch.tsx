@@ -1,15 +1,15 @@
-import { useThemeContext } from "@contexts/ThemeProvider";
+import { useTheme } from "@contexts/ThemeProvider";
 import useResponsive from "@hooks/useResponsive";
 import { FiMoon } from "react-icons/fi";
 import { MdOutlineWbSunny } from "react-icons/md";
 
 export default function ThemeSwitch() {
-  const { changeCurrentTheme, isLight } = useThemeContext();
+  const { setTheme, isLight } = useTheme();
   const { isClient } = useResponsive();
 
   const handleOnClick = () => {
     const newTheme = isLight ? "dark" : "light";
-    changeCurrentTheme(newTheme);
+    setTheme(newTheme);
   };
 
   return (
