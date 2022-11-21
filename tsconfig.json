@@ -19,7 +19,7 @@
     "paths": {
       "@content/*": ["../content/*"],
       "@api/*": ["api/*"],
-      "@contexts/*": ["layouts/contexts/*"],
+      "@contexts/*": ["contexts/*"],
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"],
       "@store/*": ["store/*"],

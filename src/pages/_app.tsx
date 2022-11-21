@@ -1,6 +1,5 @@
 import "../styles/globals.scss";
 import NextNProgress from "nextjs-progressbar";
-import { JSX } from "@babel/types";
 import Base from "../layouts/Base";
 
 export default function BridgeApp({ Component, pageProps }): JSX.Element {

@@ -8,11 +8,12 @@ import {
   website,
 } from "@components/siteInfo";
 import clsx from "clsx";
-import { JSX } from "@babel/types";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WagmiConfig, createClient } from "wagmi";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import Footer from "@components/Footer";
+import Header from "@components/Header";
+import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 
 const metamask = new MetaMaskConnector();
 
@@ -24,6 +25,7 @@ const client = createClient(
 );
 
 function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
+  const initialTheme = getInitialTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
   }, []);
 
   return (
-    <div className={clsx("flex flex-col min-h-screen antialiased")}>
+    <div className={clsx("flex flex-col min-h-screen antialiased bg-dark-00")}>
       <Head>
         <base href="/" />
         <meta name="application-name" content={appName} />
@@ -78,8 +80,13 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
 
       <WagmiConfig client={client}>
         <ConnectKitProvider>
-          <main className={clsx("flex-grow")}>{mounted && children}</main>
-          <Footer />
+          {mounted && (
+            <ThemeProvider theme={initialTheme}>
+              <Header />
+              <main className={clsx("flex-grow")}>{children}</main>
+              <Footer />
+            </ThemeProvider>
+          )}
         </ConnectKitProvider>
       </WagmiConfig>
     </div>
