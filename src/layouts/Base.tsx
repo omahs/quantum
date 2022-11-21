@@ -57,7 +57,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
 
         <meta name="og:locale" content="en_SG" />
         <meta name="og:title" content={siteTitle} />
-        <meta name="og:image" content="/br_share.png" />
+        <meta name="og:image" content="/bridge_share.png" />
         <meta name="og:site_name" content={appName} />
         <meta name="og:url" content={website} />
         <meta name="og:description" content={shortDescription} />
@@ -67,13 +67,14 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <meta name="twitter:creator" content="@birthdaydev" />
         <meta name="twitter:title" content={siteTitle} />
         <meta name="twitter:description" content={shortDescription} />
-        <meta name="twitter:image" content="/br_share.png" />
+        <meta name="twitter:image" content="/bridge_share.png" />
         <meta name="twitter:image:alt" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
 
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" sizes="64x64" href="/favicon-64x64.png" />
       </Head>
 
       <WagmiConfig client={client}>
