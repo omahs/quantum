@@ -10,13 +10,14 @@ module.exports = {
       sans: ['"Space Grotesk"', "sans-serif"],
       mono: ['"Raleway"'],
     },
-    container: {
-      screens: {
-        sm: "600px",
-        md: "768px",
-        lg: "984px",
-        xl: "1240px",
-      },
+    screens: {
+      xs: "390px", // Mobile - Large
+      sm: "600px", // Tablet
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px", // Web - Extra large
     },
     colors: {
       dark: {
@@ -68,50 +69,6 @@ module.exports = {
         700: "#404040",
         800: "#262626",
         900: "#171717",
-      },
-    },
-    extend: {
-      screens: {
-        "2xl": "1280px",
-        "3xl": "1440px",
-      },
-      fontSize: {
-        "4xl": ["2.5rem", "3rem"],
-        "5xl": ["3rem", "3.5rem"],
-        "5.5xl": ["3.5rem", "4.5rem"],
-        "7.5xl": ["5.25rem", "6rem"],
-      },
-      typography: (theme) => ({
-        DEFAULT: {
-          css: {
-            "h5, h6": {
-              color: theme("colors.emerald.700"),
-              fontWeight: "bold",
-              fontFamily: theme("fontFamily.serif"),
-            },
-            "h1 strong": {
-              color: `${theme("colors.emerald.700")} !important`,
-            },
-          },
-        },
-      }),
-      keyframes: {
-        "slide-right": {
-          "0%": {
-            transform: "translateX(100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
-        "slide-left": {
-          "0%": {
-            transform: "translateX(-100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
       },
     },
   },
