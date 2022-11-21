@@ -5,43 +5,46 @@ module.exports = {
     "./src/pages/**/*.{js,ts,jsx,tsx}",
     "./src/templates/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],
       mono: ['"Raleway"'],
     },
-    container: {
-      screens: {
-        sm: "600px",
-        md: "768px",
-        lg: "984px",
-        xl: "1240px",
-      },
+    screens: {
+      xs: "390px", // Mobile - Large
+      sm: "600px", // Tablet
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px", // Web - Extra large
     },
     colors: {
+      transparent: "rgba(0, 0, 0 ,0)",
       dark: {
-        50: "#737373",
-        100: "#666666",
-        200: "#595959",
-        300: "#4D4D4D",
-        400: "#404040",
-        500: "#333333",
-        600: "#262626",
-        700: "#1A1A1A",
-        800: "#0D0D0D",
-        900: "#000000",
+        "00": "#000000",
+        100: "#121212",
+        200: "#2B2B2B",
+        300: "#333333",
+        500: "#8C8C8C",
+        700: "#A6A6A6",
+        800: "#D9D9D9",
+        900: "#F2F2F2",
+        1000: "#FFFFFF",
+        "card-stroke": "rgba(51, 51, 51, 0.5)",
       },
       light: {
-        50: "#FFFFFF",
+        "00": "#FFFFFF",
         100: "#F2F2F2",
-        200: "#E6E6E6",
-        300: "#D9D9D9",
-        400: "#CCCCCC",
-        500: "#BFBFBF",
-        600: "#B3B3B3",
-        700: "#A6A6A6",
-        800: "#999999",
-        900: "#8C8C8C",
+        200: "#D9D9D9",
+        300: "#CCCCCC",
+        500: "#737373",
+        700: "#595959",
+        800: "#2B2B2B",
+        900: "#121212",
+        1000: "#000000",
+        "card-stroke": "rgba(204, 204, 204, 0.3)",
       },
       primary: {
         50: "#E8DEFF",
@@ -69,50 +72,9 @@ module.exports = {
         800: "#262626",
         900: "#171717",
       },
-    },
-    extend: {
-      screens: {
-        "2xl": "1280px",
-        "3xl": "1440px",
-      },
-      fontSize: {
-        "4xl": ["2.5rem", "3rem"],
-        "5xl": ["3rem", "3.5rem"],
-        "5.5xl": ["3.5rem", "4.5rem"],
-        "7.5xl": ["5.25rem", "6rem"],
-      },
-      typography: (theme) => ({
-        DEFAULT: {
-          css: {
-            "h5, h6": {
-              color: theme("colors.emerald.700"),
-              fontWeight: "bold",
-              fontFamily: theme("fontFamily.serif"),
-            },
-            "h1 strong": {
-              color: `${theme("colors.emerald.700")} !important`,
-            },
-          },
-        },
-      }),
-      keyframes: {
-        "slide-right": {
-          "0%": {
-            transform: "translateX(100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
-        "slide-left": {
-          "0%": {
-            transform: "translateX(-100%)",
-          },
-          "100%": {
-            transform: "translateX(0)",
-          },
-        },
-      },
+      error: "#E54545",
+      warning: "#D97B01",
+      valid: "#0CC72C",
     },
   },
   plugins: [require("@tailwindcss/typography")],

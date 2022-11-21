@@ -31,14 +31,14 @@ const SocialItems = [
 
 export default function Footer() {
   return (
-    <footer className="w-full relative pb-8 md:pb-12 pt-4 md:pt-3 bg-dark-900 border-t md:border-t-0 border-dark-500">
+    <footer className="w-full relative pb-8 md:pb-12 pt-4 md:pt-3 bg-dark-00 border-t md:border-t-0 border-dark-300">
       <Container className="px-5 md:px-12 lg:px-[120px]">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row">
-            <div className="text-xs font-semibold text-light-700">
+            <div className="text-xs font-semibold text-dark-700">
               Developed by&nbsp;
             </div>
-            <div className="text-xs font-semibold text-light-700">
+            <div className="text-xs font-semibold text-dark-700">
               Birthday Research
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function Footer() {
                 className="p-1"
                 data-testid={testId}
               >
-                <Icon size={24} className="text-light-700" />
+                <Icon size={24} className="text-dark-700" />
               </a>
             ))}
           </div>
