@@ -8,7 +8,7 @@ function Home() {
       className="relative min-h-screen flex flex-col bg-light-00 dark:bg-dark-00"
       data-testid="homepage"
     >
-      <h1 className="text-light-00 dark:text-dark-00">
+      <h1 className="text-light-1000 dark:text-dark-1000">
         {isMobile
           ? "DeFiChain ERC-20 Bridge Mobile"
           : "DeFiChain ERC-20 Bridge"}
