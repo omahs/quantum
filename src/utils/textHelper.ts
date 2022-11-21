@@ -1,4 +1,4 @@
-export const truncateTextFromMiddle = (text: string, length = 5): string => {
+const truncateTextFromMiddle = (text: string, length = 5): string => {
   if (text.length <= length) {
     return text;
   }
@@ -8,4 +8,4 @@ export const truncateTextFromMiddle = (text: string, length = 5): string => {
   )}`;
 };
 
-export default { truncateTextFromMiddle };
+export { truncateTextFromMiddle };
