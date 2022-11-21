@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { truncateTextFromMiddle } from "@utils/textHelper";
-import ThemedText from "./commons/ThemedText";
 import MetaMaskIcon from "./icons/MetaMaskIcon";
 
 interface Wallet {
@@ -76,7 +75,7 @@ function ConnectButtonDisplay({
       )}
       onClick={onClick}
     >
-      <ThemedText textStyle="text-sm font-semibold">{btnLabel}</ThemedText>
+      <span className="text-dark-1000 text-sm font-semibold">{btnLabel}</span>
     </button>
   );
 }
@@ -112,7 +111,7 @@ function MobileWallet({ walletText, show }: MobileProps) {
   return show ? (
     <>
       <div className="w-3 h-3 bg-valid rounded-full mr-2" />
-      <ThemedText textStyle="text-xs">{walletText}</ThemedText>
+      <span className="text-dark-1000 text-xs">{walletText}</span>
     </>
   ) : null;
 }
@@ -123,11 +122,9 @@ function TabletOrWebWallet({ wallet, walletText, show }: TabletOrWebProps) {
       <MetaMaskIcon />
 
       <div className="ml-2 text-left">
-        <ThemedText textStyle="text-sm block">{walletText}</ThemedText>
+        <span className="text-dark-1000 text-sm block">{walletText}</span>
         <div className="flex items-center">
-          <ThemedText color="text-dark-700" textStyle="text-xs">
-            {wallet.token}
-          </ThemedText>
+          <span className="text-dark-700 text-xs">{wallet.token}</span>
           <div className="w-2 h-2 bg-valid rounded-full ml-1" />
         </div>
       </div>
