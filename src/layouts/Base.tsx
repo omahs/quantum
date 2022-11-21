@@ -11,6 +11,7 @@ import clsx from "clsx";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WagmiConfig, createClient } from "wagmi";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
+import Footer from "@components/Footer";
 import Header from "@components/Header";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 
@@ -83,6 +84,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
             <ThemeProvider theme={initialTheme}>
               <Header />
               <main className={clsx("flex-grow")}>{children}</main>
+              <Footer />
             </ThemeProvider>
           )}
         </ConnectKitProvider>
