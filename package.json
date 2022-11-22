@@ -6,6 +6,7 @@
     "apps/*"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
@@ -16,7 +17,8 @@
     "turbo": "1.6.3"
   },
   "engines": {
-    "npm": ">=8.0.0",
+    "npm": ">=9.0.0",
     "node": ">=16.0.0"
-  }
+  },
+  "packageManager": "npm@9.1.2"
 }
