@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "tsconfig/web.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "@content/*": [
+        "../content/*"
+      ],
+      "@api/*": [
+        "api/*"
+      ],
+      "@contexts/*": [
+        "contexts/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@store/*": [
+        "store/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@public/*": [
+        "../public/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "cypress"
+  ]
+}

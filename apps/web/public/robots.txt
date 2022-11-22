@@ -1,9 +1,10 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /*?network=*
 
 # Host
 Host: https://bridge.defichain.com
 
 # Sitemaps
-Sitemap: https://bridge.defichain.com/sitemap-0.xml
+Sitemap: https://bridge.defichain.com/sitemap.xml
