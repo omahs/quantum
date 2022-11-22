@@ -104,6 +104,10 @@ body {
     background: linear-gradient(#000000, #000000) padding-box,
       var(--accent-gradient-1) border-box;
   }
+  .dark-bg-gradient-2 {
+    background: linear-gradient(#000000, #000000) padding-box,
+      var(--accent-gradient-2) border-box;
+  }
 
   .light-card-bg {
     background: var(--ui-light-card-bg) border-box;
