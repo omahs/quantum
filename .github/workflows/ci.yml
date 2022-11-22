@@ -22,6 +22,7 @@ jobs:
           cache: "npm"
 
       - run: npm ci
+      - run: npx turbo typecheck
       - run: npx turbo lint
 
   lint_prettier:
