@@ -113,6 +113,10 @@ export default function WalletAddressInput({
   const showVerifiedBadge = isValidAddress && !isFocused;
   return (
     <>
+      <div className="flex items-center mb-2 lg:mb-3">
+        <label className="text-xs lg:text-base font-semibold">Address</label>
+        {blockchain === "DeFiChain" && <NetworkTag network={network} />}
+      </div>
       <div
         className={clsx(
           "relative min-h-[48px] flex items-center border rounded-[10px] py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
@@ -183,6 +187,22 @@ export default function WalletAddressInput({
         </span>
       )}
     </>
+  );
+}
+
+function NetworkTag({ network }: { network: Network }): JSX.Element {
+  return (
+    <div className="flex items-center h-7 rounded-[37px] dark-section-bg border border-dark-card-stroke px-2 py-1 lg:px-3 lg:py-2 ml-2">
+      <div
+        className={clsx(
+          "w-2 h-2 rounded-full mr-1",
+          network === "mainnet" ? "bg-valid" : "bg-warning"
+        )}
+      />
+      <span className="text-dark-1000 text-2xs font-bold tracking-[0.08em] uppercase">
+        {network}
+      </span>
+    </div>
   );
 }
 

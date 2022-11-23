@@ -76,6 +76,11 @@ module.exports = {
       warning: "#D97B01",
       valid: "#0CC72C",
     },
+    extend: {
+      fontSize: {
+        "2xs": ["0.625rem", "0.75rem"],
+      },
+    },
   },
   plugins: [require("@tailwindcss/typography")],
 };
