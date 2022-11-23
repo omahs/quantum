@@ -34,6 +34,19 @@
     rgba(241, 239, 239, 0.5) 100.17%
   );
 
+  --ui-dark-gradient-1: linear-gradient(
+    144deg, 
+    rgba(46, 46, 46, 0.2) -0.38%,
+    rgba(18, 18, 18, 0.2) 100.17%
+  );
+
+  --ui-dark-gradient-2: linear-gradient(
+    144deg, 
+    rgba(46, 46, 46, 0.4) -0.38%, 
+    rgba(18, 18, 18, 0.4) 100.17%
+  );
+
+
   /* Accent gradients */
   --accent-gradient-1: linear-gradient(
     72.57deg,
@@ -117,6 +130,12 @@ body {
   .light-bg-gradient-1 {
     background: linear-gradient(#ffffff, #ffffff) padding-box,
       var(--accent-gradient-1) border-box;
+  }
+  .bg-dark-gradient-1 {
+    background: var(--ui-dark-gradient-1);
+  }
+  .bg-dark-gradient-2 {
+    background: var(--ui-dark-gradient-2);
   }
 }
 

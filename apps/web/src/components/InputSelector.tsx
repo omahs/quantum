@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { FaChevronDown, FaCheckCircle } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
+import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 
 const networks = [
   {
@@ -75,7 +76,7 @@ interface SelectorI {
   label: string;
   type: Type;
   popUpLabel: string;
-  width: number;
+  floating?: (node: HTMLElement | null) => void;
   options?: NetworkOptionsI[] | TokensI[];
   onSelect?: (value: NetworkOptionsI | TokensI) => void;
   value: NetworkOptionsI | TokensI;
@@ -92,13 +93,6 @@ export default function InputSelector() {
     defaultNetworkB.tokens[0]
   );
   const ref = useRef<HTMLInputElement>(null);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    if (ref?.current !== null) {
-      setWidth(ref?.current?.offsetWidth);
-    }
-  }, []);
 
   useEffect(() => {
     const networkB = networks.find(
@@ -124,16 +118,38 @@ export default function InputSelector() {
     }
   }, [selectedTokensA]);
 
+  const { x, y, reference, floating, strategy, refs } = useFloating({
+    placement: "bottom-end",
+    middleware: [
+      shift(),
+      size({
+        apply({ rects }) {
+          if (
+            refs.floating.current !== null &&
+            refs.floating.current !== undefined
+          ) {
+            Object.assign(refs.floating.current.style, {
+              minWidth: "325px",
+              maxWidth: "368px",
+              width: `${rects.reference.width}px`,
+            });
+          }
+        },
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+
   return (
     <div className="mx-6">
-      <div className="flex flex-row items-center mt-10" ref={ref}>
+      <div className="flex flex-row items-center mt-10" ref={reference}>
         <div className="w-1/2">
           <Selector
             label="Source Network"
             popUpLabel="Select source"
             options={networks}
+            floating={floating}
             type={Type.Network}
-            width={width}
             onSelect={(value: NetworkOptionsI) => setSelectedNetworkA(value)}
             value={selectedNetworkA}
           />
@@ -143,8 +159,8 @@ export default function InputSelector() {
             label="Token"
             popUpLabel="Select token"
             options={selectedNetworkA.tokens}
+            floating={floating}
             type={Type.Token}
-            width={width}
             onSelect={(value: TokensI) => setSelectedTokensA(value)}
             value={selectedTokensA}
           />
@@ -156,9 +172,7 @@ export default function InputSelector() {
             label="Destination Network"
             disabled
             popUpLabel="Select destination"
-            options={networks}
             type={Type.Network}
-            width={width}
             value={selectedNetworkB}
           />
         </div>
@@ -167,9 +181,7 @@ export default function InputSelector() {
             disabled
             label="Token to receive"
             popUpLabel="Select token"
-            options={selectedNetworkB.tokens}
             type={Type.Token}
-            width={width}
             value={selectedTokensB}
           />
         </div>
@@ -184,7 +196,7 @@ function Selector({
   popUpLabel,
   onSelect,
   value,
-  width,
+  floating,
   type,
   disabled = false,
 }: SelectorI) {
@@ -207,7 +219,7 @@ function Selector({
                 }
               }}
               className={clsx(
-                "relative w-full",
+                "relative w-full outline-0",
                 disabled && "cursor-default",
                 type === Type.Network ? "p-px pr-0" : "p-px",
                 open ? "bg-gradient-2 pr-px" : "bg-dark-200",
@@ -253,18 +265,18 @@ function Selector({
                 leaveTo="opacity-0"
               >
                 <Listbox.Options
-                  style={{ width: `${width}px` }}
+                  ref={floating}
                   className={clsx(
-                    "absolute mt-2 w-full w-56 overflow-auto rounded-lg p-px max-w-[368px] z-10",
+                    "absolute mt-2 w-full w-56 overflow-auto rounded-lg p-px z-10 outline-0",
                     { "right-0": type !== Type.Network },
                     open ? "bg-gradient-2" : "bg-dark-200"
                   )}
                 >
-                  <div className="bg-dark-00 rounded-lg px-5 lg:px-6 py-4">
-                    <span className="text-dark-700 font-semibold text-xs lg:text-sm">
+                  <div className="bg-dark-00 rounded-lg py-4">
+                    <span className="text-dark-700 font-semibold text-xs lg:text-sm px-5 lg:px-6">
                       {popUpLabel}
                     </span>
-                    <div className="flex flex-col space-y-1 lg:space-y-2 mt-3">
+                    <div className="flex flex-col mt-3">
                       {type === Type.Network ? (
                         <NetworkOptions options={options} />
                       ) : (
@@ -288,31 +300,39 @@ function NetworkOptions({ options }) {
       {options.map((option) => (
         <Listbox.Option
           key={option.name}
-          className={({ active }) =>
-            clsx(
-              "relative cursor-default select-none py-2 lg:py-4 border-t-[0.5px] border-[#42424280] ",
-              active ? "" : ""
-            )
-          }
+          className="relative cursor-default select-none"
           value={option}
         >
-          {({ selected }) => (
-            <div className="flex flex-row justify-between items-center cursor-default">
-              <div className="flex flex-row items-center">
-                <Image
-                  width={100}
-                  height={100}
-                  className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
-                  data-testid={option.name}
-                  src={option.icon}
-                  alt={option.name}
-                />
-                <span className="truncate text-dark-1000 ml-2 text-base lg:text-lg">
-                  {option.name}
-                </span>
+          {({ selected, active }) => (
+            <>
+              <div className="mx-5 lg:mx-6 border-t-[0.5px] border-[#42424280]" />
+              <div
+                className={clsx(
+                  "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
+                  active && "bg-dark-gradient-1",
+                  selected && "bg-dark-gradient-2"
+                )}
+              >
+                <div className="flex flex-row justify-between items-center cursor-default">
+                  <div className="flex flex-row items-center">
+                    <Image
+                      width={100}
+                      height={100}
+                      className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
+                      data-testid={option.name}
+                      src={option.icon}
+                      alt={option.name}
+                    />
+                    <span className="truncate text-dark-1000 ml-2 text-base lg:text-lg">
+                      {option.name}
+                    </span>
+                  </div>
+                  {selected && (
+                    <FaCheckCircle className="h-6 w-6 text-[#00AD1D]" />
+                  )}
+                </div>
               </div>
-              {selected && <FaCheckCircle className="h-6 w-6 text-[#00AD1D]" />}
-            </div>
+            </>
           )}
         </Listbox.Option>
       ))}
@@ -326,51 +346,57 @@ function TokenOptions({ options }) {
       {options.map((option) => (
         <Listbox.Option
           key={option.tokenA.name}
-          className={({ active }) =>
-            clsx(
-              "relative cursor-default select-none py-2 lg:py-4 border-t-[0.5px] border-[#42424280] ",
-              active ? "" : ""
-            )
-          }
+          className="relative cursor-default select-none"
           value={option}
         >
-          {({ selected }) => (
-            <div className="flex flex-row justify-between items-center cursor-default">
-              <div className="flex flex-row w-4/12 items-center">
-                <Image
-                  width={100}
-                  height={100}
-                  className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
-                  data-testid={option.tokenA.name}
-                  src={option.tokenA.icon}
-                  alt={option.tokenA.name}
-                />
-                <span className="truncate text-dark-1000 ml-2 text-base lg:text-lg">
-                  {option.tokenA.name}
-                </span>
-              </div>
-              <div className="flex flex-row w-2/12 justify-center items-center">
-                <FiArrowRight size={15} className="h-4 w-4 text-dark-500" />
-              </div>
-              <div className="flex flex-row w-4/12 items-center">
-                <Image
-                  width={100}
-                  height={100}
-                  className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
-                  data-testid={option.tokenB.name}
-                  src={option.tokenB.icon}
-                  alt={option.tokenB.name}
-                />
-                <span className="truncate text-dark-900 ml-2 text-base lg:text-lg">
-                  {option.tokenB.name}
-                </span>
-              </div>
-              <div className="flex flex-row w-2/12 justify-end items-center">
-                {selected && (
-                  <FaCheckCircle className="h-6 w-6 text-[#00AD1D]" />
+          {({ selected, active }) => (
+            <>
+              <div className="mx-5 lg:mx-6 border-t-[0.5px] border-[#42424280]" />
+              <div
+                className={clsx(
+                  "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
+                  active && "bg-dark-gradient-1",
+                  selected && "bg-dark-gradient-2"
                 )}
+              >
+                <div className="flex flex-row justify-between items-center cursor-default">
+                  <div className="flex flex-row w-4/12 items-center">
+                    <Image
+                      width={100}
+                      height={100}
+                      className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
+                      data-testid={option.tokenA.name}
+                      src={option.tokenA.icon}
+                      alt={option.tokenA.name}
+                    />
+                    <span className="truncate text-dark-1000 ml-2 text-base lg:text-lg">
+                      {option.tokenA.name}
+                    </span>
+                  </div>
+                  <div className="flex flex-row w-2/12 justify-center items-center">
+                    <FiArrowRight size={15} className="h-4 w-4 text-dark-500" />
+                  </div>
+                  <div className="flex flex-row w-4/12 items-center">
+                    <Image
+                      width={100}
+                      height={100}
+                      className="w-6 h-6 lg:w-[28px] lg:h-[28px]"
+                      data-testid={option.tokenB.name}
+                      src={option.tokenB.icon}
+                      alt={option.tokenB.name}
+                    />
+                    <span className="truncate text-dark-900 ml-2 text-base lg:text-lg">
+                      {option.tokenB.name}
+                    </span>
+                  </div>
+                  <div className="flex flex-row w-2/12 justify-end items-center">
+                    {selected && (
+                      <FaCheckCircle className="h-6 w-6 text-[#00AD1D]" />
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </Listbox.Option>
       ))}
