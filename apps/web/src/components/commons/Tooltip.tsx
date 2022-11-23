@@ -30,11 +30,7 @@ export default function Tooltip({
   return (
     // eslint-disable-next-line
     <div
-      className={clsx(
-        "inline-block relative p-1 rounded-full",
-        { "hover:bg-dark-200 active:dark-btn-pressed": !disableTooltip },
-        containerClass
-      )}
+      className={clsx("inline-block relative p-1 rounded-full", containerClass)}
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
       onMouseDown={hideTooltip}

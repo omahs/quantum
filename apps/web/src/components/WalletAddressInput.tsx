@@ -132,7 +132,8 @@ export default function WalletAddressInput({
         <Tooltip
           content="Paste from clipboard"
           containerClass={clsx("mr-3 lg:mr-6 shrink-0", {
-            "cursor-pointer": !disabled,
+            "cursor-pointer hover:bg-dark-200 active:dark-btn-pressed":
+              !disabled,
           })}
           disableTooltip={disabled || !isSm} // Disable tooltip for mobile
         >
