@@ -114,7 +114,7 @@ export default function WalletAddressInput({
   return (
     <>
       <div className="flex items-center mb-2 lg:mb-3">
-        <label className="text-xs lg:text-base font-semibold">Address</label>
+        <span className="text-xs lg:text-base font-semibold">Address</span>
         {blockchain === "DeFiChain" && <NetworkTag network={network} />}
       </div>
       <div

@@ -15,21 +15,17 @@ function Home() {
           : "DeFiChain ERC-20 Bridge"}
       </h1>
       {/* TODO: Remove test wallet input here */}
-      <div className="p-4 sm:w-1/2 border border-dark-100 rounded-lg">
-        Ethereum:
-        <WalletAddressInput blockchain="Ethereum" />
-        <br />
-        DeFiChain MainNet:
+      <div className="p-4 sm:w-1/2 border border-dark-100 rounded-lg bg-[#0E0E0E]">
         <WalletAddressInput blockchain="DeFiChain" />
         <br />
-        DeFiChain TestNet:
+        <WalletAddressInput blockchain="Ethereum" />
+        <br />
         <WalletAddressInput blockchain="DeFiChain" network="testnet" />
         <br />
         <br />
-        Ethereum Disabled:
+        /* Disabled */
         <WalletAddressInput blockchain="Ethereum" network="testnet" disabled />
         <br />
-        DeFiChain Disabled:
         <WalletAddressInput blockchain="DeFiChain" network="testnet" disabled />
       </div>
     </section>
