@@ -31,7 +31,8 @@ export default function Tooltip({
     // eslint-disable-next-line
     <div
       className={clsx(
-        "inline-block relative p-1 rounded-full hover:bg-dark-200 active:dark-btn-pressed",
+        "inline-block relative p-1 rounded-full",
+        { "hover:bg-dark-200 active:dark-btn-pressed": !disableTooltip },
         containerClass
       )}
       onMouseEnter={showTooltip}

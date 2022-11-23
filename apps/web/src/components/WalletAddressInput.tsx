@@ -52,6 +52,7 @@ export default function WalletAddressInput({
   };
 
   const handlePasteBtnClick = async () => {
+    if (disabled) return;
     const copiedText = await navigator.clipboard.readText();
     setAddressInput(copiedText);
   };
@@ -133,7 +134,7 @@ export default function WalletAddressInput({
           containerClass={clsx("mr-3 lg:mr-6 shrink-0", {
             "cursor-pointer": !disabled,
           })}
-          disableTooltip={!isSm} // Disable tooltip for mobile
+          disableTooltip={disabled || !isSm} // Disable tooltip for mobile
         >
           <FiClipboard
             size={20}
