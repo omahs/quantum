@@ -21,8 +21,8 @@ export default function WalletAddressInput({
   disabled = false,
 }: Props): JSX.Element {
   const [addressInput, setAddressInput] = useState<string>("");
-  const [isValidAddress, setIsValidAddress] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const validateAddressInput = (input: string): void => {
@@ -90,8 +90,16 @@ export default function WalletAddressInput({
     <div
       className={clsx(
         "relative min-h-[48px] flex items-center border rounded-[10px] py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[22px]",
-        { "bg-dark-100 opacity-30": disabled, "border-error": hasError },
-        isFocused ? "border-transparent dark-bg-gradient-2" : "border-dark-300"
+        {
+          "bg-dark-100 opacity-30": disabled,
+          "border-error": hasError,
+          "border-transparent dark-bg-gradient-2": isFocused,
+          "border-dark-300 hover:border-dark-500": !(
+            disabled ||
+            hasError ||
+            isFocused
+          ), // Default
+        }
       )}
     >
       <FiClipboard
