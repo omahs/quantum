@@ -4,7 +4,13 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { FaChevronDown, FaCheckCircle } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
-import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
+import {
+  shift,
+  autoUpdate,
+  size,
+  useFloating,
+  Strategy,
+} from "@floating-ui/react-dom";
 
 const networks = [
   {
@@ -76,7 +82,12 @@ interface SelectorI {
   label: string;
   type: Type;
   popUpLabel: string;
-  floating?: (node: HTMLElement | null) => void;
+  floatingObj: {
+    floating: (node: HTMLElement | null) => void;
+    strategy: Strategy;
+    x: number | null;
+    y: number | null;
+  };
   options?: NetworkOptionsI[] | TokensI[];
   onSelect?: (value: NetworkOptionsI | TokensI) => void;
   value: NetworkOptionsI | TokensI;
@@ -140,6 +151,13 @@ export default function InputSelector() {
     whileElementsMounted: autoUpdate,
   });
 
+  const floatingObj = {
+    strategy,
+    x,
+    y,
+    floating,
+  };
+
   return (
     <div className="mx-6">
       <div className="flex flex-row items-center mt-10" ref={reference}>
@@ -148,7 +166,7 @@ export default function InputSelector() {
             label="Source Network"
             popUpLabel="Select source"
             options={networks}
-            floating={floating}
+            floatingObj={floatingObj}
             type={Type.Network}
             onSelect={(value: NetworkOptionsI) => setSelectedNetworkA(value)}
             value={selectedNetworkA}
@@ -159,7 +177,7 @@ export default function InputSelector() {
             label="Token"
             popUpLabel="Select token"
             options={selectedNetworkA.tokens}
-            floating={floating}
+            floatingObj={floatingObj}
             type={Type.Token}
             onSelect={(value: TokensI) => setSelectedTokensA(value)}
             value={selectedTokensA}
@@ -172,6 +190,7 @@ export default function InputSelector() {
             label="Destination Network"
             disabled
             popUpLabel="Select destination"
+            floatingObj={floatingObj}
             type={Type.Network}
             value={selectedNetworkB}
           />
@@ -181,6 +200,7 @@ export default function InputSelector() {
             disabled
             label="Token to Receive"
             popUpLabel="Select token"
+            floatingObj={floatingObj}
             type={Type.Token}
             value={selectedTokensB}
           />
@@ -196,10 +216,11 @@ function Selector({
   popUpLabel,
   onSelect,
   value,
-  floating,
+  floatingObj,
   type,
   disabled = false,
 }: SelectorI) {
+  const { floating, x, y, strategy } = floatingObj;
   const roundedBorderStyle =
     type === Type.Network ? "rounded-l-lg" : "rounded-r-lg";
   const { name, icon } =
@@ -268,6 +289,11 @@ function Selector({
               >
                 <Listbox.Options
                   ref={floating}
+                  style={{
+                    position: strategy,
+                    top: y ?? "",
+                    left: x ?? "",
+                  }}
                   className={clsx(
                     "absolute mt-2 w-full w-56 overflow-auto rounded-lg p-px z-10 outline-0",
                     { "right-0": type !== Type.Network },
