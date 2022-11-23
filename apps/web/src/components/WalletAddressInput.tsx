@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import * as ethers from "ethers";
-import { fromAddress } from "@defichain/jellyfish-address";
 import { FiClipboard } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
+import { fromAddress } from "@defichain/jellyfish-address";
 import useResponsive from "@hooks/useResponsive";
+import useAutoResizeTextArea from "@hooks/useAutoResizeTextArea";
 import Tooltip from "./commons/Tooltip";
 
 type Blockchain = "Ethereum" | "DeFiChain";
@@ -30,12 +31,14 @@ export default function WalletAddressInput({
   network = "mainnet",
   disabled = false,
 }: Props): JSX.Element {
-  const { isSm } = useResponsive();
   const [addressInput, setAddressInput] = useState<string>("");
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [error, setError] = useState({ message: "", isWarning: false });
+
+  const { isSm } = useResponsive();
+  useAutoResizeTextArea(textAreaRef.current, addressInput);
 
   const validateAddressInput = (input: string): void => {
     let isValid = false;
@@ -81,15 +84,6 @@ export default function WalletAddressInput({
     }
     validateAddressInput(addressInput);
   }, [addressInput]);
-
-  /* Autoresize the textarea height */
-  useEffect(() => {
-    if (textAreaRef.current) {
-      const currentRef = textAreaRef.current;
-      currentRef.style.height = "0px";
-      currentRef.style.height = `${currentRef.scrollHeight}px`;
-    }
-  }, [textAreaRef, addressInput]);
 
   /* Error and warning messages */
   useEffect(() => {
