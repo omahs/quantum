@@ -179,7 +179,7 @@ export default function InputSelector() {
         <div className="w-1/2">
           <Selector
             disabled
-            label="Token to receive"
+            label="Token to Receive"
             popUpLabel="Select token"
             type={Type.Token}
             value={selectedTokensB}
