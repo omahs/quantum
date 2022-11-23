@@ -144,7 +144,7 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `bg-transparent focus:outline-none text-dark-1000 lg:text-dark-900 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
+            `bg-transparent focus:outline-none text-dark-1000 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
@@ -203,7 +203,7 @@ function AddressWithVerifiedBadge({
     // eslint-disable-next-line
     <div
       className={clsx(
-        "w-full bg-transparent focus:outline-none break-all text-dark-1000 lg:text-dark-900 text-sm lg:text-xl mr-10 relative after:absolute",
+        "w-full bg-transparent focus:outline-none break-all text-dark-1000 text-sm lg:text-xl mr-10 relative after:absolute",
         isLg
           ? "after:content-[url('/verified-24x24.svg')] after:ml-2 after:-bottom-1"
           : "after:content-[url('/verified-20x20.svg')] after:ml-1"
