@@ -203,7 +203,9 @@ function Selector({
   const roundedBorderStyle =
     type === Type.Network ? "rounded-l-lg" : "rounded-r-lg";
   const { name, icon } =
-    type === Type.Network ? value : (value as TokensI).tokenA;
+    type === Type.Network
+      ? (value as NetworkOptionsI)
+      : (value as TokensI).tokenA;
   return (
     <div>
       <span className="pl-5 text-dark-900 font-semibold text-xs lg:text-base">
