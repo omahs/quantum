@@ -107,9 +107,21 @@ body {
     background: linear-gradient(#000000, #000000) padding-box,
       var(--accent-gradient-1) border-box;
   }
-  .dark-bg-gradient-2 {
-    background: linear-gradient(#000000, #000000) padding-box,
-      var(--accent-gradient-2) border-box;
+
+  /* To style :before of element and add gradient border with transparent background */
+  .dark-gradient-2 {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -1px;
+    padding: 1px;
+    border-radius: 10px;
+    background: var(--accent-gradient-2);
+    mask: linear-gradient(#000000 0 0) content-box, linear-gradient(#000000 0 0);
+    -webkit-mask: linear-gradient(#000000 0 0) content-box,
+      linear-gradient(#000000 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
   }
 
   .light-card-bg {

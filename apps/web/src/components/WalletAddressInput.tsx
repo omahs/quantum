@@ -120,7 +120,7 @@ export default function WalletAddressInput({
           {
             "bg-dark-100 opacity-30": disabled,
             "border-error": showBorderError,
-            "border-transparent dark-bg-gradient-2": isFocused,
+            "z-0 border-transparent before:dark-gradient-2": isFocused,
             "border-dark-300 hover:border-dark-500": !(
               disabled ||
               showBorderError ||
