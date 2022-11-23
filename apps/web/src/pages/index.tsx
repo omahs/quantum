@@ -1,3 +1,4 @@
+import InputSelector from "@components/InputSelector";
 import useResponsive from "@hooks/useResponsive";
 
 function Home() {
@@ -13,6 +14,7 @@ function Home() {
           ? "DeFiChain ERC-20 Bridge Mobile"
           : "DeFiChain ERC-20 Bridge"}
       </h1>
+      <InputSelector />
     </section>
   );
 }

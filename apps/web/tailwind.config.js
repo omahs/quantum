@@ -76,6 +76,16 @@ module.exports = {
       warning: "#D97B01",
       valid: "#0CC72C",
     },
+    extend: {
+      borderRadius: {
+        DEFAULT: "5px",
+        md: "10px",
+        lg: "15px",
+        xl: "20px",
+        "2xl": "25px",
+        "3xl": "30px",
+      },
+    },
   },
   plugins: [require("@tailwindcss/typography")],
 };
