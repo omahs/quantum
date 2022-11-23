@@ -4,19 +4,20 @@ import * as ethers from "ethers";
 import { fromAddress } from "@defichain/jellyfish-address";
 import { FiClipboard } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
+import useResponsive from "@hooks/useResponsive";
 
 type Blockchain = "Ethereum" | "DeFiChain";
 type Network = "mainnet" | "testnet";
 
 interface Props {
   blockchain: Blockchain;
-  networkName?: Network;
+  network?: Network;
   disabled?: boolean;
 }
 
 export default function WalletAddressInput({
   blockchain,
-  networkName = "mainnet",
+  network = "mainnet",
   disabled = false,
 }: Props): JSX.Element {
   const [addressInput, setAddressInput] = useState<string>("");
@@ -29,7 +30,7 @@ export default function WalletAddressInput({
     if (blockchain === "Ethereum") {
       isValid = ethers.utils.isAddress(input);
     } else {
-      const decodedAddress = fromAddress(input, networkName);
+      const decodedAddress = fromAddress(input, network);
       isValid = decodedAddress !== undefined;
     }
     setIsValidAddress(isValid);
@@ -62,7 +63,7 @@ export default function WalletAddressInput({
       DeFiChain: "DeFiChain",
       Ethereum: "ERC20",
     };
-    return `Enter ${blockchainName[blockchain]} (${networkNameMap[networkName]}) address`;
+    return `Enter ${blockchainName[blockchain]} (${networkNameMap[network]}) address`;
   };
 
   /* Validate wallet address input onchange */
@@ -88,17 +89,17 @@ export default function WalletAddressInput({
   return (
     <div
       className={clsx(
-        "relative min-h-[48px] w-[335px] flex items-center py-2.5 pr-3.5 pl-4 border rounded-[10px]",
+        "relative min-h-[48px] flex items-center border rounded-[10px] py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[22px]",
         { "bg-dark-100 opacity-30": disabled, "border-error": hasError },
         isFocused ? "border-transparent dark-bg-gradient-2" : "border-dark-300"
       )}
     >
       <FiClipboard
         size={20}
-        className={clsx("text-dark-1000 mr-4 shrink-0", {
+        className={clsx("text-dark-1000 ml-1 mr-4 shrink-0", {
           "cursor-pointer": !disabled,
         })}
-        onClick={handlePasteBtnClick}
+        onMouseDown={handlePasteBtnClick}
       />
       {showVerifiedBadge && (
         <AddressWithVerifiedBadge
@@ -109,9 +110,9 @@ export default function WalletAddressInput({
       <textarea
         ref={textAreaRef}
         className={clsx(
-          `bg-transparent text-dark-1000 text-sm focus:outline-none grow  placeholder:text-sm resize-none`,
+          `bg-transparent focus:outline-none text-dark-1000 lg:text-dark-900 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
           { hidden: showVerifiedBadge },
-          disabled ? "placeholder:text-dark-1000" : "placeholder:text-dark-500"
+          isFocused ? "placeholder:text-dark-300" : "placeholder:text-dark-500"
         )}
         placeholder={getPlaceholder()}
         value={addressInput}
@@ -127,7 +128,7 @@ export default function WalletAddressInput({
       {((isFocused && addressInput) || (addressInput && !isValidAddress)) && (
         <IoCloseCircle
           size={20}
-          className="fill-dark-500 cursor-pointer ml-4 shrink-0"
+          className="fill-dark-500 cursor-pointer ml-4 mr-1 shrink-0"
           onMouseDown={() => {
             setAddressInput("");
             handleFocusWithCursor();
@@ -150,12 +151,15 @@ function AddressWithVerifiedBadge({
   value: string;
   onClick: () => void;
 }): JSX.Element {
+  const { isLg } = useResponsive();
   return (
     // eslint-disable-next-line
     <div
       className={clsx(
-        "bg-transparent text-dark-1000 text-sm focus:outline-none break-all mr-9",
-        "after:content-[url('/verified-20x20.svg')] after:absolute after:ml-1"
+        "w-full bg-transparent focus:outline-none break-all text-dark-1000 lg:text-dark-900 text-sm lg:text-xl mr-10 relative after:absolute",
+        isLg
+          ? "after:content-[url('/verified-24x24.svg')] after:ml-2 after:top-0.5"
+          : "after:content-[url('/verified-20x20.svg')] after:ml-1"
       )}
       onClick={() => onClick()}
     >
