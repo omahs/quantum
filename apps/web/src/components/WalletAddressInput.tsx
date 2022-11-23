@@ -5,6 +5,7 @@ import { fromAddress } from "@defichain/jellyfish-address";
 import { FiClipboard } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import useResponsive from "@hooks/useResponsive";
+import Tooltip from "./commons/Tooltip";
 
 type Blockchain = "Ethereum" | "DeFiChain";
 type Network = "mainnet" | "testnet";
@@ -29,6 +30,7 @@ export default function WalletAddressInput({
   network = "mainnet",
   disabled = false,
 }: Props): JSX.Element {
+  const { isSm } = useResponsive();
   const [addressInput, setAddressInput] = useState<string>("");
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -128,17 +130,23 @@ export default function WalletAddressInput({
               disabled ||
               showBorderError ||
               isFocused
-            ), // Default
+            ),
           }
         )}
       >
-        <FiClipboard
-          size={20}
-          className={clsx("text-dark-1000 ml-1 mr-4 shrink-0", {
+        <Tooltip
+          content="Paste from clipboard"
+          containerClass={clsx("mr-3 lg:mr-6 shrink-0", {
             "cursor-pointer": !disabled,
           })}
-          onMouseDown={handlePasteBtnClick}
-        />
+          disableTooltip={!isSm} // Disable tooltip for mobile
+        >
+          <FiClipboard
+            size={20}
+            className="text-dark-1000"
+            onMouseDown={handlePasteBtnClick}
+          />
+        </Tooltip>
         {showVerifiedBadge && (
           <AddressWithVerifiedBadge
             value={addressInput}
