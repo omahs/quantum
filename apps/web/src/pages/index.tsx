@@ -23,7 +23,7 @@ function Home() {
         <WalletAddressInput blockchain="DeFiChain" network="testnet" />
         <br />
         <br />
-        /* Disabled */
+        --- Disabled ----
         <WalletAddressInput blockchain="Ethereum" network="testnet" disabled />
         <br />
         <WalletAddressInput blockchain="DeFiChain" network="testnet" disabled />
