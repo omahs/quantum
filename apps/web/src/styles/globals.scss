@@ -113,9 +113,6 @@ body {
     content: "";
     position: absolute;
     z-index: -1;
-    inset: -1px;
-    padding: 1px;
-    border-radius: 10px;
     background: var(--accent-gradient-2);
     mask: linear-gradient(#000000 0 0) content-box, linear-gradient(#000000 0 0);
     -webkit-mask: linear-gradient(#000000 0 0) content-box,
