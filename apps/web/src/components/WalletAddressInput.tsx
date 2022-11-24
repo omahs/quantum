@@ -31,10 +31,11 @@ export default function WalletAddressInput({
   disabled = false,
 }: Props): JSX.Element {
   const [addressInput, setAddressInput] = useState<string>("");
-  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isValidAddress, setIsValidAddress] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [error, setError] = useState({ message: "", isError: false });
+  const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
   const { isSm } = useResponsive();
   useAutoResizeTextArea(textAreaRef.current, addressInput);
@@ -53,7 +54,10 @@ export default function WalletAddressInput({
   const handlePasteBtnClick = async () => {
     if (disabled) return;
     const copiedText = await navigator.clipboard.readText();
-    setAddressInput(copiedText);
+    if (copiedText) {
+      setAddressInput(copiedText);
+      setCopiedFromClipboard(true);
+    }
   };
 
   const handleFocusWithCursor = () => {
@@ -99,24 +103,38 @@ export default function WalletAddressInput({
     setError({ message, isError: hasInvalidInput });
   }, [addressInput, isValidAddress, blockchain, network]);
 
+  useEffect(() => {
+    if (copiedFromClipboard) {
+      setTimeout(() => setCopiedFromClipboard(false), 2000);
+    }
+  }, [copiedFromClipboard]);
+
   const showErrorBorder = addressInput && !isValidAddress && !isFocused;
   const showVerifiedBadge = isValidAddress && !isFocused;
   return (
     <>
       {/* Address label */}
-      <div className="flex items-center mb-2 lg:mb-3">
-        <span className="text-xs lg:text-base font-semibold">Address</span>
+      <div className="group relative mb-2 flex items-center lg:mb-3">
+        <span className="text-xs font-semibold lg:text-base">Address</span>
         {blockchain === "DeFiChain" && <NetworkTag network={network} />}
+        <div
+          className={clsx(
+            "absolute right-0 rounded-[5px] bg-valid px-2 py-1 text-2xs text-dark-00 opacity-0 transition duration-300 lg:text-xs",
+            { "opacity-100": copiedFromClipboard }
+          )}
+        >
+          Added from clipboard
+        </div>
       </div>
 
       {/* Main wallet input container */}
       <div
         className={clsx(
-          "relative min-h-[48px] flex items-center border rounded-[10px] py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
+          "relative flex min-h-[48px] items-center rounded-[10px] border py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
           {
             "bg-dark-100 opacity-30": disabled,
             "border-error": showErrorBorder,
-            "z-0 border-transparent before:dark-gradient-2 before:p-px before:rounded-[10px] before:-inset-[1px]":
+            "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-[10px] before:p-px":
               isFocused,
             "border-dark-300 hover:border-dark-500": !(
               disabled ||
@@ -154,7 +172,7 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `max-h-36 bg-transparent focus:outline-none text-dark-1000 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
+            `max-h-36 grow resize-none bg-transparent text-sm text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
@@ -176,7 +194,7 @@ export default function WalletAddressInput({
         {((isFocused && addressInput) || (addressInput && !isValidAddress)) && (
           <IoCloseCircle
             size={20}
-            className="fill-dark-500 cursor-pointer ml-4 mr-1 shrink-0"
+            className="ml-4 mr-1 shrink-0 cursor-pointer fill-dark-500"
             onMouseDown={() => {
               setAddressInput("");
               handleFocusWithCursor();
@@ -189,7 +207,7 @@ export default function WalletAddressInput({
       {error.message && !disabled && (
         <span
           className={clsx(
-            "px-4 lg:px-6 pt-2 text-xs lg:text-sm",
+            "px-4 pt-2 text-xs lg:px-6 lg:text-sm",
             error.isError ? "text-error" : "text-warning"
           )}
         >
@@ -217,10 +235,10 @@ function AddressWithVerifiedBadge({
     // eslint-disable-next-line
     <div
       className={clsx(
-        "w-full bg-transparent focus:outline-none break-all text-dark-1000 text-sm lg:text-xl mr-10 relative after:absolute",
+        "relative mr-10 w-full break-all bg-transparent text-sm text-dark-1000 after:absolute focus:outline-none lg:text-xl",
         isLg
-          ? "after:content-[url('/verified-24x24.svg')] after:ml-2 after:-bottom-1"
-          : "after:content-[url('/verified-20x20.svg')] after:ml-1"
+          ? "after:-bottom-1 after:ml-2 after:content-[url('/verified-24x24.svg')]"
+          : "after:ml-1 after:content-[url('/verified-20x20.svg')]"
       )}
       onClick={() => onClick()}
     >
