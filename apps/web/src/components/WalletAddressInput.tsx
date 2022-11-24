@@ -34,7 +34,7 @@ export default function WalletAddressInput({
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [error, setError] = useState({ message: "", isWarning: false });
+  const [error, setError] = useState({ message: "", isError: false });
 
   const { isSm } = useResponsive();
   useAutoResizeTextArea(textAreaRef.current, addressInput);
@@ -70,13 +70,13 @@ export default function WalletAddressInput({
   };
 
   const getPlaceholder = () => {
+    const displayedName = blockchainNameMap[blockchain];
     if (network === "testnet" && blockchain === "DeFiChain") {
-      return `Enter ${blockchainNameMap[blockchain]} (${networkNameMap[network]}) address`;
+      return `Enter ${displayedName} (${networkNameMap[network]}) address`;
     }
-    return `Enter ${blockchainNameMap[blockchain]} address`;
+    return `Enter ${displayedName} address`;
   };
 
-  /* Validate wallet address input onchange */
   useEffect(() => {
     if (addressInput === "") {
       setIsValidAddress(false);
@@ -85,24 +85,18 @@ export default function WalletAddressInput({
     validateAddressInput(addressInput);
   }, [addressInput]);
 
-  /* Error and warning messages */
   useEffect(() => {
+    let message: string;
     const isDeFiChain = blockchain === "DeFiChain";
-    if (!isValidAddress && addressInput) {
-      const blockchainName = blockchainNameMap[blockchain];
+    const hasInvalidInput = !!(addressInput && !isValidAddress);
+    if (hasInvalidInput) {
       const dfiNetwork = isDeFiChain ? ` ${networkNameMap[network]}` : "";
-      setError({
-        message: `Use correct address for ${blockchainName}${dfiNetwork}`,
-        isWarning: false,
-      });
-    } else if (isDeFiChain && network === "testnet") {
-      setError({
-        message: "Make sure to only use TestNet for testing",
-        isWarning: true,
-      });
+      message = `Use correct address for ${blockchainNameMap[blockchain]}${dfiNetwork}`;
     } else {
-      setError({ message: "", isWarning: false });
+      const isTestnet = isDeFiChain && network === "testnet";
+      message = isTestnet ? "Make sure to only use TestNet for testing" : "";
     }
+    setError({ message, isError: hasInvalidInput });
   }, [addressInput, isValidAddress, blockchain, network]);
 
   const showErrorBorder = addressInput && !isValidAddress && !isFocused;
@@ -196,7 +190,7 @@ export default function WalletAddressInput({
         <span
           className={clsx(
             "px-4 lg:px-6 pt-2 text-xs lg:text-sm",
-            error.isWarning ? "text-warning" : "text-error"
+            error.isError ? "text-error" : "text-warning"
           )}
         >
           {error.message}
