@@ -153,7 +153,7 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `bg-transparent focus:outline-none text-dark-1000 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
+            `max-h-36 bg-transparent focus:outline-none text-dark-1000 text-sm lg:text-xl grow placeholder:text-sm lg:placeholder:text-xl resize-none`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
