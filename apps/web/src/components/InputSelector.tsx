@@ -2,8 +2,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { FaChevronDown, FaCheckCircle } from "react-icons/fa";
-import { FiArrowRight } from "react-icons/fi";
+import { FaCheckCircle } from "react-icons/fa";
+import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { Strategy } from "@floating-ui/react-dom";
 
 export enum SelectionType {
@@ -99,7 +99,7 @@ export function InputSelector({
                 </div>
                 {!disabled && (
                   <span className="text-dark-900">
-                    <FaChevronDown
+                    <FiChevronDown
                       className={clsx(
                         "h-5 w-5 lg:h-6 lg:w-6 text-dark-900 transition-[transform]",
                         { "rotate-180": open }
@@ -156,7 +156,7 @@ function NetworkOptions({ options }) {
       {options.map((option) => (
         <Listbox.Option
           key={option.name}
-          className="relative cursor-default select-none"
+          className="relative select-none cursor-pointer"
           value={option}
         >
           {({ selected, active }) => (
@@ -169,7 +169,7 @@ function NetworkOptions({ options }) {
                   selected && "bg-dark-gradient-2"
                 )}
               >
-                <div className="flex flex-row justify-between items-center cursor-default">
+                <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-row items-center">
                     <Image
                       width={100}
@@ -202,7 +202,7 @@ function TokenOptions({ options }) {
       {options.map((option) => (
         <Listbox.Option
           key={option.tokenA.name}
-          className="relative cursor-default select-none"
+          className="relative select-none cursor-pointer"
           value={option}
         >
           {({ selected, active }) => (
@@ -215,7 +215,7 @@ function TokenOptions({ options }) {
                   selected && "bg-dark-gradient-2"
                 )}
               >
-                <div className="flex flex-row justify-between items-center cursor-default">
+                <div className="flex flex-row justify-between items-center">
                   <div className="flex flex-row w-4/12 items-center">
                     <Image
                       width={100}
