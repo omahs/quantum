@@ -178,6 +178,7 @@ export default function BridgeForm() {
       <div className="flex flex-row justify-between items-center px-5">
         <div className="flex flex-row items-center">
           <span className="text-dark-700 text-xs lg:text-base">Fees</span>
+          {/* TODO add onclick info */}
           <button>
             <FiInfo size={16} className="text-dark-700 ml-2" />
           </button>
