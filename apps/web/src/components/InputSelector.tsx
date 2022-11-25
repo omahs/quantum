@@ -161,7 +161,7 @@ function NetworkOptions({ options }) {
         >
           {({ selected, active }) => (
             <>
-              <div className="mx-5 lg:mx-6 border-t-[0.5px] border-[#42424280]" />
+              <Divider />
               <div
                 className={clsx(
                   "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
@@ -207,7 +207,7 @@ function TokenOptions({ options }) {
         >
           {({ selected, active }) => (
             <>
-              <div className="mx-5 lg:mx-6 border-t-[0.5px] border-[#42424280]" />
+              <Divider />
               <div
                 className={clsx(
                   "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
@@ -258,4 +258,8 @@ function TokenOptions({ options }) {
       ))}
     </>
   );
+}
+
+function Divider() {
+  return <div className="mx-5 lg:mx-6 border-t-[0.5px] border-[#42424280]" />;
 }
