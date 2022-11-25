@@ -20,10 +20,14 @@ export default function WelcomeHeader() {
       </div>
       <div className="hidden md:block">
         <div className="flex flex-row items-center md:mt-5">
-          <FiBook size={20} className="text-dark-700" />
-          <span className="ml-2 text-base text-dark-700">User Guide</span>
-          <FiHelpCircle size={20} className="text-dark-700 ml-6" />
-          <span className="ml-2 text-base text-dark-700">User Guide</span>
+          <button type="button" className="flex flex-row items-center">
+            <FiBook size={20} className="text-dark-700" />
+            <span className="ml-2 text-base text-dark-700">User Guide</span>
+          </button>
+          <button type="button" className="flex flex-row items-center ml-6">
+            <FiHelpCircle size={20} className="text-dark-700" />
+            <span className="ml-2 text-base text-dark-700">FAQs</span>
+          </button>
         </div>
       </div>
     </div>
