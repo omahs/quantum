@@ -126,7 +126,7 @@ export default function BridgeForm() {
   };
 
   return (
-    <div className="w-full dark-card-bg-image p-6 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
+    <div className="w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>
         <div className="w-1/2">
           <InputSelector
@@ -189,7 +189,7 @@ export default function BridgeForm() {
           suffix={` ${selectedTokensA.tokenA.name}`}
         />
       </div>
-      <div className="px-6 md:px-4 lg:px-[88px] mt-8 md:mt-6 lg:mt-16 mb-10 lg:mb-0">
+      <div className="px-6 md:px-4 lg:px-[88px] mt-8 md:mt-6 lg:mt-16 lg:mb-0">
         <button className="p-3.5 md:p-2.5 lg:p-4 bg-dark-1000 w-full text-dark-00 text-lg lg:text-xl font-bold rounded-[92px]">
           Connect wallet
         </button>
