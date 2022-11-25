@@ -187,6 +187,7 @@ export default function BridgeForm() {
           className="text-left text-dark-1000 text-xs lg:text-base"
           value={0}
           decimalScale={2}
+          thousandSeparator
           suffix={` ${selectedTokensA.tokenA.name}`}
         />
       </div>
