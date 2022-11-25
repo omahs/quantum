@@ -109,7 +109,7 @@ export default function WalletAddressInput({
     }
   }, [copiedFromClipboard]);
 
-  const showErrorBorder = addressInput && !isValidAddress && !isFocused;
+  const showErrorBorder = addressInput && !isValidAddress;
   const showVerifiedBadge = isValidAddress && !isFocused;
   return (
     <>
@@ -135,7 +135,7 @@ export default function WalletAddressInput({
             "bg-dark-100 opacity-30": disabled,
             "border-error": showErrorBorder,
             "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-[10px] before:p-px":
-              isFocused,
+              isFocused && !showErrorBorder,
             "border-dark-300 hover:border-dark-500": !(
               disabled ||
               showErrorBorder ||
@@ -207,7 +207,7 @@ export default function WalletAddressInput({
       {error.message && !disabled && (
         <span
           className={clsx(
-            "px-4 pt-2 text-xs lg:px-6 lg:text-sm",
+            "block px-4 pt-2 text-xs lg:px-6 lg:text-sm",
             error.isError ? "text-error" : "text-warning"
           )}
         >
