@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
+import { FiInfo } from "react-icons/fi";
 import {
   InputSelector,
   SelectionType,
@@ -9,7 +10,6 @@ import {
 import { SwitchIcon } from "./icons/SwitchIcon";
 import { ArrowDownIcon } from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
-import { FiInfo } from "react-icons/fi";
 
 const networks = [
   {
@@ -179,7 +179,7 @@ export default function BridgeForm() {
         <div className="flex flex-row items-center">
           <span className="text-dark-700 text-xs lg:text-base">Fees</span>
           {/* TODO add onclick info */}
-          <button>
+          <button type="button">
             <FiInfo size={16} className="text-dark-700 ml-2" />
           </button>
         </div>
@@ -192,7 +192,10 @@ export default function BridgeForm() {
         />
       </div>
       <div className="px-6 md:px-4 lg:px-[88px] mt-8 md:mt-6 lg:mt-16 lg:mb-0">
-        <button className="p-3.5 md:p-2.5 lg:p-4 bg-dark-1000 w-full text-dark-00 text-lg lg:text-xl font-bold rounded-[92px]">
+        <button
+          type="button"
+          className="p-3.5 md:p-2.5 lg:p-4 bg-dark-1000 w-full text-dark-00 text-lg lg:text-xl font-bold rounded-[92px]"
+        >
           Connect wallet
         </button>
       </div>
@@ -205,6 +208,7 @@ function SwitchButton({ onClick }) {
     <div className="my-8 flex flex-row">
       <div className="w-full flex justify-between border-t border-dark-300 border-opacity-50 mt-6 flex-1" />
       <button
+        type="button"
         onClick={onClick}
         className="flex justify-center items-center dark-card-bg dark-bg-card-section w-12 h-12 rounded-full group"
       >

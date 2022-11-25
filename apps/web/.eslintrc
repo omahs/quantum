@@ -33,5 +33,8 @@
         "aspects": ["invalidHref", "preferButton"]
       }
     ]
+  },
+  "globals": {
+    "JSX": "readonly"
   }
 }
