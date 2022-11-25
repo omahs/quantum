@@ -232,8 +232,8 @@ function AddressWithVerifiedBadge({
 }): JSX.Element {
   const { isLg } = useResponsive();
   return (
-    // eslint-disable-next-line
     <div
+      aria-hidden="true"
       className={clsx(
         "relative mr-10 w-full break-all bg-transparent text-sm text-dark-1000 after:absolute focus:outline-none lg:text-xl",
         isLg

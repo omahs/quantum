@@ -28,9 +28,9 @@ export default function Tooltip({
   };
 
   return (
-    // eslint-disable-next-line
     <div
-      className={clsx("inline-block relative p-1 rounded-full", containerClass)}
+      aria-hidden="true"
+      className={clsx("relative inline-block rounded-full p-1", containerClass)}
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
       onMouseDown={hideTooltip}
@@ -38,9 +38,9 @@ export default function Tooltip({
       {children}
       {!disableTooltip && active && (
         <div
-          className={`absolute left-1/2 -top-8 -translate-x-1/2 z-[100] rounded-lg px-3 py-1 text-dark-00 bg-dark-1000 text-sm whitespace-nowrap
-          before:absolute before:left-1/2 before:top-[20%] before:rotate-45 before:-z-[1] before:rounded-[1px] before:h-0 before:w-0 before:-ml-2.5
-          before:border-[10.5px] before:border-transparent before:bg-dark-1000 before:border-t-dark-1000`}
+          className={`absolute left-1/2 -top-8 z-[100] -translate-x-1/2 whitespace-nowrap rounded-lg bg-dark-1000 px-3 py-1 text-sm text-dark-00
+          before:absolute before:left-1/2 before:top-[20%] before:-z-[1] before:-ml-2.5 before:h-0 before:w-0 before:rotate-45 before:rounded-[1px]
+          before:border-[10.5px] before:border-transparent before:border-t-dark-1000 before:bg-dark-1000`}
         >
           {content}
         </div>
