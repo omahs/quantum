@@ -108,7 +108,7 @@ export default function BridgeForm() {
             refs.floating.current !== undefined
           ) {
             Object.assign(refs.floating.current.style, {
-              minWidth: "325px",
+              minWidth: "225px",
               maxWidth: "368px",
               width: `${rects.reference.width}px`,
             });
@@ -126,7 +126,7 @@ export default function BridgeForm() {
   };
 
   return (
-    <div className="dark-card-bg-image p-6 lg:p-12 my-6 rounded-lg border border-dark-200 backdrop-blur-[18px]">
+    <div className="w-full dark-card-bg-image p-6 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>
         <div className="w-1/2">
           <InputSelector
@@ -185,8 +185,14 @@ export default function BridgeForm() {
         <NumericFormat
           className="text-left text-dark-1000 text-xs lg:text-base"
           value={0}
+          decimalScale={2}
           suffix={` ${selectedTokensA.tokenA.name}`}
         />
+      </div>
+      <div className="px-6 md:px-4 lg:px-[88px] mt-8 md:mt-6 lg:mt-16 mb-10 lg:mb-0">
+        <button className="p-3.5 md:p-2.5 lg:p-4 bg-dark-1000 w-full text-dark-00 text-lg lg:text-xl font-bold rounded-[92px]">
+          Connect wallet
+        </button>
       </div>
     </div>
   );
