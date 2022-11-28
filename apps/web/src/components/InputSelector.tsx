@@ -165,8 +165,7 @@ function NetworkOptions({ options }) {
               <div
                 className={clsx(
                   "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
-                  active && "bg-dark-gradient-1",
-                  selected && "bg-dark-gradient-2"
+                  active && "bg-dark-gradient-1"
                 )}
               >
                 <div className="flex flex-row justify-between items-center">
@@ -211,8 +210,7 @@ function TokenOptions({ options }) {
               <div
                 className={clsx(
                   "px-5 lg:px-6 py-3 lg:py-4 my-1 lg:my-2",
-                  active && "bg-dark-gradient-1",
-                  selected && "bg-dark-gradient-2"
+                  active && "bg-dark-gradient-1"
                 )}
               >
                 <div className="flex flex-row justify-between items-center">
