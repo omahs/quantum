@@ -82,9 +82,16 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <ConnectKitProvider>
           {mounted && (
             <ThemeProvider theme={initialTheme}>
-              <Header />
-              <main className={clsx("flex-grow")}>{children}</main>
-              <Footer />
+              <div className="relative w-full h-full bg-dark-00">
+                <div className="relative z-[1]">
+                  <Header />
+                  <main className={clsx("flex-grow relative z-[1]")}>
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+                <div className="w-full h-full absolute z-auto top-0 left-0 bg-no-repeat mix-blend-screen bg-cover bg-center bg-local bg-clip-padding bg-origin-padding lg:bg-[url('/background/desktop.png')] md:bg-[url('/background/tablet.png')] bg-[url('/background/mobile.png')]" />
+              </div>
             </ThemeProvider>
           )}
         </ConnectKitProvider>
