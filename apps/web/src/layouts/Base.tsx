@@ -7,7 +7,6 @@ import {
   siteTitle,
   website,
 } from "@components/siteInfo";
-import clsx from "clsx";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WagmiConfig, createClient } from "wagmi";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
@@ -33,7 +32,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
   }, []);
 
   return (
-    <div className={clsx("flex flex-col min-h-screen antialiased bg-dark-00")}>
+    <div className="flex flex-col min-h-screen antialiased bg-dark-00">
       <Head>
         <base href="/" />
         <meta name="application-name" content={appName} />
@@ -84,9 +83,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
             <ThemeProvider theme={initialTheme}>
               <div className="relative">
                 <Header />
-                <main className={clsx("flex-grow relative z-[1]")}>
-                  {children}
-                </main>
+                <main className="flex-grow relative z-[1]">{children}</main>
                 <div className="w-full h-full absolute z-auto top-0 left-0 bg-no-repeat mix-blend-screen bg-cover bg-top lg:bg-center bg-local bg-clip-padding bg-origin-padding bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]" />
                 <Footer />
               </div>
