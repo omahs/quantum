@@ -85,6 +85,9 @@ module.exports = {
         "2xl": "25px",
         "3xl": "30px",
       },
+      fontSize: {
+        "2xs": ["0.625rem", "0.75rem"],
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
