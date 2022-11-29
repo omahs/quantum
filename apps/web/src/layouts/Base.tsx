@@ -13,6 +13,7 @@ import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
+import { EnvironmentNetworkProvider } from "@contexts/EnvironmentNetworkContext";
 
 const metamask = new MetaMaskConnector();
 
@@ -80,14 +81,16 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           {mounted && (
-            <ThemeProvider theme={initialTheme}>
-              <div className="relative">
-                <Header />
-                <main className="flex-grow relative z-[1]">{children}</main>
-                <div className="w-full h-full absolute z-auto top-0 left-0 bg-no-repeat mix-blend-screen bg-cover bg-top lg:bg-center bg-local bg-clip-padding bg-origin-padding bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]" />
-                <Footer />
-              </div>
-            </ThemeProvider>
+            <EnvironmentNetworkProvider>
+              <ThemeProvider theme={initialTheme}>
+                <div className="relative">
+                  <Header />
+                  <main className="flex-grow relative z-[1]">{children}</main>
+                  <div className="w-full h-full absolute z-auto top-0 left-0 bg-no-repeat mix-blend-screen bg-cover bg-top lg:bg-center bg-local bg-clip-padding bg-origin-padding bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]" />
+                  <Footer />
+                </div>
+              </ThemeProvider>
+            </EnvironmentNetworkProvider>
           )}
         </ConnectKitProvider>
       </WagmiConfig>

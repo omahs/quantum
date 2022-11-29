@@ -4,23 +4,19 @@ import * as ethers from "ethers";
 import { FiClipboard } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import { fromAddress } from "@defichain/jellyfish-address";
+import { useEnvironmentNetworkContext } from "@contexts/EnvironmentNetworkContext";
 import useResponsive from "@hooks/useResponsive";
 import useAutoResizeTextArea from "@hooks/useAutoResizeTextArea";
-import { Blockchain, EnvironmentNetwork } from "types";
+import { Blockchain } from "types";
 import Tooltip from "./commons/Tooltip";
-import NetworkTag from "./NetworkTag";
+import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
 
 interface Props {
   blockchain: Blockchain;
   label: string;
-  network?: EnvironmentNetwork;
   disabled?: boolean;
 }
 
-const networkNameMap: Record<EnvironmentNetwork, string> = {
-  mainnet: "MainNet",
-  testnet: "TestNet",
-};
 const blockchainNameMap: Record<Blockchain, string> = {
   DeFiChain: "DeFiChain",
   Ethereum: "ERC20",
@@ -29,7 +25,6 @@ const blockchainNameMap: Record<Blockchain, string> = {
 export default function WalletAddressInput({
   blockchain,
   label,
-  network = "mainnet",
   disabled = false,
 }: Props): JSX.Element {
   const [addressInput, setAddressInput] = useState<string>("");
@@ -40,6 +35,7 @@ export default function WalletAddressInput({
   const [error, setError] = useState({ message: "", isError: false });
   const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
+  const { network, networkDisplayName } = useEnvironmentNetworkContext();
   const { isSm } = useResponsive();
   useAutoResizeTextArea(textAreaRef.current, [addressInput, placeholder]);
 
@@ -79,9 +75,7 @@ export default function WalletAddressInput({
   useEffect(() => {
     const displayedName = blockchainNameMap[blockchain];
     if (network === "testnet" && blockchain === "DeFiChain") {
-      setPlaceholder(
-        `Enter ${displayedName} (${networkNameMap[network]}) address`
-      );
+      setPlaceholder(`Enter ${displayedName} (${networkDisplayName}) address`);
     } else {
       setPlaceholder(`Enter ${displayedName} address`);
     }
@@ -93,14 +87,14 @@ export default function WalletAddressInput({
       return;
     }
     validateAddressInput(addressInput);
-  }, [addressInput]);
+  }, [addressInput, network]);
 
   useEffect(() => {
     let message: string;
     const isDeFiChain = blockchain === "DeFiChain";
     const hasInvalidInput = !!(addressInput && !isValidAddress);
     if (hasInvalidInput) {
-      const dfiNetwork = isDeFiChain ? ` ${networkNameMap[network]}` : "";
+      const dfiNetwork = isDeFiChain ? ` ${networkDisplayName}` : "";
       message = `Use correct address for ${blockchainNameMap[blockchain]}${dfiNetwork}`;
     } else {
       const isTestnet = isDeFiChain && network === "testnet";
@@ -120,11 +114,11 @@ export default function WalletAddressInput({
   return (
     <>
       {/* Address label */}
-      <div className="group relative mb-2 flex items-center lg:mb-3">
+      <div className="h-5 lg:h-7 group relative mb-2 flex items-center lg:mb-3">
         <span className="pl-5 text-xs font-semibold lg:text-base text-dark-1000">
           {label}
         </span>
-        {blockchain === "DeFiChain" && <NetworkTag network={network} />}
+        {blockchain === "DeFiChain" && <EnvironmentNetworkSwitch />}
         <div
           className={clsx(
             "absolute right-0 rounded bg-valid px-2 py-1 text-2xs text-dark-00  transition duration-300 lg:text-xs",
