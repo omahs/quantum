@@ -155,7 +155,7 @@ export default function BridgeForm() {
       </div>
       <SwitchButton onClick={switchNetwork} />
 
-      <div className="flex flex-row items-end mb-5 sm:mb-4">
+      <div className="flex flex-row items-end mb-4 lg:mb-5">
         <div className="w-1/2">
           <InputSelector
             label="Destination Network"

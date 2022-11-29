@@ -87,7 +87,7 @@ export default function WalletAddressInput({
       return;
     }
     validateAddressInput(addressInput);
-  }, [addressInput, network]);
+  }, [addressInput, network, blockchain]);
 
   useEffect(() => {
     let message: string;
