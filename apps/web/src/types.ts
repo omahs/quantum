@@ -4,7 +4,7 @@
 
 export type Network = "Ethereum" | "DeFiChain";
 
-export type EnvironmentNetwork = "mainnet" | "testnet";
+export type NetworkEnvironment = "mainnet" | "testnet";
 
 export interface TokenDetailI {
   name: string;
