@@ -138,7 +138,7 @@ export default function WalletAddressInput({
       {/* Main wallet input container */}
       <div
         className={clsx(
-          "relative flex min-h-[48px] items-center rounded-lg border py-2.5 pr-3.5 pl-4 xl:px-5 xl:py-[21px]",
+          "relative flex min-h-[48px] items-center rounded-lg border py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
           {
             "bg-dark-100 opacity-30": disabled,
             "border-error": showErrorBorder,
