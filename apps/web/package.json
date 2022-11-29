@@ -16,7 +16,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@babel/types": "^7.20.2",
+    "@babel/types": "^7.20.5",
     "@tailwindcss/line-clamp": "^0.4.2",
     "axios": "^1.2.0",
     "clsx": "^1.2.1",
