@@ -10,6 +10,7 @@ import {
 import { SwitchIcon } from "./icons/SwitchIcon";
 import { ArrowDownIcon } from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
+import WalletAddressInput from "./WalletAddressInput";
 
 const networks = [
   {
@@ -126,7 +127,7 @@ export default function BridgeForm() {
   };
 
   return (
-    <div className="w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
+    <div className="w-[calc(100%+2px)] dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>
         <div className="w-1/2">
           <InputSelector
@@ -153,7 +154,7 @@ export default function BridgeForm() {
       </div>
       <SwitchButton onClick={switchNetwork} />
 
-      <div className="flex flex-row items-center mb-8">
+      <div className="flex flex-row items-center mb-5 sm:mb-4">
         <div className="w-1/2">
           <InputSelector
             label="Destination Network"
@@ -174,6 +175,13 @@ export default function BridgeForm() {
             value={selectedTokensB}
           />
         </div>
+      </div>
+      <div className="mb-8">
+        <WalletAddressInput
+          label="Address"
+          blockchain="DeFiChain"
+          network="testnet"
+        />
       </div>
       <div className="flex flex-row justify-between items-center px-5">
         <div className="flex flex-row items-center">

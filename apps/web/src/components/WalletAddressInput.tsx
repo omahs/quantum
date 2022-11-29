@@ -12,6 +12,7 @@ import NetworkTag from "./NetworkTag";
 
 interface Props {
   blockchain: Blockchain;
+  label: string;
   network?: Network;
   disabled?: boolean;
 }
@@ -27,6 +28,7 @@ const blockchainNameMap: Record<Blockchain, string> = {
 
 export default function WalletAddressInput({
   blockchain,
+  label,
   network = "mainnet",
   disabled = false,
 }: Props): JSX.Element {
@@ -115,7 +117,9 @@ export default function WalletAddressInput({
     <>
       {/* Address label */}
       <div className="group relative mb-2 flex items-center lg:mb-3">
-        <span className="text-xs font-semibold lg:text-base">Address</span>
+        <span className="pl-5 text-xs font-semibold lg:text-base text-dark-1000">
+          {label}
+        </span>
         {blockchain === "DeFiChain" && <NetworkTag network={network} />}
         <div
           className={clsx(
