@@ -123,8 +123,8 @@ export default function WalletAddressInput({
         {blockchain === "DeFiChain" && <NetworkTag network={network} />}
         <div
           className={clsx(
-            "absolute right-0 rounded-[5px] bg-valid px-2 py-1 text-2xs text-dark-00 opacity-0 transition duration-300 lg:text-xs",
-            { "opacity-100": copiedFromClipboard }
+            "absolute right-0 rounded bg-valid px-2 py-1 text-2xs text-dark-00  transition duration-300 lg:text-xs",
+            copiedFromClipboard ? "opacity-100" : "opacity-0"
           )}
         >
           Added from clipboard
@@ -134,11 +134,11 @@ export default function WalletAddressInput({
       {/* Main wallet input container */}
       <div
         className={clsx(
-          "relative flex min-h-[48px] items-center rounded-[10px] border py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
+          "relative flex min-h-[48px] items-center rounded-md border py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
           {
             "bg-dark-100 opacity-30": disabled,
             "border-error": showErrorBorder,
-            "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-[10px] before:p-px":
+            "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-md before:p-px":
               isFocused && !showErrorBorder,
             "border-dark-300 hover:border-dark-500": !(
               disabled ||
