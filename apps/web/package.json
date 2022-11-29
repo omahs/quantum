@@ -16,12 +16,12 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@babel/types": "^7.20.2",
+    "@babel/types": "^7.20.5",
     "@defichain/jellyfish-address": "^2.69.0",
     "@tailwindcss/line-clamp": "^0.4.2",
     "axios": "^1.2.0",
     "clsx": "^1.2.1",
-    "connectkit": "^1.0.0",
+    "connectkit": "^1.0.1",
     "dayjs": "^1.11.6",
     "ethers": "^5.7.2",
     "next": "13.0.4",
@@ -29,7 +29,7 @@
     "nextjs-progressbar": "^0.0.16",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.6.0",
+    "react-icons": "^4.7.1",
     "react-responsive": "^9.0.0",
     "sass": "^1.56.1",
     "tsconfig": "*",
