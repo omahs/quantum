@@ -138,11 +138,11 @@ export default function WalletAddressInput({
       {/* Main wallet input container */}
       <div
         className={clsx(
-          "relative flex min-h-[48px] items-center rounded-md border py-2.5 pr-3.5 pl-4 lg:px-5 lg:py-[21px]",
+          "relative flex min-h-[48px] items-center rounded-lg border py-2.5 pr-3.5 pl-4 xl:px-5 xl:py-[21px]",
           {
             "bg-dark-100 opacity-30": disabled,
             "border-error": showErrorBorder,
-            "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-md before:p-px":
+            "before:dark-gradient-2 z-0 border-transparent before:-inset-[1px] before:rounded-lg before:p-px":
               isFocused && !showErrorBorder,
             "border-dark-300 hover:border-dark-500": !(
               disabled ||
@@ -180,7 +180,7 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `max-h-36 grow resize-none bg-transparent text-sm text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
+            `w-full max-h-36 grow resize-none bg-transparent text-sm text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
