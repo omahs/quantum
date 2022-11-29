@@ -1,99 +1,22 @@
-import { useEffect, useState } from "react";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { FiInfo } from "react-icons/fi";
-import { Network } from "types";
-import {
-  InputSelector,
-  SelectionType,
-  TokensI,
-  NetworkOptionsI,
-} from "./InputSelector";
+import { networks, useNetworkContext } from "@contexts/NetworkContext";
+import { Network, SelectionType, TokensI, NetworkOptionsI } from "types";
+import { InputSelector } from "./InputSelector";
 import { SwitchIcon } from "./icons/SwitchIcon";
 import { ArrowDownIcon } from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
 import WalletAddressInput from "./WalletAddressInput";
 
-const networks = [
-  {
-    name: "Ethereum",
-    icon: "/tokens/Ethereum.svg",
-    tokens: [
-      {
-        tokenA: { name: "wBTC", icon: "/tokens/wBTC.svg" },
-        tokenB: { name: "dBTC", icon: "/tokens/dBTC.svg" },
-      },
-      {
-        tokenA: { name: "USDT", icon: "/tokens/USDT.svg" },
-        tokenB: { name: "dUSDT", icon: "/tokens/dUSDT.svg" },
-      },
-      {
-        tokenA: { name: "USDC", icon: "/tokens/USDC.svg" },
-        tokenB: { name: "dUSDC", icon: "/tokens/dUSDC.svg" },
-      },
-      {
-        tokenA: { name: "ETH", icon: "/tokens/ETH.svg" },
-        tokenB: { name: "dETH", icon: "/tokens/dETH.svg" },
-      },
-    ],
-  },
-  {
-    name: "DeFiChain",
-    icon: "/tokens/DeFichain.svg",
-    tokens: [
-      {
-        tokenA: { name: "dBTC", icon: "/tokens/dBTC.svg" },
-        tokenB: { name: "wBTC", icon: "/tokens/wBTC.svg" },
-      },
-      {
-        tokenA: { name: "dUSDT", icon: "/tokens/dUSDT.svg" },
-        tokenB: { name: "USDT", icon: "/tokens/USDT.svg" },
-      },
-      {
-        tokenA: { name: "dUSDC", icon: "/tokens/dUSDC.svg" },
-        tokenB: { name: "USDC", icon: "/tokens/USDC.svg" },
-      },
-      {
-        tokenA: { name: "dETH", icon: "/tokens/dETH.svg" },
-        tokenB: { name: "ETH", icon: "/tokens/ETH.svg" },
-      },
-    ],
-  },
-];
-
 export default function BridgeForm() {
-  const [defaultNetworkA, defaultNetworkB] = networks;
-  const [selectedNetworkA, setSelectedNetworkA] = useState(defaultNetworkA);
-  const [selectedTokensA, setSelectedTokensA] = useState(
-    defaultNetworkA.tokens[0]
-  );
-  const [selectedNetworkB, setSelectedNetworkB] = useState(defaultNetworkB);
-  const [selectedTokensB, setSelectedTokensB] = useState(
-    defaultNetworkB.tokens[0]
-  );
-
-  useEffect(() => {
-    const networkB = networks.find(
-      (network) => network.name !== selectedNetworkA.name
-    );
-    if (networkB !== undefined) {
-      setSelectedNetworkB(networkB);
-      const tokens = selectedNetworkA.tokens.find(
-        (item) => item.tokenA.name === selectedTokensB.tokenA.name
-      );
-      if (tokens !== undefined) {
-        setSelectedTokensA(tokens);
-      }
-    }
-  }, [selectedNetworkA]);
-
-  useEffect(() => {
-    const tokens = selectedNetworkB.tokens.find(
-      (item) => item.tokenA.name === selectedTokensA.tokenB.name
-    );
-    if (tokens !== undefined) {
-      setSelectedTokensB(tokens);
-    }
-  }, [selectedTokensA]);
+  const {
+    selectedNetworkA,
+    selectedTokensA,
+    selectedNetworkB,
+    selectedTokensB,
+    setSelectedNetworkA,
+    setSelectedTokensA,
+  } = useNetworkContext();
 
   const switchNetwork = () => {
     setSelectedNetworkA(selectedNetworkB);
