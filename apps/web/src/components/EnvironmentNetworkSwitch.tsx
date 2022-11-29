@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import { useEnvironmentNetworkContext } from "@contexts/EnvironmentNetworkContext";
+import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 
 export default function EnvironmentNetworkSwitch(): JSX.Element {
-  const { network, updateNetwork } = useEnvironmentNetworkContext();
+  const { networkEnv, updateNetworkEnv } = useNetworkEnvironmentContext();
 
   const handleOnClick = () => {
-    const newNetwork = network === "mainnet" ? "testnet" : "mainnet";
-    updateNetwork(newNetwork);
+    const newNetwork = networkEnv === "mainnet" ? "testnet" : "mainnet";
+    updateNetworkEnv(newNetwork);
   };
 
   return (
@@ -18,11 +18,11 @@ export default function EnvironmentNetworkSwitch(): JSX.Element {
       <div
         className={clsx(
           "w-2 h-2 rounded-full mr-1",
-          network === "mainnet" ? "bg-valid" : "bg-warning"
+          networkEnv === "mainnet" ? "bg-valid" : "bg-warning"
         )}
       />
       <span className="text-dark-1000 text-2xs font-bold tracking-[0.08em] uppercase">
-        {network}
+        {networkEnv}
       </span>
     </button>
   );

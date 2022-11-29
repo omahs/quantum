@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { FiInfo } from "react-icons/fi";
-import { Blockchain } from "types";
+import { Network } from "types";
 import {
   InputSelector,
   SelectionType,
@@ -180,7 +180,7 @@ export default function BridgeForm() {
       <div className="mb-8">
         <WalletAddressInput
           label="Address"
-          blockchain={selectedNetworkB.name as Blockchain}
+          blockchain={selectedNetworkB.name as Network}
         />
       </div>
       <div className="flex flex-row justify-between items-center px-5">

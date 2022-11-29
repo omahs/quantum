@@ -13,7 +13,7 @@ import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
-import { EnvironmentNetworkProvider } from "@contexts/EnvironmentNetworkContext";
+import { NetworkEnvironmentProvider } from "@contexts/NetworkEnvironmentContext";
 
 const metamask = new MetaMaskConnector();
 
@@ -81,7 +81,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           {mounted && (
-            <EnvironmentNetworkProvider>
+            <NetworkEnvironmentProvider>
               <ThemeProvider theme={initialTheme}>
                 <div className="relative">
                   <Header />
@@ -90,7 +90,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                   <Footer />
                 </div>
               </ThemeProvider>
-            </EnvironmentNetworkProvider>
+            </NetworkEnvironmentProvider>
           )}
         </ConnectKitProvider>
       </WagmiConfig>
