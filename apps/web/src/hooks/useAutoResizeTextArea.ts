@@ -3,11 +3,11 @@ import { useEffect } from "react";
 /**
  * Updates the height of a <textarea> when the value changes
  * @param textAreaRef
- * @param value
+ * @param dependencyArr
  */
 export default function useAutoResizeTextArea(
   textAreaRef: HTMLTextAreaElement | null,
-  value: string
+  dependencyArr: string[]
 ) {
   const ref = textAreaRef;
   useEffect(() => {
@@ -18,5 +18,5 @@ export default function useAutoResizeTextArea(
       // Then set the height directly
       ref.style.height = `${ref.scrollHeight}px`;
     }
-  }, [ref, value]);
+  }, [ref, dependencyArr]);
 }

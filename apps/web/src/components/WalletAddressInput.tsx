@@ -36,11 +36,12 @@ export default function WalletAddressInput({
   const [isValidAddress, setIsValidAddress] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [placeholder, setPlaceholder] = useState<string>("");
   const [error, setError] = useState({ message: "", isError: false });
   const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
   const { isSm } = useResponsive();
-  useAutoResizeTextArea(textAreaRef.current, addressInput);
+  useAutoResizeTextArea(textAreaRef.current, [addressInput, placeholder]);
 
   const validateAddressInput = (input: string): void => {
     let isValid = false;
@@ -75,13 +76,16 @@ export default function WalletAddressInput({
     }, 1);
   };
 
-  const getPlaceholder = () => {
+  useEffect(() => {
     const displayedName = blockchainNameMap[blockchain];
     if (network === "testnet" && blockchain === "DeFiChain") {
-      return `Enter ${displayedName} (${networkNameMap[network]}) address`;
+      setPlaceholder(
+        `Enter ${displayedName} (${networkNameMap[network]}) address`
+      );
+    } else {
+      setPlaceholder(`Enter ${displayedName} address`);
     }
-    return `Enter ${displayedName} address`;
-  };
+  }, [blockchain, network]);
 
   useEffect(() => {
     if (addressInput === "") {
@@ -182,7 +186,7 @@ export default function WalletAddressInput({
               ? "placeholder:text-dark-300"
               : "placeholder:text-dark-500"
           )}
-          placeholder={getPlaceholder()}
+          placeholder={placeholder}
           value={addressInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
