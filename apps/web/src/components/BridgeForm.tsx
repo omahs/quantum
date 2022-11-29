@@ -127,7 +127,7 @@ export default function BridgeForm() {
   };
 
   return (
-    <div className="w-[calc(100%+2px)] dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
+    <div className="w-full sm:w-[calc(100%+2px)] lg:w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>
         <div className="w-1/2">
           <InputSelector
@@ -154,7 +154,7 @@ export default function BridgeForm() {
       </div>
       <SwitchButton onClick={switchNetwork} />
 
-      <div className="flex flex-row items-center mb-5 sm:mb-4">
+      <div className="flex flex-row items-end mb-5 sm:mb-4">
         <div className="w-1/2">
           <InputSelector
             label="Destination Network"
