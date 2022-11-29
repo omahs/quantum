@@ -6,18 +6,18 @@ import { IoCloseCircle } from "react-icons/io5";
 import { fromAddress } from "@defichain/jellyfish-address";
 import useResponsive from "@hooks/useResponsive";
 import useAutoResizeTextArea from "@hooks/useAutoResizeTextArea";
-import { Blockchain, Network } from "types";
+import { Blockchain, EnvironmentNetwork } from "types";
 import Tooltip from "./commons/Tooltip";
 import NetworkTag from "./NetworkTag";
 
 interface Props {
   blockchain: Blockchain;
   label: string;
-  network?: Network;
+  network?: EnvironmentNetwork;
   disabled?: boolean;
 }
 
-const networkNameMap: Record<Network, string> = {
+const networkNameMap: Record<EnvironmentNetwork, string> = {
   mainnet: "MainNet",
   testnet: "TestNet",
 };

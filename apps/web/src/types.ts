@@ -3,4 +3,4 @@
  */
 
 export type Blockchain = "Ethereum" | "DeFiChain";
-export type Network = "mainnet" | "testnet";
+export type EnvironmentNetwork = "mainnet" | "testnet";

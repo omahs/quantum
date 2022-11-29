@@ -1,10 +1,10 @@
 import clsx from "clsx";
-import { Network } from "types";
+import { EnvironmentNetwork } from "types";
 
 export default function NetworkTag({
   network,
 }: {
-  network: Network;
+  network: EnvironmentNetwork;
 }): JSX.Element {
   return (
     <div className="flex items-center h-7 rounded-[37px] dark-section-bg border border-dark-card-stroke px-2 py-1 lg:px-3 lg:py-2 ml-2">
