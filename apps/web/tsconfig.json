@@ -5,39 +5,16 @@
     "skipLibCheck": true,
     "baseUrl": "src",
     "paths": {
-      "@content/*": [
-        "../content/*"
-      ],
-      "@api/*": [
-        "api/*"
-      ],
-      "@contexts/*": [
-        "contexts/*"
-      ],
-      "@components/*": [
-        "components/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@store/*": [
-        "store/*"
-      ],
-      "@utils/*": [
-        "utils/*"
-      ],
-      "@public/*": [
-        "../public/*"
-      ]
+      "@content/*": ["../content/*"],
+      "@api/*": ["api/*"],
+      "@contexts/*": ["contexts/*"],
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@store/*": ["store/*"],
+      "@utils/*": ["utils/*"],
+      "@public/*": ["../public/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "cypress"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "cypress"]
 }
