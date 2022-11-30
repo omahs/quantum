@@ -29,7 +29,7 @@ export default function Header(): JSX.Element {
   const [wallet, setWallet] = useState<Wallet>();
 
   return (
-    <div className="flex items-center justify-between bg-dark-00 px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
+    <div className="flex z-[1] relative items-center justify-between bg-dark-00 px-5 pt-8 pb-6 sm:px-12 sm:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
       <Link href="/">
         <div className="relative cursor-pointer w-[140px] h-[32px] lg:w-[264px] lg:h-[60px]">
           <Image
