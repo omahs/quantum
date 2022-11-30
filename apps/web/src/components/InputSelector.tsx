@@ -58,7 +58,7 @@ export function InputSelector({
       : (value as TokensI).tokenA;
   return (
     <div>
-      <span className="pl-5 text-dark-900 font-semibold text-xs lg:text-base">
+      <span className="pl-5 text-dark-900 font-semibold text-xs lg:text-base lg:tracking-wider">
         {label}
       </span>
       <Listbox value={value} onChange={onSelect}>

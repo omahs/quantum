@@ -21,7 +21,7 @@ export default function EnvironmentNetworkSwitch(): JSX.Element {
           networkEnv === "mainnet" ? "bg-valid" : "bg-warning"
         )}
       />
-      <span className="text-dark-1000 text-2xs font-bold tracking-[0.08em] uppercase">
+      <span className="text-dark-1000 text-2xs font-bold tracking-widest uppercase">
         {networkEnv}
       </span>
     </button>

@@ -88,6 +88,11 @@ module.exports = {
       fontSize: {
         "2xs": ["0.625rem", "0.75rem"],
       },
+      letterSpacing: {
+        wide: "0.02em",
+        wider: "0.04em",
+        widest: "0.08em",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
