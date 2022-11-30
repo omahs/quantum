@@ -12,7 +12,7 @@ export default function EnvironmentNetworkSwitch(): JSX.Element {
   return (
     <button
       type="button"
-      className="flex items-center rounded-[37px] dark-section-bg border border-dark-card-stroke px-2 py-1 lg:px-3 lg:py-2 ml-2"
+      className="flex items-center rounded-[37px] dark-section-bg border border-dark-card-stroke px-2 py-1 lg:px-3 lg:py-2 ml-2 hover:dark-btn-hover hover:border-dark-500"
       onClick={handleOnClick}
     >
       <div
