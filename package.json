@@ -13,6 +13,9 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
+  "dependencies": {
+    "@defichain/jellyfish-address": "^3.2.0"
+  },
   "devDependencies": {
     "eslint": "^8.28.0",
     "eslint-config-airbnb": "^19.0.4",
