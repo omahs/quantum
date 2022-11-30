@@ -181,6 +181,8 @@ export default function BridgeForm() {
         <WalletAddressInput
           label="Address"
           blockchain={selectedNetworkB.name as Network}
+          /* TODO: disabled should be based on whether wallet is connected or not */
+          disabled={false}
         />
       </div>
       <div className="flex flex-row justify-between items-center px-5">
