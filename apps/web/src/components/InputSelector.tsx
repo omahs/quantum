@@ -122,11 +122,7 @@ export function InputSelector({
                   <div className="bg-dark-00 rounded-lg py-4">
                     <span className="text-dark-700 px-5 text-xs font-semibold lg:px-6 lg:text-sm">{popUpLabel}</span>
                     <div className="mt-3 flex flex-col">
-                      {type === SelectionType.Network ? (
-                        <NetworkOptions options={options} />
-                      ) : (
-                        <TokenOptions options={options} />
-                      )}
+                      {type === SelectionType.Network ? <NetworkOptions /> : <TokenOptions options={options} />}
                     </div>
                   </div>
                 </Listbox.Options>
@@ -139,41 +135,13 @@ export function InputSelector({
   );
 }
 
-function NetworkOptions({ options }: { options?: any[] }) {
-  return (
-    <>
-      {options?.map((option) => (
-        <Listbox.Option key={option.name} className="relative cursor-pointer select-none" value={option}>
-          {({ selected, active }) => (
-            <>
-              <Divider />
-              <div className={clsx('my-1 px-5 py-3 lg:my-2 lg:px-6 lg:py-4', active && 'bg-dark-gradient-1')}>
-                <div className="flex flex-row items-center justify-between">
-                  <div className="flex flex-row items-center">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="h-6 w-6 lg:h-[28px] lg:w-[28px]"
-                      data-testid={option.name}
-                      src={option.icon}
-                      alt={option.name}
-                    />
-                    <span className="text-dark-1000 ml-2 truncate text-base lg:text-lg">{option.name}</span>
-                  </div>
-                  {selected && <FaCheckCircle className="h-6 w-6 text-[#00AD1D]" />}
-                </div>
-              </div>
-            </>
-          )}
-        </Listbox.Option>
-      ))}
-    </>
-  );
+function NetworkOptions() {
+  return <div />;
 }
 
 function TokenOptions({ options }: { options: any[] | undefined }) {
   return (
-    <>
+    <div>
       {options?.map((option) => (
         <Listbox.Option key={option.tokenA.name} className="relative cursor-pointer select-none" value={option}>
           {({ selected, active }) => (
@@ -215,7 +183,7 @@ function TokenOptions({ options }: { options: any[] | undefined }) {
           )}
         </Listbox.Option>
       ))}
-    </>
+    </div>
   );
 }
 
