@@ -69,7 +69,7 @@ export default function WalletAddressInput({
         textArea.setSelectionRange(cursorPosition, cursorPosition);
         textArea.focus();
       }
-    }, 1);
+    }, 0);
   };
 
   useEffect(() => {
@@ -81,6 +81,7 @@ export default function WalletAddressInput({
     } else {
       setPlaceholder(`Enter ${displayedName} address`);
     }
+    setAddressInput(""); // Reset input on network change
   }, [blockchain, networkEnv]);
 
   useEffect(() => {
@@ -117,7 +118,7 @@ export default function WalletAddressInput({
     <>
       {/* Address label */}
       <div className="h-5 lg:h-7 group relative mb-2 flex items-center lg:mb-3">
-        <span className="pl-5 text-xs font-semibold lg:text-base text-dark-1000">
+        <span className="pl-5 text-xs font-semibold xl:tracking-wider lg:text-base text-dark-900">
           {label}
         </span>
         {blockchain === "DeFiChain" && <EnvironmentNetworkSwitch />}
@@ -176,7 +177,7 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `w-full max-h-36 grow resize-none bg-transparent text-sm text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
+            `w-full max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
