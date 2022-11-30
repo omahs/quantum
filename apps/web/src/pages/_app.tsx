@@ -1,7 +1,8 @@
-import "../styles/globals.scss";
-import NextNProgress from "nextjs-progressbar";
-import Base from "../layouts/Base";
+import '../styles/globals.scss';
+import NextNProgress from 'nextjs-progressbar';
+import Base from '../layouts/Base';
 
+// @ts-ignore
 export default function BridgeApp({ Component, pageProps }): JSX.Element {
   return (
     <Base {...pageProps}>
