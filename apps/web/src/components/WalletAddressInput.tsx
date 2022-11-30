@@ -118,7 +118,7 @@ export default function WalletAddressInput({
     <>
       {/* Address label */}
       <div className="h-5 lg:h-7 group relative mb-2 flex items-center lg:mb-3">
-        <span className="pl-5 text-xs font-semibold lg:tracking-wider lg:text-base text-dark-900">
+        <span className="pl-5 text-xs font-semibold xl:tracking-wider lg:text-base text-dark-900">
           {label}
         </span>
         {blockchain === "DeFiChain" && <EnvironmentNetworkSwitch />}
