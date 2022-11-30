@@ -1,10 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "helpers:pinGitHubActionDigests",
-    ":semanticCommitTypeAll(bump)"
-  ],
+  "extends": ["config:base", "helpers:pinGitHubActionDigests", ":semanticCommitTypeAll(bump)"],
   "rebaseWhen": "behind-base-branch",
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": false,
@@ -13,6 +9,11 @@
   },
   "rangeStrategy": "bump",
   "packageRules": [
+    {
+      "matchPackageNames": ["node", "npm", "pnpm", "yarn", "@types/node"],
+      "groupName": "engines",
+      "enabled": false
+    },
     {
       "matchPackagePatterns": ["^defichain$", "^@defichain/", "^jellyfishsdk$"],
       "groupName": "defichain"
@@ -26,9 +27,8 @@
       "groupName": "jest"
     },
     {
-      "matchPackagePatterns": ["^cargo$"],
-      "groupName": "cargo packages",
-      "enabled": false
+      "matchPackagePatterns": ["^@birthdayresearch/contented"],
+      "groupName": "@birthdayresearch/contented"
     }
   ]
 }

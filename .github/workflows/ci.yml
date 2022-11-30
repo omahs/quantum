@@ -19,9 +19,9 @@ jobs:
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3.5.1
         with:
           node-version: 16
-          cache: "npm"
+          cache: 'pnpm'
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - run: npx turbo typecheck
       - run: npx turbo lint
 
@@ -36,5 +36,5 @@ jobs:
           node-version: 16
           cache: npm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - run: npx --no-install prettier --check "apps/web/src/**/*.{js,jsx,ts,tsx}"
