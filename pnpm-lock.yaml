@@ -65,7 +65,7 @@ importers:
     specifiers:
       '@babel/types': ^7.20.5
       '@cypress/code-coverage': ^3.10.0
-      '@defichain/jellyfish-address': ^3.2.0
+      '@defichain/jellyfish-address': ^3.3.0
       '@floating-ui/react-dom': ^1.0.1
       '@headlessui/react': ^1.7.4
       '@netlify/plugin-lighthouse': ^4.0.3
@@ -4929,7 +4929,7 @@ packages:
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
-      '@types/node': 18.11.9
+      '@types/node': 18.11.10
     dev: false
 
   /@types/prettier/2.7.1:
@@ -4961,7 +4961,7 @@ packages:
   /@types/secp256k1/4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
     dependencies:
-      '@types/node': 18.11.9
+      '@types/node': 18.11.10
     dev: false
 
   /@types/semver/7.3.13:
