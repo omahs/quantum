@@ -10,7 +10,7 @@ export class AppProbeIndicator extends ProbeIndicator {
   }
 
   async readiness(): Promise<HealthIndicatorResult> {
-    // Logic to check if app is ready for connections
+    // TODO: Logic to check if app is ready for connections
     return this.withAlive('example', 'ready');
   }
 }
