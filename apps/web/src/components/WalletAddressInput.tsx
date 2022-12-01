@@ -41,7 +41,7 @@ export default function WalletAddressInput({
 
   const validateAddressInput = (input: string): void => {
     let isValid = false;
-    if (blockchain === "Ethereum") {
+    if (blockchain === Network.Ethereum) {
       isValid = ethers.utils.isAddress(input);
     } else {
       const decodedAddress = fromAddress(input, networkEnv);
@@ -74,7 +74,7 @@ export default function WalletAddressInput({
 
   useEffect(() => {
     const displayedName = blockchainNameMap[blockchain];
-    if (networkEnv === "testnet" && blockchain === "DeFiChain") {
+    if (networkEnv === "testnet" && blockchain === Network.DeFiChain) {
       setPlaceholder(
         `Enter ${displayedName} (${networkEnvDisplayName}) address`
       );
@@ -121,7 +121,7 @@ export default function WalletAddressInput({
         <span className="pl-5 text-xs font-semibold xl:tracking-wider lg:text-base text-dark-900">
           {label}
         </span>
-        {blockchain === "DeFiChain" && <EnvironmentNetworkSwitch />}
+        {blockchain === Network.DeFiChain && <EnvironmentNetworkSwitch />}
         <div
           className={clsx(
             "absolute right-0 rounded bg-valid px-2 py-1 text-2xs text-dark-00  transition duration-300 lg:text-xs",
