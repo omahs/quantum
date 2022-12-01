@@ -23,7 +23,7 @@
     "build": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
       "outputs": ["dist/**"],
-      "dependsOn": ["^build", "generate:proto", "generate:client", "generate:schema"]
+      "dependsOn": ["^build", "generate:client", "generate:schema"]
     },
     "build:docker": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
