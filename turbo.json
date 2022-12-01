@@ -34,7 +34,13 @@
     },
     "test": {
       "inputs": ["src/**", "src/**/*.unit.ts", "tests-i9n/**", "tests-e2e/**"],
-      "dependsOn": ["^build", "generate:proto", "build:docker", "generate:client", "generate:schema"]
+      "dependsOn": [
+        "^build",
+        "generate:proto",
+        "build:docker",
+        "generate:client",
+        "generate:schema"
+      ]
     },
     "test:unit": {
       "inputs": ["src/**", "src/**/*.unit.ts"],
@@ -46,7 +52,12 @@
     },
     "test:e2e": {
       "inputs": ["src/**", "tests-e2e/**"],
-      "dependsOn": ["build:docker", "^build:docker", "generate:client", "generate:schema"]
+      "dependsOn": [
+        "build:docker",
+        "^build:docker",
+        "generate:client",
+        "generate:schema"
+      ]
     },
     "lint": {
       "outputs": []

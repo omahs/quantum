@@ -3,7 +3,7 @@ name: CI E2E
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
   push:
     branches: [main]
   pull_request:
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3.5.1
         with:
           node-version: 16
-          cache: 'pnpm'
+          cache: "pnpm"
 
       # install specific version of chrome
       - name: Install latest Google Chrome
@@ -60,7 +60,7 @@ jobs:
           record: true
           parallel: true
           start: npm run start
-          wait-on: 'http://localhost:5173'
+          wait-on: "http://localhost:5173"
           browser: chrome
           spec: cypress/e2e/**
           tag: ${{ github.event_name }}

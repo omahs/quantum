@@ -5,8 +5,10 @@
  */
 function readPackage(pkg, context) {
   // See https://github.com/cec-org/codex/issues/434
-  if (pkg.name.startsWith('@nestjs/')) {
-    context.log(`[codex] ${pkg.name}: making all peer dependencies non-optional`);
+  if (pkg.name.startsWith("@nestjs/")) {
+    context.log(
+      `[codex] ${pkg.name}: making all peer dependencies non-optional`
+    );
     pkg.peerDependenciesMeta = {};
   }
   return pkg;
