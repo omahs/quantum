@@ -1,8 +1,7 @@
-export default function BrLogo(): JSX.Element {
+export default function BrLogo({ size }: { size: number }): JSX.Element {
   return (
     <svg
-      width="161"
-      height="20"
+      height={size}
       viewBox="0 0 161 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

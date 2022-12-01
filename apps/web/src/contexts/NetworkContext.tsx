@@ -27,13 +27,13 @@ export const networks = [
           name: "wBTC",
           symbol: "BTC",
           icon: "/tokens/wBTC.svg",
-          supply: "19255432.1234",
+          supply: "1925543.1234",
         },
         tokenB: {
           name: "dBTC",
           symbol: "BTC",
           icon: "/tokens/dBTC.svg",
-          supply: "19255432.1234",
+          supply: "1925543.1234",
         },
       },
       {
@@ -89,13 +89,13 @@ export const networks = [
           name: "dBTC",
           symbol: "BTC",
           icon: "/tokens/dBTC.svg",
-          supply: "18012456.4321",
+          supply: "1801245.4321",
         },
         tokenB: {
           name: "wBTC",
           symbol: "BTC",
           icon: "/tokens/wBTC.svg",
-          supply: "18012456.4321",
+          supply: "1801245.4321",
         },
       },
       {
