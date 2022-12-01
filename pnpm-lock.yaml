@@ -5,11 +5,8 @@ importers:
   .:
     specifiers:
       '@cec-org/codex-turbo': ^0.20.11
-      '@defichain/jellyfish-address': ^3.2.0
       husky: ^8.0.2
       lint-staged: ^13.0.4
-    dependencies:
-      '@defichain/jellyfish-address': 3.3.0_defichain@3.3.0
     devDependencies:
       '@cec-org/codex-turbo': 0.20.11
       husky: 8.0.2
@@ -68,6 +65,7 @@ importers:
     specifiers:
       '@babel/types': ^7.20.5
       '@cypress/code-coverage': ^3.10.0
+      '@defichain/jellyfish-address': ^3.2.0
       '@floating-ui/react-dom': ^1.0.1
       '@headlessui/react': ^1.7.4
       '@netlify/plugin-lighthouse': ^4.0.3
@@ -111,6 +109,7 @@ importers:
       wagmi: ^0.8.8
     dependencies:
       '@babel/types': 7.20.5
+      '@defichain/jellyfish-address': 3.3.0_defichain@3.3.0
       '@floating-ui/react-dom': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@headlessui/react': 1.7.4_biqbaboplfbrettd7655fr4n2y
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
