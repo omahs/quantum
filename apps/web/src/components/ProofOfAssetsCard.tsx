@@ -24,7 +24,7 @@ export default function ProofOfAssetsCard() {
     .decimalPlaces(0, BigNumber.ROUND_DOWN);
 
   return (
-    <div className="relative w-full dark-card-bg-image rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px] px-6 pt-6 lg:px-8 lg:pt-8">
+    <div className="hidden md:block relative w-full dark-card-bg-image rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px] px-6 pt-6 lg:px-8 lg:pt-8">
       <span className="block text-lg lg:text-2xl font-semibold leading-6 lg:leading-9 tracking-wide text-dark-900">
         Proof of assets
       </span>
