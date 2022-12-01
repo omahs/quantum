@@ -14,7 +14,7 @@ export default function ThemeSwitch() {
     <button
       type="button"
       onClick={handleOnClick}
-      className="text-light-1000 dark:text-dark-1000 bg-light-00 dark:bg-dark-00 w-4 h-4"
+      className="text-light-1000 dark:text-dark-1000 bg-light-00 dark:bg-dark-00 h-4 w-4"
     >
       {isLight ? <FiMoon /> : <MdOutlineWbSunny />}
     </button>
