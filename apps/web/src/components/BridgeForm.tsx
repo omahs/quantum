@@ -194,17 +194,17 @@ export default function BridgeForm() {
           </button>
         </div>
         <NumericFormat
-          className="text-left text-dark-1000 text-xs lg:text-base"
+          className="text-dark-1000 text-left text-xs lg:text-base"
           value={0}
           decimalScale={2}
           thousandSeparator
           suffix={` ${selectedTokensA.tokenA.name}`}
         />
       </div>
-      <div className="px-6 md:px-4 lg:px-[88px] mt-8 md:mt-6 lg:mt-16 lg:mb-0">
+      <div className="mt-8 px-6 md:mt-6 md:px-4 lg:mt-16 lg:mb-0 lg:px-[88px]">
         <button
           type="button"
-          className="p-3.5 md:p-2.5 lg:p-4 bg-dark-1000 w-full text-dark-00 text-lg lg:text-xl font-bold rounded-[92px]"
+          className="bg-dark-1000 text-dark-00 w-full rounded-[92px] p-3.5 text-lg font-bold md:p-2.5 lg:p-4 lg:text-xl"
         >
           Connect wallet
         </button>
@@ -213,23 +213,23 @@ export default function BridgeForm() {
   );
 }
 
-function SwitchButton({ onClick }) {
+function SwitchButton({ onClick }: { onClick: () => void }) {
   return (
     <div className="my-8 flex flex-row">
-      <div className="w-full flex justify-between border-t border-dark-300 border-opacity-50 mt-6 flex-1" />
+      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
       <button
         type="button"
         onClick={onClick}
-        className="flex justify-center items-center dark-card-bg dark-bg-card-section w-12 h-12 rounded-full group"
+        className="dark-card-bg dark-bg-card-section group flex h-12 w-12 items-center justify-center rounded-full"
       >
-        <div className="hidden lg:block group-hover:hidden">
+        <div className="hidden group-hover:hidden lg:block">
           <ArrowDownIcon size={24} className="fill-dark-700" />
         </div>
-        <div className="lg:hidden group-hover:block">
+        <div className="group-hover:block lg:hidden">
           <SwitchIcon size={24} className="fill-dark-700" />
         </div>
       </button>
-      <div className="w-full flex justify-between border-t border-dark-300 border-opacity-50 mt-6 flex-1" />
+      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
     </div>
   );
 }
