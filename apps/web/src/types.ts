@@ -8,6 +8,7 @@ export type NetworkEnvironment = "mainnet" | "testnet";
 
 export interface TokenDetailI {
   name: string;
+  symbol: string;
   icon: string;
   supply: string;
 }

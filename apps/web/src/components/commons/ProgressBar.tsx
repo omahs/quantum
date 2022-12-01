@@ -1,7 +1,9 @@
+import BigNumber from "bignumber.js";
+
 export default function ProgressBar({
   progressPercentage,
 }: {
-  progressPercentage: number;
+  progressPercentage: number | BigNumber;
 }): JSX.Element {
   return (
     <div className="h-2 w-full bg-dark-200 rounded-[9px]">
