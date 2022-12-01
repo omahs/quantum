@@ -209,16 +209,14 @@ export default function WalletAddressInput({
       </div>
 
       {/* Error and warning messages */}
-      {error.message && !disabled && (
-        <span
-          className={clsx(
-            "block px-4 pt-2 text-xs lg:px-6 lg:text-sm",
-            error.isError ? "text-error" : "text-warning"
-          )}
-        >
-          {error.message}
-        </span>
-      )}
+      <span
+        className={clsx(
+          "block px-4 pt-2 text-xs lg:px-6 lg:text-sm empty:before:content-['*'] empty:before:opacity-0",
+          error.isError ? "text-error" : "text-warning"
+        )}
+      >
+        {error.message && !disabled ? error.message : ""}
+      </span>
     </>
   );
 }
