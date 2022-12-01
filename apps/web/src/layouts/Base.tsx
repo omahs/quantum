@@ -1,12 +1,18 @@
-import Head from 'next/head';
-import { PropsWithChildren, useEffect, useState } from 'react';
-import { appName, longDescription, shortDescription, siteTitle, website } from '@components/siteInfo';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WagmiConfig, createClient } from 'wagmi';
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import Footer from '@components/Footer';
-import Header from '@components/Header';
-import { getInitialTheme, ThemeProvider } from '@contexts/ThemeProvider';
+import Head from "next/head";
+import { PropsWithChildren, useEffect, useState } from "react";
+import {
+  appName,
+  longDescription,
+  shortDescription,
+  siteTitle,
+  website,
+} from "@components/siteInfo";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { WagmiConfig, createClient } from "wagmi";
+import { ConnectKitProvider, getDefaultClient } from "connectkit";
+import Footer from "@components/Footer";
+import Header from "@components/Header";
+import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 
 const metamask = new MetaMaskConnector();
 
@@ -14,7 +20,7 @@ const client = createClient(
   getDefaultClient({
     appName,
     connectors: [metamask],
-  }),
+  })
 );
 
 function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
@@ -38,8 +44,15 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <meta name="google" content="notranslate" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover" />
-        <meta key="apple-mobile-web-app-capable" name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover"
+        />
+        <meta
+          key="apple-mobile-web-app-capable"
+          name="apple-mobile-web-app-capable"
+          content="yes"
+        />
         <meta name="theme-color" content="#5B10FF" />
 
         <meta name="og:locale" content="en_SG" />

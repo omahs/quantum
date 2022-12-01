@@ -1,6 +1,12 @@
 export default function MetaMaskIcon(): JSX.Element {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <circle cx="16" cy="16" r="16" fill="#E27625" fillOpacity="0.1" />
       <path
         d="M23.7474 8.36768L17.2419 13.1813L18.4517 10.3445L23.7474 8.36768Z"

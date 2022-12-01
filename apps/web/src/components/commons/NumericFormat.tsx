@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from "bignumber.js";
 
 interface NumericFormatProps extends BigNumber.Format {
   value: string | number | BigNumber;
@@ -10,17 +10,21 @@ interface NumericFormatProps extends BigNumber.Format {
 export default function NumericFormat({
   value,
   className,
-  prefix = '',
-  suffix = '',
+  prefix = "",
+  suffix = "",
   thousandSeparator,
   decimalScale = 8,
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
     prefix,
     suffix,
-    decimalSeparator: '.',
-    groupSeparator: thousandSeparator ? ',' : '',
+    decimalSeparator: ".",
+    groupSeparator: thousandSeparator ? "," : "",
     groupSize: thousandSeparator ? 3 : 0,
   };
-  return <span className={className}>{new BigNumber(value).toFormat(decimalScale, fmt)}</span>;
+  return (
+    <span className={className}>
+      {new BigNumber(value).toFormat(decimalScale, fmt)}
+    </span>
+  );
 }

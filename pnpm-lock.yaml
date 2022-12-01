@@ -4,17 +4,11 @@ importers:
 
   .:
     specifiers:
-      '@cec-org/codex-prettier': ^0.20.7
       '@cec-org/codex-turbo': ^0.20.7
-      '@cec-org/codex-typescript': ^0.20.7
-      '@cec-org/eslint-config': ^0.20.7
       husky: ^8.0.2
       lint-staged: ^13.0.4
     devDependencies:
-      '@cec-org/codex-prettier': 0.20.8
       '@cec-org/codex-turbo': 0.20.8
-      '@cec-org/codex-typescript': 0.20.8
-      '@cec-org/eslint-config': 0.20.8_typescript@4.9.3
       husky: 8.0.2
       lint-staged: 13.0.4
 
@@ -26,8 +20,11 @@ importers:
       '@cec-org/codex-nestjs-jsonrpc': ^0.20.7
       '@cec-org/codex-nestjs-testcontainers': ^0.20.7
       '@cec-org/codex-nestjs-testing': ^0.20.7
+      '@cec-org/codex-prettier': ^0.20.7
       '@cec-org/codex-testcontainers': ^0.20.7
       '@cec-org/codex-turbo-jest': ^0.20.7
+      '@cec-org/codex-typescript': ^0.20.7
+      '@cec-org/eslint-config': ^0.20.7
       '@nestjs/common': ^9.2.0
       '@nestjs/config': ^2.2.0
       '@nestjs/core': ^9.2.0
@@ -56,8 +53,11 @@ importers:
       '@cec-org/codex-nestjs-docker': 0.20.8_typanion@3.12.1
       '@cec-org/codex-nestjs-testcontainers': 0.20.8
       '@cec-org/codex-nestjs-testing': 0.20.8_urrunw6jnaimfchsip4ynkkgba
+      '@cec-org/codex-prettier': 0.20.8
       '@cec-org/codex-testcontainers': 0.20.8
       '@cec-org/codex-turbo-jest': 0.20.8_vwrtu3rp63lhewuq2kx2djodzi
+      '@cec-org/codex-typescript': 0.20.8
+      '@cec-org/eslint-config': 0.20.8_typescript@4.9.3
       '@nestjs/testing': 9.2.1_dp4dfo6dfdynyltnibxzzh4imm
       light-my-request: 5.7.0
 

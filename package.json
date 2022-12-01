@@ -18,19 +18,10 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@cec-org/codex-prettier": "^0.20.7",
     "@cec-org/codex-turbo": "^0.20.7",
-    "@cec-org/codex-typescript": "^0.20.7",
-    "@cec-org/eslint-config": "^0.20.7",
     "husky": "^8.0.2",
     "lint-staged": "^13.0.4"
   },
-  "lint-staged": {
-    "*": [
-      "prettier --write --ignore-unknown"
-    ]
-  },
-  "prettier": "@cec-org/codex-prettier",
   "engines": {
     "node": "^18.0.0 || ^16.16.0",
     "pnpm": ">=7.11.0"

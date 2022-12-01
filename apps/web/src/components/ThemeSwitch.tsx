@@ -1,12 +1,12 @@
-import { useTheme } from '@contexts/ThemeProvider';
-import { FiMoon } from 'react-icons/fi';
-import { MdOutlineWbSunny } from 'react-icons/md';
+import { useTheme } from "@contexts/ThemeProvider";
+import { FiMoon } from "react-icons/fi";
+import { MdOutlineWbSunny } from "react-icons/md";
 
 export default function ThemeSwitch() {
   const { setTheme, isLight } = useTheme();
 
   const handleOnClick = () => {
-    const newTheme = isLight ? 'dark' : 'light';
+    const newTheme = isLight ? "dark" : "light";
     setTheme(newTheme);
   };
 

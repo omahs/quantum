@@ -1,31 +1,31 @@
-import React from 'react';
-import { FaYoutube, FaReddit, FaGithub, FaTwitter } from 'react-icons/fa';
-import Container from './commons/Container';
+import React from "react";
+import { FaYoutube, FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
+import Container from "./commons/Container";
 
 const SocialItems = [
   {
     icon: FaYoutube,
-    testId: 'youtube',
-    label: 'Youtube',
-    href: 'https://www.youtube.com/DeFiChain',
+    testId: "youtube",
+    label: "Youtube",
+    href: "https://www.youtube.com/DeFiChain",
   },
   {
     icon: FaReddit,
-    testId: 'reddit',
-    label: 'Reddit',
-    href: 'https://www.reddit.com/r/defiblockchain',
+    testId: "reddit",
+    label: "Reddit",
+    href: "https://www.reddit.com/r/defiblockchain",
   },
   {
     icon: FaGithub,
-    testId: 'gitHub',
-    label: 'GitHub',
-    href: 'https://github.com/DeFiCh',
+    testId: "gitHub",
+    label: "GitHub",
+    href: "https://github.com/DeFiCh",
   },
   {
     icon: FaTwitter,
-    testId: 'twitter',
-    label: 'Twitter',
-    href: 'https://twitter.com/defichain',
+    testId: "twitter",
+    label: "Twitter",
+    href: "https://twitter.com/defichain",
   },
 ];
 
@@ -35,12 +35,23 @@ export default function Footer() {
       <Container className="px-5 md:px-12 lg:px-[120px]">
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-col md:flex-row">
-            <div className="text-dark-700 text-xs font-semibold">Developed by&nbsp;</div>
-            <div className="text-dark-700 text-xs font-semibold">Birthday Research</div>
+            <div className="text-dark-700 text-xs font-semibold">
+              Developed by&nbsp;
+            </div>
+            <div className="text-dark-700 text-xs font-semibold">
+              Birthday Research
+            </div>
           </div>
           <div className="flex flex-row space-x-2 md:space-x-4">
             {SocialItems.map(({ href, testId, icon: Icon }) => (
-              <a href={href} key={testId} target="_blank" rel="noreferrer" className="p-1" data-testid={testId}>
+              <a
+                href={href}
+                key={testId}
+                target="_blank"
+                rel="noreferrer"
+                className="p-1"
+                data-testid={testId}
+              >
                 <Icon size={24} className="text-dark-700" />
               </a>
             ))}
