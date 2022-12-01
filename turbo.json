@@ -15,11 +15,6 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
-    "generate:proto": {
-      "inputs": ["proto/**"],
-      "outputs": ["generated/**"],
-      "dependsOn": ["^build"]
-    },
     "build": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
       "outputs": ["dist/**"],
