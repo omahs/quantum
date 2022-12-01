@@ -5,7 +5,7 @@ import { HealthIndicatorResult } from '@nestjs/terminus';
 @Injectable()
 export class AppProbeIndicator extends ProbeIndicator {
   async liveness(): Promise<HealthIndicatorResult> {
-    // Logic to check if app is live
+    // TODO: Logic to check if app is live
     return this.withAlive('example', 'live');
   }
 
