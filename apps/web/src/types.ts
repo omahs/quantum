@@ -16,8 +16,8 @@ export interface TokenDetailI {
 }
 
 export enum SelectionType {
-  Network = "Network",
-  Token = "Token",
+  "Network" = "Network",
+  "Token" = "Token",
 }
 
 export interface TokensI {
