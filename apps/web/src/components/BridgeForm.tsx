@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { FiInfo } from "react-icons/fi";
+import { Network } from "types";
 import {
   InputSelector,
   SelectionType,
@@ -10,6 +11,7 @@ import {
 import { SwitchIcon } from "./icons/SwitchIcon";
 import { ArrowDownIcon } from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
+import WalletAddressInput from "./WalletAddressInput";
 
 const networks = [
   {
@@ -126,7 +128,7 @@ export default function BridgeForm() {
   };
 
   return (
-    <div className="dark-card-bg-image border-dark-200 w-full rounded-lg border p-6 pb-16 backdrop-blur-[18px] md:pt-8 lg:p-12">
+    <div className="w-full sm:w-[calc(100%+2px)] lg:w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>
         <div className="w-1/2">
           <InputSelector
@@ -153,7 +155,7 @@ export default function BridgeForm() {
       </div>
       <SwitchButton onClick={switchNetwork} />
 
-      <div className="mb-8 flex flex-row items-center">
+      <div className="flex flex-row items-end mb-4 lg:mb-5">
         <div className="w-1/2">
           <InputSelector
             label="Destination Network"
@@ -175,7 +177,15 @@ export default function BridgeForm() {
           />
         </div>
       </div>
-      <div className="flex flex-row items-center justify-between px-5">
+      <div className="mb-8">
+        <WalletAddressInput
+          label="Address"
+          blockchain={selectedNetworkB.name as Network}
+          /* TODO: disabled should be based on whether wallet is connected or not */
+          disabled={false}
+        />
+      </div>
+      <div className="flex flex-row justify-between items-center px-5">
         <div className="flex flex-row items-center">
           <span className="text-dark-700 text-xs lg:text-base">Fees</span>
           {/* TODO add onclick info */}

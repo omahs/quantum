@@ -65,6 +65,7 @@ importers:
     specifiers:
       '@babel/types': ^7.20.5
       '@cypress/code-coverage': ^3.10.0
+      '@defichain/jellyfish-address': ^3.3.0
       '@floating-ui/react-dom': ^1.0.1
       '@headlessui/react': ^1.7.4
       '@netlify/plugin-lighthouse': ^4.0.3
@@ -108,6 +109,7 @@ importers:
       wagmi: ^0.8.8
     dependencies:
       '@babel/types': 7.20.5
+      '@defichain/jellyfish-address': 3.3.0_defichain@3.3.0
       '@floating-ui/react-dom': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@headlessui/react': 1.7.4_biqbaboplfbrettd7655fr4n2y
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
@@ -2512,6 +2514,65 @@ packages:
       - supports-color
     dev: true
 
+  /@defichain/jellyfish-address/3.3.0_defichain@3.3.0:
+    resolution: {integrity: sha512-VubAK6TBC7xS7qr5bauhNKgZmVNMD/nnxrZAEawwzhn7QLHlXSAlw0eIa8S9wAYFDzdzKg6WxZREie/X5G9AwA==}
+    peerDependencies:
+      defichain: ^3.3.0
+    dependencies:
+      '@defichain/jellyfish-crypto': 3.3.0_defichain@3.3.0
+      '@defichain/jellyfish-network': 3.3.0_defichain@3.3.0
+      '@defichain/jellyfish-transaction': 3.3.0_defichain@3.3.0
+      bech32: 2.0.0
+      bs58: 4.0.1
+      defichain: 3.3.0
+    dev: false
+
+  /@defichain/jellyfish-buffer/3.3.0_defichain@3.3.0:
+    resolution: {integrity: sha512-Pdl57k4L2ttPJEZqEkLM/O6nNnDfdnCpPxNoOJlp5fTrQSiMGAi7u+6xqxxackX48xF60A8XQhbJ5yPBAsiHQg==}
+    peerDependencies:
+      defichain: ^3.3.0
+    dependencies:
+      bignumber.js: 9.1.0
+      bn.js: 5.2.1
+      defichain: 3.3.0
+      smart-buffer: 4.2.0
+    dev: false
+
+  /@defichain/jellyfish-crypto/3.3.0_defichain@3.3.0:
+    resolution: {integrity: sha512-nzDNylyahAdL9SW7ecfFa05a10HgxSb3oK832pXXGlgMeC5FynXuwTIyhXZmpBPhhrgPja1Z5WIWwjYguwEsWA==}
+    peerDependencies:
+      defichain: ^3.3.0
+    dependencies:
+      bech32: 2.0.0
+      bip66: 1.1.5
+      browserify-aes: 1.2.0
+      bs58: 4.0.1
+      create-hash: 1.2.0
+      defichain: 3.3.0
+      randombytes: 2.1.0
+      tiny-secp256k1: 1.1.6
+      wif: 2.0.6
+    dev: false
+
+  /@defichain/jellyfish-network/3.3.0_defichain@3.3.0:
+    resolution: {integrity: sha512-oGIZMH5xEC5WV44+9vjAR5ItIQ5ixKOb0+dMYV0PFoRfWCZTpG9Y1PSUuK2mtTzF+iKmA5tJbvhFXcW7wjluzg==}
+    peerDependencies:
+      defichain: ^3.3.0
+    dependencies:
+      bignumber.js: 9.1.0
+      defichain: 3.3.0
+    dev: false
+
+  /@defichain/jellyfish-transaction/3.3.0_defichain@3.3.0:
+    resolution: {integrity: sha512-nn0MUSQ29wNV9/AdrdRpJMQRXFNsARHsB2MPjG51K3df42RQ9jme45uHjNwe+lDgRi3sjc7NEtdAIKPfH28qZw==}
+    peerDependencies:
+      defichain: ^3.3.0
+    dependencies:
+      '@defichain/jellyfish-buffer': 3.3.0_defichain@3.3.0
+      '@defichain/jellyfish-crypto': 3.3.0_defichain@3.3.0
+      defichain: 3.3.0
+    dev: false
+
   /@emotion/is-prop-valid/0.8.8:
     resolution: {integrity: sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==}
     requiresBuild: true
@@ -4868,7 +4929,7 @@ packages:
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
-      '@types/node': 18.11.9
+      '@types/node': 18.11.10
     dev: false
 
   /@types/prettier/2.7.1:
@@ -4900,7 +4961,7 @@ packages:
   /@types/secp256k1/4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
     dependencies:
-      '@types/node': 18.11.9
+      '@types/node': 18.11.10
     dev: false
 
   /@types/semver/7.3.13:
@@ -6248,6 +6309,10 @@ packages:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
     dev: false
 
+  /bech32/2.0.0:
+    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
+    dev: false
+
   /big.js/5.2.2:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
     dev: true
@@ -6276,6 +6341,12 @@ packages:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
     dependencies:
       file-uri-to-path: 1.0.0
+    dev: false
+
+  /bip66/1.1.5:
+    resolution: {integrity: sha512-nemMHz95EmS38a26XbbdxIYj5csHd3RMP3H5bwQknX0WYHF01qhpufP42mLOwVICuH2JmhIhXiWs89MfUGL7Xw==}
+    dependencies:
+      safe-buffer: 5.2.1
     dev: false
 
   /bl/4.1.0:
@@ -7535,6 +7606,11 @@ packages:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
     dependencies:
       clone: 1.0.4
+    dev: false
+
+  /defichain/3.3.0:
+    resolution: {integrity: sha512-ifllmQqBrF1/uaaKzZQAHRfcrPNa75wJhk8/aAooInz5UGH3biHyyTkDCExwWYZO+zvwZrtQZ463SG3tqeARWw==}
+    engines: {node: '>=v16.17.0'}
     dev: false
 
   /define-lazy-prop/2.0.0:
@@ -12155,8 +12231,6 @@ packages:
 
   /nan/2.17.0:
     resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
-    dev: true
-    optional: true
 
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
@@ -15169,6 +15243,18 @@ packages:
     resolution: {integrity: sha512-Vst+6kEsWvb17Zpz14sRJV/f8bUWKhqm6Dc+v08iShmIJ/WxqWytHzCTd6m88pS33rE2zpX34TRmOpAJPloNCA==}
     engines: {node: '>=6'}
 
+  /tiny-secp256k1/1.1.6:
+    resolution: {integrity: sha512-FmqJZGduTyvsr2cF3375fqGHUovSwDi/QytexX1Se4BPuPZpTE5Ftp5fg+EFSuEf3lhZqgCRjEG3ydUQ/aNiwA==}
+    engines: {node: '>=6.0.0'}
+    requiresBuild: true
+    dependencies:
+      bindings: 1.5.0
+      bn.js: 4.12.0
+      create-hmac: 1.1.7
+      elliptic: 6.5.4
+      nan: 2.17.0
+    dev: false
+
   /tmp/0.2.1:
     resolution: {integrity: sha512-76SUhtfqR2Ijn+xllcI5P1oyannHNHByD80W1q447gU3mp9G9PSpGdWmjUOHRDPiHYacIk66W7ubDTuPF3BEtQ==}
     engines: {node: '>=8.17.0'}
@@ -15961,6 +16047,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       string-width: 4.2.3
+
+  /wif/2.0.6:
+    resolution: {integrity: sha512-HIanZn1zmduSF+BQhkE+YXIbEiH0xPr1012QbFEGB0xsKqJii0/SqJjyn8dFv6y36kOznMgMB+LGcbZTJ1xACQ==}
+    dependencies:
+      bs58check: 2.1.2
+    dev: false
 
   /wkx/0.5.0:
     resolution: {integrity: sha512-Xng/d4Ichh8uN4l0FToV/258EjMGU9MGcA0HV2d9B/ZpZB3lqQm7nkOdZdm5GhKtLLhAE7PiVQwN4eN+2YJJUg==}
