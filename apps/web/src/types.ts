@@ -2,7 +2,10 @@
  * Place for common types we want to reuse in entire app
  */
 
-export type Network = "Ethereum" | "DeFiChain";
+export enum Network {
+  Ethereum = "Ethereum",
+  DeFiChain = "DeFiChain",
+}
 
 export type NetworkEnvironment = "mainnet" | "testnet";
 
@@ -14,8 +17,8 @@ export interface TokenDetailI {
 }
 
 export enum SelectionType {
-  Network = "Network",
-  Token = "Token",
+  "Network" = "Network",
+  "Token" = "Token",
 }
 
 export interface TokensI {

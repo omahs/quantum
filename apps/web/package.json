@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@babel/types": "^7.20.5",
-    "@defichain/jellyfish-address": "^3.2.0",
+    "@defichain/jellyfish-address": "^3.3.0",
     "@floating-ui/react-dom": "^1.0.1",
     "@headlessui/react": "^1.7.4",
     "@tailwindcss/line-clamp": "^0.4.2",
@@ -35,7 +35,6 @@
     "react-icons": "^4.7.1",
     "react-responsive": "^9.0.2",
     "sass": "^1.56.1",
-    "tsconfig": "*",
     "wagmi": "^0.8.8"
   },
   "devDependencies": {
@@ -57,6 +56,7 @@
     "eslint-config-next": "13.0.5",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.19",

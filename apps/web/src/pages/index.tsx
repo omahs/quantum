@@ -5,7 +5,7 @@ import ProofOfAssetsCard from "@components/ProofOfAssetsCard";
 function Home() {
   return (
     <section
-      className="relative min-h-screen flex flex-col mt-8 md:mt-7 lg:mt-12"
+      className="relative mt-8 flex min-h-screen flex-col md:mt-7 lg:mt-12"
       data-testid="homepage"
     >
       <div className="flex flex-col md:flex-row w-full px-0 md:px-12 lg:px-[120px]">
