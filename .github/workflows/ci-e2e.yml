@@ -50,7 +50,7 @@ jobs:
       - run: .github/workflows/ci/wait-for http://localhost:19551/ping -t 240
 
       - uses: cypress-io/github-action@d79d2d530a66e641eb4a5f227e13bc985c60b964 # v4.2.2
-        working-directory: apps/web
+        working-directory: ./apps/web
         with:
           config-file: cypress.config.js
           install: false
