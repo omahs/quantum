@@ -4,13 +4,13 @@ importers:
 
   .:
     specifiers:
-      '@birthdayresearch/sticky-turbo': ^0.2.4
       husky: ^8.0.2
       lint-staged: ^13.0.4
+      turbo: ^1.6.3
     devDependencies:
-      '@birthdayresearch/sticky-turbo': 0.2.4
       husky: 8.0.2
       lint-staged: 13.0.4
+      turbo: 1.6.3
 
   apps/server:
     specifiers:
