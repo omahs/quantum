@@ -1,13 +1,12 @@
-import BigNumber from "bignumber.js";
 import Image from "next/image";
 import { FiInfo } from "react-icons/fi";
 import { TokenDetailI } from "types";
 import { truncateTextFromMiddle } from "@utils/textHelper";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import useResponsive from "@hooks/useResponsive";
-import ProgressBar from "./commons/ProgressBar";
 import NumericFormat from "./commons/NumericFormat";
 import BrLogo from "./icons/BrLogo";
+import DailyLimit from "./DailyLimit";
 
 const asset = {
   walletAddress: "0xaab27b150451726ecsds38aa1d0a94505c8729bd1",
@@ -18,10 +17,6 @@ const asset = {
 export default function ProofOfAssetsCard() {
   const { isLg } = useResponsive();
   const { selectedTokensA, selectedTokensB } = useNetworkContext();
-  const limitPercentage = new BigNumber(asset.usedLimit)
-    .dividedBy(asset.dailyLimit)
-    .multipliedBy(100)
-    .decimalPlaces(0, BigNumber.ROUND_DOWN);
 
   return (
     <div className="hidden md:block relative w-full dark-card-bg-image rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px] px-6 pt-6 lg:px-8 lg:pt-8">
@@ -45,24 +40,7 @@ export default function ProofOfAssetsCard() {
         <TokenSupplyItem token={selectedTokensB.tokenA} />
       </div>
       <div className="mt-5 lg:mt-6">
-        <div className="flex items-center mb-2">
-          <span className="text-xs lg:text-sm font-semibold lg:tracking-wide text-dark-700">
-            DAILY LIMIT
-          </span>
-          <button type="button" className="ml-2">
-            {/* TODO: Disply daily limit info onclick */}
-            <FiInfo size={16} className="text-dark-700" />
-          </button>
-        </div>
-        <ProgressBar progressPercentage={limitPercentage} />
-      </div>
-      <div className="mt-2 flex items-center justify-between">
-        <span className="text-sm lg:text-base text-dark-900">
-          {`${asset.usedLimit} ${selectedTokensA.tokenA.symbol} (${limitPercentage}%)`}
-        </span>
-        <span className="text-sm lg:text-base text-dark-700">
-          {`/${asset.dailyLimit} ${selectedTokensA.tokenA.symbol}`}
-        </span>
+        <DailyLimit />
       </div>
       <div className="flex items-center rounded-b-lg lg:rounded-b-xl dark-bg-card-section -mx-6 mt-4 lg:-mx-8 lg:mt-6 px-6 pt-4 pb-5 lg:px-8 lg:py-5">
         <span className="text-xs text-dark-700 mr-2 lg:mr-3">Backed by</span>
