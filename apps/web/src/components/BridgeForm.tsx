@@ -7,6 +7,7 @@ import { SwitchIcon } from "./icons/SwitchIcon";
 import { ArrowDownIcon } from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
 import WalletAddressInput from "./WalletAddressInput";
+import DailyLimit from "./DailyLimit";
 
 export default function BridgeForm() {
   const {
@@ -110,7 +111,9 @@ export default function BridgeForm() {
       </div>
       <div className="flex flex-row justify-between items-center px-5">
         <div className="flex flex-row items-center">
-          <span className="text-dark-700 text-xs lg:text-base">Fees</span>
+          <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
+            Fees
+          </span>
           {/* TODO add onclick info */}
           <button type="button">
             <FiInfo size={16} className="text-dark-700 ml-2" />
@@ -123,6 +126,9 @@ export default function BridgeForm() {
           thousandSeparator
           suffix={` ${selectedTokensA.tokenA.name}`}
         />
+      </div>
+      <div className="block md:hidden px-5 mt-4">
+        <DailyLimit />
       </div>
       <div className="mt-8 px-6 md:mt-6 md:px-4 lg:mt-16 lg:mb-0 lg:px-[88px]">
         <button
