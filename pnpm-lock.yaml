@@ -38,7 +38,7 @@ importers:
       ts-loader: ^9.4.1
       ts-node: ^10.9.1
       tsconfig-paths: ^4.1.0
-      typeorm: ^0.3.10
+      typeorm: ^0.3.11
     dependencies:
       '@nestjs/common': 9.2.1_upcmjahfwlai3vw7b2ah62xipi
       '@nestjs/config': 2.2.0_zgn5mu6qrgzh2mkt2kmizzegr4
@@ -46,7 +46,7 @@ importers:
       '@nestjs/platform-express': 9.2.1_hjcqpoaebdr7gdo5hgc22hthbe
       class-validator: 0.13.2
       pg: 8.8.0
-      typeorm: 0.3.10_pg@8.8.0+ts-node@10.9.1
+      typeorm: 0.3.11_pg@8.8.0+ts-node@10.9.1
     devDependencies:
       '@birthdayresearch/eslint-config': 0.2.4_typescript@4.9.3
       '@birthdayresearch/sticky-prettier': 0.2.4
@@ -13667,14 +13667,14 @@ packages:
   /typedarray/0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  /typeorm/0.3.10_pg@8.8.0+ts-node@10.9.1:
-    resolution: {integrity: sha512-VMKiM84EpJQ+Mz9xDIPqnfplWhyUy1d8ccaKdMY9obifxJOTFnv8GYVyPsGwG8Lk7Nb8MlttHyHWENGAhBA3WA==}
+  /typeorm/0.3.11_pg@8.8.0+ts-node@10.9.1:
+    resolution: {integrity: sha512-pzdOyWbVuz/z8Ww6gqvBW4nylsM0KLdUCDExr2gR20/x1khGSVxQkjNV/3YqliG90jrWzrknYbYscpk8yxFJVg==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
     peerDependencies:
       '@google-cloud/spanner': ^5.18.0
       '@sap/hana-client': ^2.12.25
-      better-sqlite3: ^7.1.2
+      better-sqlite3: ^7.1.2 || ^8.0.0
       hdb-pool: ^0.1.6
       ioredis: ^5.0.4
       mongodb: ^3.6.0
