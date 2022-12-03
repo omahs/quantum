@@ -7,12 +7,7 @@ import useResponsive from "@hooks/useResponsive";
 import NumericFormat from "./commons/NumericFormat";
 import BrLogo from "./icons/BrLogo";
 import DailyLimit from "./DailyLimit";
-
-const asset = {
-  walletAddress: "0xaab27b150451726ecsds38aa1d0a94505c8729bd1",
-  dailyLimit: 25,
-  usedLimit: 12.675,
-};
+import { mockWallet } from "./Header";
 
 export default function ProofOfAssetsCard() {
   const { isLg } = useResponsive();
@@ -24,7 +19,7 @@ export default function ProofOfAssetsCard() {
         Proof of assets
       </span>
       <div className="text-xs lg:text-sm text-valid">
-        {truncateTextFromMiddle(asset.walletAddress, isLg ? 16 : 10)}
+        {truncateTextFromMiddle(mockWallet.address, isLg ? 16 : 10)}
       </div>
       <div className="flex items-center mt-5 lg:mt-6">
         <span className="text-xs lg:text-sm font-semibold lg:tracking-wide text-dark-700">

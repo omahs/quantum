@@ -20,12 +20,13 @@ interface TabletOrWebProps extends MobileProps {
   wallet: Wallet;
 }
 
+// TODO: Replace test data here
+export const mockWallet = {
+  address: "0xaab27b150451726ecsds38aa1d0a94505c8729bd1",
+  token: "Ethereum",
+};
+
 export default function Header(): JSX.Element {
-  // TODO: Replace test data here
-  const mockWallet = {
-    address: "0xaab27b150451726ecsds38aa1d0a94505c8729bd1",
-    token: "Ethereum",
-  };
   const [wallet, setWallet] = useState<Wallet>();
 
   return (

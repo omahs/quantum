@@ -1,4 +1,5 @@
 import { useNetworkContext } from "@contexts/NetworkContext";
+import useResponsive from "@hooks/useResponsive";
 import BigNumber from "bignumber.js";
 import { FiInfo } from "react-icons/fi";
 import NumericFormat from "./commons/NumericFormat";
@@ -6,15 +7,16 @@ import ProgressBar from "./commons/ProgressBar";
 
 const DAILY_CAP = {
   dailyLimit: 25,
-  usedLimit: 12.675,
+  reachedLimit: 12.675,
 };
 
 export default function DailyLimit() {
+  const { isXl } = useResponsive();
   const { selectedTokensA } = useNetworkContext();
-  const limitPercentage = new BigNumber(DAILY_CAP.usedLimit)
+  const limitPercentage = new BigNumber(DAILY_CAP.reachedLimit)
     .dividedBy(DAILY_CAP.dailyLimit)
     .multipliedBy(100)
-    .decimalPlaces(0, BigNumber.ROUND_DOWN);
+    .decimalPlaces(2);
 
   const getFillColor = () => {
     let color = "bg-error";
@@ -43,16 +45,19 @@ export default function DailyLimit() {
           fillColor={getFillColor()}
         />
       </div>
-      <div className="md:mt-2 flex items-center justify-between">
+      <div className="md:mt-2 flex items-center text-xs md:text-sm lg:text-base">
         <NumericFormat
-          className="text-xs md:text-sm lg:text-base text-dark-900"
-          value={DAILY_CAP.usedLimit}
+          className="text-dark-900"
+          value={DAILY_CAP.reachedLimit}
           decimalScale={3}
           thousandSeparator
-          suffix={` ${selectedTokensA.tokenA.symbol} (${limitPercentage}%)`}
+          suffix={` ${selectedTokensA.tokenA.symbol}`}
         />
+        <span className="hidden md:block text-dark-700 ml-1">
+          {`(${limitPercentage}%${isXl ? " reached" : ""})`}
+        </span>
         <NumericFormat
-          className="hidden md:inline-block text-sm lg:text-base text-dark-700"
+          className="self-end text-right text-dark-700 grow ml-0.5"
           value={DAILY_CAP.dailyLimit}
           decimalScale={0}
           thousandSeparator
