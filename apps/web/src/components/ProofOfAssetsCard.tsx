@@ -10,22 +10,24 @@ import DailyLimit from "./DailyLimit";
 import { mockWallet } from "./Header";
 
 export default function ProofOfAssetsCard() {
-  const { isLg } = useResponsive();
+  const { isMd, isLg } = useResponsive();
   const { selectedTokensA, selectedTokensB } = useNetworkContext();
 
   return (
-    <div className="hidden md:block relative w-full dark-card-bg-image rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px] px-6 pt-6 lg:px-8 lg:pt-8">
-      <span className="block text-lg lg:text-2xl font-semibold leading-6 lg:leading-9 tracking-wide text-dark-900">
+    <div className="h-full md:h-auto relative w-full md:dark-card-bg-image md:rounded-lg lg:rounded-xl md:border md:border-dark-200 md:backdrop-blur-[18px] md:px-6 md:pt-6 lg:px-8 lg:pt-8">
+      <span className="hidden md:block text-lg lg:text-2xl font-semibold leading-6 lg:leading-9 tracking-wide text-dark-900">
         Proof of assets
       </span>
-      <div className="text-xs lg:text-sm text-valid">
-        {truncateTextFromMiddle(mockWallet.address, isLg ? 16 : 10)}
+      <div className="text-sm md:text-xs lg:text-sm text-valid break-all pr-[76px] md:pr-0">
+        {isMd
+          ? truncateTextFromMiddle(mockWallet.address, isLg ? 16 : 10)
+          : mockWallet.address}
       </div>
       <div className="flex items-center mt-5 lg:mt-6">
         <span className="text-xs lg:text-sm font-semibold lg:tracking-wide text-dark-700">
           TOKEN SUPPLY
         </span>
-        <button type="button" className="ml-2">
+        <button type="button" className="ml-2 focus:outline-none">
           {/* TODO: Disply token supply info onclick */}
           <FiInfo size={16} className="text-dark-700" />
         </button>
@@ -34,10 +36,10 @@ export default function ProofOfAssetsCard() {
         <TokenSupplyItem token={selectedTokensA.tokenA} />
         <TokenSupplyItem token={selectedTokensB.tokenA} />
       </div>
-      <div className="mt-5 lg:mt-6">
+      <div className="hidden md:block mt-5 lg:mt-6">
         <DailyLimit />
       </div>
-      <div className="flex items-center rounded-b-lg lg:rounded-b-xl dark-bg-card-section -mx-6 mt-4 lg:-mx-8 lg:mt-6 px-6 pt-4 pb-5 lg:px-8 lg:py-5">
+      <div className="flex items-center border-t-[0.5px] border-t-dark-200 md:border-t-0 rounded-b-lg lg:rounded-b-xl md:dark-bg-card-section md:-mx-6 mt-5 md:mt-4 lg:mt-6 lg:-mx-8 pt-4 pb-0 md:pb-5 md:px-6 lg:px-8 lg:py-5">
         <span className="text-xs text-dark-700 mr-2 lg:mr-3">Backed by</span>
         <BrLogo size={isLg ? 20 : 14} />
       </div>
