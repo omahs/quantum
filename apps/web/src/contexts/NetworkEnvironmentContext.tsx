@@ -5,18 +5,18 @@ import React, {
   useState,
   PropsWithChildren,
 } from "react";
-import { EnvironmentNetwork } from "types";
+import { NetworkEnvironment } from "types";
 
 const DEFAULT_ENV_NETWORK = "mainnet";
-const NETWORK_ENV_DISPLAY_NAME: Record<EnvironmentNetwork, string> = {
+const NETWORK_ENV_DISPLAY_NAME: Record<NetworkEnvironment, string> = {
   mainnet: "MainNet",
   testnet: "TestNet",
 };
 
 interface NetworkContextI {
-  networkEnv: EnvironmentNetwork;
+  networkEnv: NetworkEnvironment;
   networkEnvDisplayName: string;
-  updateNetworkEnv: (networkEnv: EnvironmentNetwork) => void;
+  updateNetworkEnv: (networkEnv: NetworkEnvironment) => void;
 }
 
 const NetworkEnvironmentContext = createContext<NetworkContextI>(
@@ -31,12 +31,12 @@ export function NetworkEnvironmentProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
   const [networkEnv, setNetworkEnv] =
-    useState<EnvironmentNetwork>(DEFAULT_ENV_NETWORK);
+    useState<NetworkEnvironment>(DEFAULT_ENV_NETWORK);
   const [networkEnvDisplayName, setNetworkEnvDisplayName] = useState<string>(
     NETWORK_ENV_DISPLAY_NAME[DEFAULT_ENV_NETWORK]
   );
 
-  const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
+  const handleNetworkEnvChange = (value: NetworkEnvironment) => {
     setNetworkEnv(value);
     setNetworkEnvDisplayName(NETWORK_ENV_DISPLAY_NAME[value]);
   };

@@ -5,25 +5,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { Strategy } from "@floating-ui/react-dom";
-
-export enum SelectionType {
-  Network = "Network",
-  Token = "Token",
-}
-
-export interface TokenDetailI {
-  name: string;
-  icon: string;
-}
-
-export interface TokensI {
-  tokenA: TokenDetailI;
-  tokenB: TokenDetailI;
-}
-
-export interface NetworkOptionsI extends TokenDetailI {
-  tokens: TokensI[];
-}
+import { SelectionType, NetworkOptionsI, TokensI } from "types";
 
 interface SelectorI {
   disabled?: boolean;
