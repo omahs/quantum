@@ -20,7 +20,7 @@
   "devDependencies": {
     "@birthdayresearch/sticky-turbo": "^0.2.4",
     "husky": "^8.0.2",
-    "lint-staged": "^13.0.4"
+    "lint-staged": "^13.1.0"
   },
   "engines": {
     "node": "^18.0.0 || ^16.16.0",
