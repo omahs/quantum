@@ -49,7 +49,7 @@ export default function BottomModal({
                 <h3 className="text-xl font-bold text-dark-900">{title}</h3>
                 <FiXCircle
                   size={24}
-                  className="text-dark-900 cursor-pointer"
+                  className="text-dark-900 cursor-pointer hover:opacity-70"
                   onClick={onClose}
                 />
               </Dialog.Title>

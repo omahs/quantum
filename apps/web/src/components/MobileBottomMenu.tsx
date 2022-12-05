@@ -44,10 +44,10 @@ export default function MobileBottomMenu() {
           <li
             key={item.title}
             aria-hidden="true"
-            className="flex flex-col items-center gap-2 cursor-pointer"
+            className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-70"
             onClick={item.onClick}
           >
-            <Icon size={28} className="text-dark-1000" />
+            <Icon size={28} className="text-dark-900" />
             <span className="text-xs font-semibold text-dark-900">
               {item.title}
             </span>
