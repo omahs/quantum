@@ -45,7 +45,7 @@ export default function ProofOfAssetsCard() {
       <div className="hidden md:block mt-5 lg:mt-6">
         <DailyLimit />
       </div>
-      <div className="flex items-center border-t-[0.5px] border-t-dark-200 md:border-t-0 rounded-b-lg lg:rounded-b-xl md:dark-bg-card-section md:-mx-6 mt-5 md:mt-4 lg:mt-6 lg:-mx-8 pt-4 pb-0 md:pb-5 md:px-6 lg:px-8 lg:py-5">
+      <div className="flex items-center border-t-[0.5px] border-t-dark-200 md:border-t-0 rounded-b-lg lg:rounded-b-xl md:dark-bg-card-section md:-mx-6 mt-5 md:mt-4 lg:mt-6 lg:-mx-8 pt-4 pb-0 md:pb-5 md:px-6 lg:px-8">
         <span className="text-xs text-dark-700 mr-2 lg:mr-3">Backed by</span>
         <BrLogo size={isLg ? 20 : 14} />
       </div>

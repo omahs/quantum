@@ -19,7 +19,7 @@ export default function MobileBottomMenu() {
   const menuList: MenuListItem[] = [
     {
       id: "assets",
-      title: "Proof of Assets",
+      title: "Proof of assets",
       icon: FiShield,
       onClick: () => setOpenProofOfAssets(true),
     },
@@ -39,7 +39,7 @@ export default function MobileBottomMenu() {
 
   return (
     <>
-      <ul className="flex justify-between">
+      <ul className="grid grid-cols-3 gap-2">
         {menuList.map(({ icon: Icon, ...item }) => (
           <li
             key={item.title}
