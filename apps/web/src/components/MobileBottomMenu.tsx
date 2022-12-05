@@ -39,23 +39,24 @@ export default function MobileBottomMenu() {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2">
-        {menuList.map(({ icon: Icon, ...item }) => (
-          <div
-            key={item.title}
-            role="button"
-            className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-70"
-            onClick={item.onClick}
-            onKeyDown={() => {}}
-            tabIndex={0}
-          >
-            <Icon size={28} className="text-dark-900" />
-            <span className="text-xs font-semibold text-dark-900">
-              {item.title}
-            </span>
-          </div>
-        ))}
-      </div>
+      <nav>
+        <ul className="grid grid-cols-3 gap-2">
+          {menuList.map(({ icon: Icon, ...item }) => (
+            <li key={item.title}>
+              <button
+                type="button"
+                className="w-full flex flex-col items-center gap-2 cursor-pointer hover:opacity-70"
+                onClick={item.onClick}
+              >
+                <Icon size={28} className="text-dark-900" />
+                <span className="text-xs font-semibold text-dark-900">
+                  {item.title}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <BottomModal
         title="Proof of assets"
         isOpen={openProofOfAssets}

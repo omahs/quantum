@@ -65,7 +65,7 @@ function TokenSupplyItem({ token }: { token: TokenDetailI }) {
       />
       <span>
         <NumericFormat
-          className="text-left text-dark-900 lg:text-lg leading-5 lg:leading-6 tracking-[0.01em] lg:tracking-normal ml-2 lg:ml-1"
+          className="text-left text-dark-900 text-lg md:text-base lg:text-lg leading-5 lg:leading-6 tracking-[0.01em] lg:tracking-normal ml-2 lg:ml-1"
           value={token.supply}
           decimalScale={4}
           thousandSeparator
