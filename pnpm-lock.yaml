@@ -86,7 +86,7 @@ importers:
       axios: ^1.2.0
       babel-plugin-istanbul: ^6.1.1
       babel-plugin-jsx-remove-data-test-id: ^3.0.0
-      bignumber.js: ^9.1.0
+      bignumber.js: ^9.1.1
       clsx: ^1.2.1
       connectkit: ^1.1.0
       cypress: ^11.2.0
@@ -120,7 +120,7 @@ importers:
       '@headlessui/react': 1.7.4_biqbaboplfbrettd7655fr4n2y
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
       axios: 1.2.0
-      bignumber.js: 9.1.0
+      bignumber.js: 9.1.1
       clsx: 1.2.1
       connectkit: 1.1.0_sqiyqnfus3bkwatozrfzljp6nm
       dayjs: 1.11.6
@@ -1766,7 +1766,7 @@ packages:
     peerDependencies:
       defichain: ^3.4.1
     dependencies:
-      bignumber.js: 9.1.0
+      bignumber.js: 9.1.1
       bn.js: 5.2.1
       defichain: 3.4.1
       smart-buffer: 4.2.0
@@ -1793,7 +1793,7 @@ packages:
     peerDependencies:
       defichain: ^3.4.1
     dependencies:
-      bignumber.js: 9.1.0
+      bignumber.js: 9.1.1
       defichain: 3.4.1
     dev: false
 
@@ -5135,8 +5135,8 @@ packages:
       bindings: 1.5.0
     dev: false
 
-  /bignumber.js/9.1.0:
-    resolution: {integrity: sha512-4LwHK4nfDOraBCtst+wOWIHbu1vhvAPJK8g8nROd4iuc3PSEjWif/qwbkh8jwCJz6yDBvtU4KPynETgrfh7y3A==}
+  /bignumber.js/9.1.1:
+    resolution: {integrity: sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==}
     dev: false
 
   /binary-extensions/2.2.0:
