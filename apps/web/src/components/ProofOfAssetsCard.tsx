@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FiInfo } from "react-icons/fi";
 import { TokenDetailI } from "types";
 import { truncateTextFromMiddle } from "@utils/textHelper";
@@ -18,11 +19,16 @@ export default function ProofOfAssetsCard() {
       <span className="hidden md:block text-lg lg:text-2xl font-semibold leading-6 lg:leading-9 tracking-wide text-dark-900">
         Proof of assets
       </span>
-      <div className="text-sm md:text-xs lg:text-sm text-valid break-all pr-[76px] md:pr-0">
-        {isMd
-          ? truncateTextFromMiddle(mockWallet.address, isLg ? 16 : 10)
-          : mockWallet.address}
-      </div>
+      <Link
+        href={`/address/${mockWallet.address}`}
+        className="focus:outline-none"
+      >
+        <div className="text-sm md:text-xs lg:text-sm text-valid break-all pr-[76px] md:pr-0 hover:underline">
+          {isMd
+            ? truncateTextFromMiddle(mockWallet.address, isLg ? 16 : 10)
+            : mockWallet.address}
+        </div>
+      </Link>
       <div className="flex items-center mt-5 lg:mt-6">
         <span className="text-xs lg:text-sm font-semibold lg:tracking-wide text-dark-700">
           TOKEN SUPPLY
