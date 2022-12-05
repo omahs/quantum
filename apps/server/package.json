@@ -44,12 +44,12 @@
     "@nestjs/platform-express": "^9.2.1",
     "class-validator": "^0.13.2",
     "pg": "^8.8.0",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.11"
   },
   "devDependencies": {
     "@birthdayresearch/eslint-config": "^0.2.4",
     "@birthdayresearch/sticky-prettier": "^0.2.4",
-    "@birthdayresearch/sticky-typescript": "^0.2.4",
+    "@birthdayresearch/sticky-typescript": "^0.3.0",
     "@birthdayresearch/sticky-turbo-jest": "^0.2.4",
     "@nestjs/cli": "^9.1.5",
     "@nestjs/schematics": "^9.0.3",
@@ -60,7 +60,7 @@
     "@types/supertest": "^2.0.12",
     "light-my-request": "^5.7.0",
     "source-map-support": "^0.5.21",
-    "supertest": "^6.3.1",
+    "supertest": "^6.3.2",
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",

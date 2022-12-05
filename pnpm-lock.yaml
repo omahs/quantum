@@ -17,7 +17,7 @@ importers:
       '@birthdayresearch/eslint-config': ^0.2.4
       '@birthdayresearch/sticky-prettier': ^0.2.4
       '@birthdayresearch/sticky-turbo-jest': ^0.2.4
-      '@birthdayresearch/sticky-typescript': ^0.2.4
+      '@birthdayresearch/sticky-typescript': ^0.3.0
       '@nestjs/cli': ^9.1.5
       '@nestjs/common': ^9.2.1
       '@nestjs/config': ^2.2.0
@@ -33,12 +33,12 @@ importers:
       light-my-request: ^5.7.0
       pg: ^8.8.0
       source-map-support: ^0.5.21
-      supertest: ^6.3.1
+      supertest: ^6.3.2
       ts-jest: ^29.0.3
       ts-loader: ^9.4.1
       ts-node: ^10.9.1
       tsconfig-paths: ^4.1.0
-      typeorm: ^0.3.10
+      typeorm: ^0.3.11
     dependencies:
       '@nestjs/common': 9.2.1_upcmjahfwlai3vw7b2ah62xipi
       '@nestjs/config': 2.2.0_zgn5mu6qrgzh2mkt2kmizzegr4
@@ -46,12 +46,12 @@ importers:
       '@nestjs/platform-express': 9.2.1_hjcqpoaebdr7gdo5hgc22hthbe
       class-validator: 0.13.2
       pg: 8.8.0
-      typeorm: 0.3.10_pg@8.8.0+ts-node@10.9.1
+      typeorm: 0.3.11_pg@8.8.0+ts-node@10.9.1
     devDependencies:
       '@birthdayresearch/eslint-config': 0.2.4_typescript@4.9.3
       '@birthdayresearch/sticky-prettier': 0.2.4
       '@birthdayresearch/sticky-turbo-jest': 0.2.4_47sz4poe4lptz2zyaue2bpr6be
-      '@birthdayresearch/sticky-typescript': 0.2.4
+      '@birthdayresearch/sticky-typescript': 0.3.0
       '@nestjs/cli': 9.1.5
       '@nestjs/schematics': 9.0.3_typescript@4.9.3
       '@nestjs/testing': 9.2.1_wdbvfsxfdwzlwdfiyh2gynjl4m
@@ -61,7 +61,7 @@ importers:
       '@types/supertest': 2.0.12
       light-my-request: 5.7.0
       source-map-support: 0.5.21
-      supertest: 6.3.1
+      supertest: 6.3.2
       ts-jest: 29.0.3_gruvivcimsmdfhnjphbo3uejz4
       ts-loader: 9.4.2_ioost42n2pkm3q6vbnx4ypyu7a
       ts-node: 10.9.1_eoe7put6ewfbqpy6gs36tihw6y
@@ -80,7 +80,7 @@ importers:
       '@tailwindcss/typography': ^0.5.8
       '@testing-library/cypress': ^8.0.7
       '@types/node': 18.11.10
-      '@types/react': 18.0.25
+      '@types/react': 18.0.26
       '@types/react-dom': 18.0.9
       autoprefixer: ^10.4.13
       axios: ^1.2.0
@@ -141,7 +141,7 @@ importers:
       '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
       '@testing-library/cypress': 8.0.7_cypress@11.2.0
       '@types/node': 18.11.10
-      '@types/react': 18.0.25
+      '@types/react': 18.0.26
       '@types/react-dom': 18.0.9
       autoprefixer: 10.4.13_postcss@8.4.19
       babel-plugin-istanbul: 6.1.1
@@ -1614,8 +1614,8 @@ packages:
       turbo: 1.6.3
     dev: true
 
-  /@birthdayresearch/sticky-typescript/0.2.4:
-    resolution: {integrity: sha512-08FcsovWmhrgcNPyX+XXO+NblI3/QDwjw1s/Re+fGA4THUGN3mmqeBzOPIQoxN5Ag7onFuptgVZNcxxGcQjRcQ==}
+  /@birthdayresearch/sticky-typescript/0.3.0:
+    resolution: {integrity: sha512-c4Z4t/wXD1UTz68VkIsA4hHmtuIpErr/R9bc6xyxg8I9oYFZnaWBv2AM9gLmG/7phNZ1xWQIJFXGSrdiCG1FXw==}
     dependencies:
       typescript: 4.7.4
     dev: true
@@ -3863,11 +3863,11 @@ packages:
   /@types/react-dom/18.0.9:
     resolution: {integrity: sha512-qnVvHxASt/H7i+XG1U1xMiY5t+IHcPGUK7TDMDzom08xa7e86eCeKOiLZezwCKVxJn6NEiiy2ekgX8aQssjIKg==}
     dependencies:
-      '@types/react': 18.0.25
+      '@types/react': 18.0.26
     dev: true
 
-  /@types/react/18.0.25:
-    resolution: {integrity: sha512-xD6c0KDT4m7n9uD4ZHi02lzskaiqcBxf4zi+tXZY98a04wvc0hi/TcCPC2FOESZi51Nd7tlUeOJY8RofL799/g==}
+  /@types/react/18.0.26:
+    resolution: {integrity: sha512-hCR3PJQsAIXyxhTNSiDFY//LhnMZWpNNr5etoCqx/iUfGc5gXWtQR2Phl908jVR6uPXacojQWTg4qRpkxTuGug==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -13114,8 +13114,8 @@ packages:
     resolution: {integrity: sha512-nPewA6m9mR3d6k7WkZ8N8zpTWfenFH3q9pA2PkuiZxINr9DKB2+40wEQf0ixn8VaGuJ78AB6iWOtStI+/4FKZQ==}
     dev: false
 
-  /supertest/6.3.1:
-    resolution: {integrity: sha512-hRohNeIfk/cA48Cxpa/w48hktP6ZaRqXb0QV5rLvW0C7paRsBU3Q5zydzYrslOJtj/gd48qx540jKtcs6vG1fQ==}
+  /supertest/6.3.2:
+    resolution: {integrity: sha512-mSmbW/sPpBU6K8w8189ZiHdc62zMe7dCHpC2ktS9tc0/d2DN0FaxNbDJJNFknZD4jCrGJpxkiFoVyemvKgOdwA==}
     engines: {node: '>=6.4.0'}
     dependencies:
       methods: 1.1.2
@@ -13667,14 +13667,14 @@ packages:
   /typedarray/0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  /typeorm/0.3.10_pg@8.8.0+ts-node@10.9.1:
-    resolution: {integrity: sha512-VMKiM84EpJQ+Mz9xDIPqnfplWhyUy1d8ccaKdMY9obifxJOTFnv8GYVyPsGwG8Lk7Nb8MlttHyHWENGAhBA3WA==}
+  /typeorm/0.3.11_pg@8.8.0+ts-node@10.9.1:
+    resolution: {integrity: sha512-pzdOyWbVuz/z8Ww6gqvBW4nylsM0KLdUCDExr2gR20/x1khGSVxQkjNV/3YqliG90jrWzrknYbYscpk8yxFJVg==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
     peerDependencies:
       '@google-cloud/spanner': ^5.18.0
       '@sap/hana-client': ^2.12.25
-      better-sqlite3: ^7.1.2
+      better-sqlite3: ^7.1.2 || ^8.0.0
       hdb-pool: ^0.1.6
       ioredis: ^5.0.4
       mongodb: ^3.6.0
