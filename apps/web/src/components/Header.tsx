@@ -23,8 +23,8 @@ interface TabletOrWebProps extends MobileProps {
 function MobileWallet({ walletText, show }: MobileProps) {
   return show ? (
     <>
-      <div className="bg-valid mr-2 h-3 w-3 rounded-full" />
-      <span className="text-dark-1000 text-xs">{walletText}</span>
+      <div className="mr-2 h-3 w-3 rounded-full bg-valid" />
+      <span className="text-xs text-dark-1000">{walletText}</span>
     </>
   ) : null;
 }
@@ -35,10 +35,10 @@ function TabletOrWebWallet({ wallet, walletText, show }: TabletOrWebProps) {
       <MetaMaskIcon />
 
       <div className="ml-2 text-left">
-        <span className="text-dark-1000 block text-sm">{walletText}</span>
+        <span className="block text-sm text-dark-1000">{walletText}</span>
         <div className="flex items-center">
-          <span className="text-dark-700 text-xs">{wallet.token}</span>
-          <div className="bg-valid ml-1 h-2 w-2 rounded-full" />
+          <span className="text-xs text-dark-700">{wallet.token}</span>
+          <div className="ml-1 h-2 w-2 rounded-full bg-valid" />
         </div>
       </div>
     </div>
@@ -69,7 +69,7 @@ function ConnectButtonDisplay({
       )}
       onClick={onClick}
     >
-      <span className="text-dark-1000 text-sm font-semibold">{btnLabel}</span>
+      <span className="text-sm font-semibold text-dark-1000">{btnLabel}</span>
     </button>
   );
 }
@@ -89,8 +89,8 @@ function WalletDisplay({
       type="button"
       onClick={onClick}
       className={clsx(
-        `hover:dark-btn-hover active:dark-btn-pressed border-dark-card-stroke dark-card-bg flex h-8 items-center rounded-[48px]
-          border-[0.5px] px-3 py-2 hover:border-transparent md:h-[52px]
+        `hover:dark-btn-hover active:dark-btn-pressed dark-card-bg flex h-8 items-center rounded-[48px]
+          border-[0.5px] border-dark-card-stroke px-3 py-2 hover:border-transparent md:h-[52px]
           md:w-[156px] lg:h-12 lg:w-[165px]
           lg:px-2.5 lg:py-1.5`
       )}
@@ -105,7 +105,7 @@ export default function Header(): JSX.Element {
   const [wallet, setWallet] = useState<Wallet>();
 
   return (
-    <div className="bg-dark-00 relative z-[1] flex items-center justify-between px-5 pt-8 pb-6 md:px-12 md:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
+    <div className="relative z-[1] flex items-center justify-between bg-dark-00 px-5 pt-8 pb-6 md:px-12 md:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
       <Link href="/">
         <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px]">
           <Image
