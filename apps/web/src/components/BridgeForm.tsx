@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
-import { FiInfo } from "react-icons/fi";
 import BigNumber from "bignumber.js";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
 import { Network, SelectionType, TokensI, NetworkOptionsI } from "types";
@@ -11,6 +10,7 @@ import ArrowDownIcon from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
 import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
+import IconTooltip from "./commons/IconTooltip";
 
 function SwitchButton({ onClick }: { onClick: () => void }) {
   return (
@@ -186,10 +186,12 @@ export default function BridgeForm() {
           <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
             Fees
           </span>
-          {/* TODO add onclick info */}
-          <button type="button">
-            <FiInfo size={16} className="ml-2 text-dark-700" />
-          </button>
+          <div className="ml-2">
+            <IconTooltip
+              title="Fees"
+              content="Fees to cover the cost of transactions on DeFiChain and Ethereum networks. For more information, visit our user guide."
+            />
+          </div>
         </div>
         <NumericFormat
           className="text-left text-xs text-dark-1000 lg:text-base"

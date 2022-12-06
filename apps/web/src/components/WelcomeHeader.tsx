@@ -1,4 +1,5 @@
-import { FiInfo, FiBook, FiHelpCircle } from "react-icons/fi";
+import { FiBook, FiHelpCircle } from "react-icons/fi";
+import IconTooltip from "./commons/IconTooltip";
 
 export default function WelcomeHeader() {
   return (
@@ -15,7 +16,10 @@ export default function WelcomeHeader() {
           Consortium
         </span>
         <button type="button" className="ml-1 align-middle">
-          <FiInfo size={16} className="text-dark-700" />
+          <IconTooltip
+            title="DeFiChain Consortium"
+            content="DeFiChain members that have been given the rights to mint and burn the Tokenized Assets on DeFiChain."
+          />
         </button>
       </div>
       <div className="hidden md:block">
