@@ -30,7 +30,7 @@ importers:
       '@types/node': ^18.11.9
       '@types/supertest': ^2.0.12
       class-validator: ^0.13.2
-      light-my-request: ^5.7.0
+      light-my-request: ^5.8.0
       pg: ^8.8.0
       source-map-support: ^0.5.21
       supertest: ^6.3.2
@@ -59,7 +59,7 @@ importers:
       '@types/jest': 29.2.3
       '@types/node': 18.11.10
       '@types/supertest': 2.0.12
-      light-my-request: 5.7.0
+      light-my-request: 5.8.0
       source-map-support: 0.5.21
       supertest: 6.3.2
       ts-jest: 29.0.3_gruvivcimsmdfhnjphbo3uejz4
@@ -9819,8 +9819,8 @@ packages:
   /libphonenumber-js/1.10.14:
     resolution: {integrity: sha512-McGS7GV/WjJ2KjfOGhJU1oJn29RYeo7Q+RpANRbUNMQ9gj5XArpbjurSuyYPTejFwbaUojstQ4XyWCrAzGOUXw==}
 
-  /light-my-request/5.7.0:
-    resolution: {integrity: sha512-hIs5SH/K8/QuOdn3mwLxZnyIqr0AEyVD818lK8eq2gcfpuWUS5x6SjZ+XJumRGi8OBESiwwbfqtCL8eBNi42kw==}
+  /light-my-request/5.8.0:
+    resolution: {integrity: sha512-4BtD5C+VmyTpzlDPCZbsatZMJVgUIciSOwYhJDCbLffPZ35KoDkDj4zubLeHDEb35b4kkPeEv5imbh+RJxK/Pg==}
     dependencies:
       cookie: 0.5.0
       process-warning: 2.0.0
