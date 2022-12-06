@@ -1,6 +1,6 @@
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { FiInfo } from "react-icons/fi";
-import { networks, useNetworkContext } from "contexts/NetworkContext";
+import { networks, useNetworkContext } from "@contexts/NetworkContext";
 import { Network, SelectionType, TokensI, NetworkOptionsI } from "types";
 import InputSelector from "./InputSelector";
 import SwitchIcon from "./icons/SwitchIcon";
