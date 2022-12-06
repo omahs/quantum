@@ -36,7 +36,7 @@ export default function WalletAddressInput({
   const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
   const { networkEnv, networkEnvDisplayName } = useNetworkEnvironmentContext();
-  const { isSm } = useResponsive();
+  const { isMd } = useResponsive();
   useAutoResizeTextArea(textAreaRef.current, [addressInput, placeholder]);
 
   const validateAddressInput = (input: string): void => {
@@ -156,7 +156,7 @@ export default function WalletAddressInput({
             "cursor-pointer hover:bg-dark-200 active:dark-btn-pressed":
               !disabled,
           })}
-          disableTooltip={disabled || !isSm} // Disable tooltip for mobile
+          disableTooltip={disabled || !isMd} // Disable tooltip for mobile
         >
           <FiClipboard
             size={20}
@@ -236,7 +236,7 @@ function AddressWithVerifiedBadge({
   const { isLg } = useResponsive();
   return (
     <div
-      aria-hidden="true"
+      role="button"
       className={clsx(
         "relative mr-10 w-full break-all bg-transparent text-sm text-dark-1000 after:absolute focus:outline-none lg:text-xl",
         isLg
@@ -244,6 +244,8 @@ function AddressWithVerifiedBadge({
           : "after:ml-1 after:content-[url('/verified-20x20.svg')]"
       )}
       onClick={() => onClick()}
+      onKeyDown={() => {}}
+      tabIndex={0}
     >
       {value}
     </div>
