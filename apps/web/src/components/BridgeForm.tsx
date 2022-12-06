@@ -2,12 +2,33 @@ import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { FiInfo } from "react-icons/fi";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
 import { Network, SelectionType, TokensI, NetworkOptionsI } from "types";
-import { InputSelector } from "./InputSelector";
-import { SwitchIcon } from "./icons/SwitchIcon";
-import { ArrowDownIcon } from "./icons/ArrowDownIcon";
+import InputSelector from "./InputSelector";
+import SwitchIcon from "./icons/SwitchIcon";
+import ArrowDownIcon from "./icons/ArrowDownIcon";
 import NumericFormat from "./commons/NumericFormat";
 import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
+
+function SwitchButton({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="my-8 flex flex-row">
+      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
+      <button
+        type="button"
+        onClick={onClick}
+        className="dark-card-bg dark-bg-card-section group flex h-12 w-12 items-center justify-center rounded-full"
+      >
+        <div className="hidden group-hover:hidden lg:block">
+          <ArrowDownIcon size={24} className="fill-dark-700" />
+        </div>
+        <div className="group-hover:block lg:hidden">
+          <SwitchIcon size={24} className="fill-dark-700" />
+        </div>
+      </button>
+      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
+    </div>
+  );
+}
 
 export default function BridgeForm() {
   const {
@@ -138,27 +159,6 @@ export default function BridgeForm() {
           Connect wallet
         </button>
       </div>
-    </div>
-  );
-}
-
-function SwitchButton({ onClick }: { onClick: () => void }) {
-  return (
-    <div className="my-8 flex flex-row">
-      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
-      <button
-        type="button"
-        onClick={onClick}
-        className="dark-card-bg dark-bg-card-section group flex h-12 w-12 items-center justify-center rounded-full"
-      >
-        <div className="hidden group-hover:hidden lg:block">
-          <ArrowDownIcon size={24} className="fill-dark-700" />
-        </div>
-        <div className="group-hover:block lg:hidden">
-          <SwitchIcon size={24} className="fill-dark-700" />
-        </div>
-      </button>
-      <div className="border-dark-300 mt-6 flex w-full flex-1 justify-between border-t border-opacity-50" />
     </div>
   );
 }
