@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
+import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
-import { Network, SelectionType, TokensI, NetworkOptionsI } from "types";
+import {
+  Network,
+  SelectionType,
+  TokensI,
+  NetworkOptionsI,
+  NetworkAddressToken,
+} from "types";
 import { QuickInputCard } from "./commons/QuickInputCard";
 import InputSelector from "./InputSelector";
 import SwitchIcon from "./icons/SwitchIcon";
@@ -12,6 +19,7 @@ import NumericFormat from "./commons/NumericFormat";
 import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
 import IconTooltip from "./commons/IconTooltip";
+import ActionButton from "./commons/ActionButton";
 
 function SwitchButton({ onClick }: { onClick: () => void }) {
   return (
@@ -43,11 +51,15 @@ export default function BridgeForm() {
     setSelectedNetworkA,
     setSelectedTokensA,
   } = useNetworkContext();
-  const { isConnected } = useAccount();
+
   const [amount, setAmount] = useState<string>("");
   const [amountErr, setAmountErr] = useState<string>("");
-  // TODO remove hardcoded max amount
-  const maxAmount = new BigNumber(100);
+  const [addressInput, setAddressInput] = useState<string>("");
+  const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
+
+  const { address, isConnected } = useAccount();
+  const { data } = useBalance({ address });
+  const maxAmount = new BigNumber(data?.formatted ?? 100); // TODO: Replace default 100 with 0 before release
 
   const switchNetwork = () => {
     setSelectedNetworkA(selectedNetworkB);
@@ -64,6 +76,10 @@ export default function BridgeForm() {
       }
       setAmountErr(err);
     }
+  };
+
+  const onTransferTokens = (): void => {
+    /* TODO: Handle token transfer here */
   };
 
   const { y, reference, floating, strategy, refs } = useFloating({
@@ -93,6 +109,9 @@ export default function BridgeForm() {
     y,
     floating,
   };
+
+  const isFormValid =
+    amount && new BigNumber(amount).gt(0) && !amountErr && !hasAddressInputErr;
 
   return (
     <div className="w-full md:w-[calc(100%+2px)] lg:w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px]">
@@ -178,6 +197,9 @@ export default function BridgeForm() {
         <WalletAddressInput
           label="Address"
           blockchain={selectedNetworkB.name as Network}
+          addressInput={addressInput}
+          onAddressInputChange={(addrInput) => setAddressInput(addrInput)}
+          onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
           disabled={!isConnected}
         />
       </div>
@@ -204,13 +226,20 @@ export default function BridgeForm() {
       <div className="block md:hidden px-5 mt-4">
         <DailyLimit />
       </div>
-      <div className="mt-8 px-6 md:mt-6 md:px-4 lg:mt-16 lg:mb-0 lg:px-[88px]">
-        <button
-          type="button"
-          className="w-full rounded-[92px] bg-dark-1000 p-3.5 text-lg font-bold text-dark-00 md:p-2.5 lg:p-4 lg:text-xl"
-        >
-          Connect wallet
-        </button>
+      <div className="mt-8 px-6 md:mt-6 md:px-4 lg:mt-16 lg:mb-0 lg:px-0 xl:px-20">
+        <ConnectKitButton.Custom>
+          {({ show }) => (
+            <ActionButton
+              label={
+                isConnected
+                  ? `Transfer to ${NetworkAddressToken[selectedNetworkB.name]}`
+                  : "Connect wallet"
+              }
+              disabled={isConnected && !isFormValid}
+              onClick={!isConnected ? show : onTransferTokens}
+            />
+          )}
+        </ConnectKitButton.Custom>
       </div>
     </div>
   );
