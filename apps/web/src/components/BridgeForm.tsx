@@ -9,7 +9,7 @@ import {
   SelectionType,
   TokensI,
   NetworkOptionsI,
-  NetworkAddressToken,
+  NetworkName,
 } from "types";
 import { QuickInputCard } from "./commons/QuickInputCard";
 import InputSelector from "./InputSelector";
@@ -20,6 +20,8 @@ import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
 import IconTooltip from "./commons/IconTooltip";
 import ActionButton from "./commons/ActionButton";
+import ConfirmTransferModal from "./ConfirmTransferModal";
+import { FEES_INFO } from "../constants";
 
 function SwitchButton({ onClick }: { onClick: () => void }) {
   return (
@@ -56,6 +58,7 @@ export default function BridgeForm() {
   const [amountErr, setAmountErr] = useState<string>("");
   const [addressInput, setAddressInput] = useState<string>("");
   const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
   const { data } = useBalance({ address });
@@ -70,8 +73,10 @@ export default function BridgeForm() {
     const re = /^\d*\.?\d*$/;
     if (value === "" || re.test(value)) {
       setAmount(value);
+
+      const isSendingToDFC = selectedNetworkB.name === NetworkName.DeFiChain;
       let err = "";
-      if (new BigNumber(value).gt(maxAmount)) {
+      if (isSendingToDFC && new BigNumber(value).gt(maxAmount)) {
         err = "Insufficient Funds";
       }
       setAmountErr(err);
@@ -80,6 +85,7 @@ export default function BridgeForm() {
 
   const onTransferTokens = (): void => {
     /* TODO: Handle token transfer here */
+    setShowConfirmModal(true);
   };
 
   const { y, reference, floating, strategy, refs } = useFloating({
@@ -154,18 +160,20 @@ export default function BridgeForm() {
           {amountErr ? (
             <span className="text-xs lg:text-sm text-error">{amountErr}</span>
           ) : (
-            <>
-              <span className="text-xs lg:text-sm text-dark-700">
-                Available:
-              </span>
-              <NumericFormat
-                className="text-xs lg:text-sm text-dark-900 ml-1"
-                value={maxAmount}
-                decimalScale={8}
-                thousandSeparator
-                suffix={` ${selectedTokensA.tokenA.name}`}
-              />
-            </>
+            selectedNetworkA.name === Network.Ethereum && (
+              <>
+                <span className="text-xs lg:text-sm text-dark-700">
+                  Available:
+                </span>
+                <NumericFormat
+                  className="text-xs lg:text-sm text-dark-900 ml-1"
+                  value={maxAmount}
+                  decimalScale={8}
+                  thousandSeparator
+                  suffix={` ${selectedTokensA.tokenA.name}`}
+                />
+              </>
+            )
           )}
         </div>
       </div>
@@ -204,15 +212,24 @@ export default function BridgeForm() {
         />
       </div>
       <div className="flex flex-row justify-between items-center px-4 lg:px-5">
+        <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
+          To receive
+        </span>
+        <NumericFormat
+          className="text-left text-xs text-dark-1000 lg:text-base"
+          value={amount || 0}
+          decimalScale={2}
+          thousandSeparator
+          suffix={` ${selectedTokensB.tokenA.name}`}
+        />
+      </div>
+      <div className="flex flex-row justify-between items-center px-4 lg:px-5 mt-4 lg:mt-6">
         <div className="flex flex-row items-center">
           <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
             Fees
           </span>
           <div className="ml-2">
-            <IconTooltip
-              title="Fees"
-              content="Fees to cover the cost of transactions on DeFiChain and Ethereum networks. For more information, visit our user guide."
-            />
+            <IconTooltip title={FEES_INFO.title} content={FEES_INFO.content} />
           </div>
         </div>
         <NumericFormat
@@ -220,7 +237,7 @@ export default function BridgeForm() {
           value={0}
           decimalScale={2}
           thousandSeparator
-          suffix={` ${selectedTokensA.tokenA.name}`}
+          suffix=" DFI" // TODO: Create hook to get fee based on source/destination
         />
       </div>
       <div className="block md:hidden px-5 mt-4">
@@ -232,15 +249,21 @@ export default function BridgeForm() {
             <ActionButton
               label={
                 isConnected
-                  ? `Transfer to ${NetworkAddressToken[selectedNetworkB.name]}`
+                  ? `Transfer to ${NetworkName[selectedNetworkB.name]}`
                   : "Connect wallet"
               }
               disabled={isConnected && !isFormValid}
-              onClick={!isConnected ? show : onTransferTokens}
+              onClick={!isConnected ? show : () => onTransferTokens()}
             />
           )}
         </ConnectKitButton.Custom>
       </div>
+      <ConfirmTransferModal
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        amount={amount}
+        toAddress={addressInput}
+      />
     </div>
   );
 }

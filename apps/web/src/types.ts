@@ -7,7 +7,7 @@ export enum Network {
   DeFiChain = "DeFiChain",
 }
 
-export enum NetworkAddressToken {
+export enum NetworkName {
   Ethereum = "ERC20",
   DeFiChain = "DeFiChain",
 }
@@ -38,4 +38,9 @@ export interface NetworkOptionsI {
   name: string;
   icon: string;
   tokens: TokensI[];
+}
+
+export interface ProgressStepI {
+  step: number;
+  label: string;
 }
