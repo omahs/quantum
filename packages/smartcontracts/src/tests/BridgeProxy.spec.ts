@@ -7,7 +7,7 @@ import {
   BridgeUpgradeable as Bridge,
   BridgeUpgradeable__factory,
   TestToken,
-} from "../typechain-types";
+} from "../generated";
 
 describe("Test Proxy", () => {
   let accounts: string[];
@@ -92,14 +92,12 @@ describe("Test Proxy", () => {
       domainData = {
         name: "CAKE_BRIDGE",
         version: "0.1",
-        chainId: 31337,
+        chainId: 1337,
         verifyingContract: proxiedBridge.address,
       };
     });
 
     it("Valid signature", async () => {
-      const network = await ethers.getDefaultProvider().getNetwork();
-      console.log(network.chainId);
       const eip712Data = {
         to: accounts[0],
         amount: 10,

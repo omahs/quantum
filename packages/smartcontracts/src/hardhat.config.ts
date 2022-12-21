@@ -98,7 +98,7 @@ const config: HardhatUserConfig = {
     cache: "./cache",
   },
   typechain: {
-    outDir: "./typechain-types",
+    outDir: "./generated",
     target: "ethers-v5",
   },
 };
