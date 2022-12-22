@@ -42,7 +42,9 @@ task('deployContract', 'Deploys a contract based on the name of the contract')
     try {
       const { name, deployargs, libraries } = taskArgs;
 
-      const contractFactory = await hre.ethers.getContractFactory(name, { libraries });
+      const contractFactory = await hre.ethers.getContractFactory(name, {
+        libraries,
+      });
       const contract = await contractFactory.deploy(...(deployargs === undefined ? [] : deployargs.split(',')));
 
       // Logs the contract address as the output of this task
