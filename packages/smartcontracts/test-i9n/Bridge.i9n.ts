@@ -46,6 +46,7 @@ describe("Bridge Contract", () => {
       defaultAdmin.testWalletAddress,
       operationalAdmin.testWalletAddress,
       defaultAdmin.testWalletAddress,
+      30, // 0.3% txn fee
     ]);
     // Deploying proxy contract
     bridgeProxy = await evmContractManager.deployContract<BridgeProxy>({
@@ -95,6 +96,9 @@ describe("Bridge Contract", () => {
       expect(await bridgeUpgradeable.relayerAddress()).toBe(
         defaultAdmin.testWalletAddress
       );
+    });
+    it("Successfully implemented the 0.3% txn fee", async () => {
+      expect((await bridgeUpgradeable.transactionFee()).toString()).toBe("30");
     });
   });
 });
