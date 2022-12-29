@@ -4,11 +4,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
-import {
-  BridgeUpgradeable as Bridge,
-  BridgeUpgradeable__factory,
-  TestToken,
-} from "../generated";
+import { BridgeV1, BridgeV1__factory, TestToken } from "../generated";
 
 function calculateFee(amount: BigNumber, transactionFee: BigNumber): BigNumber {
   const feeAmount = amount.mul(transactionFee).div(10000);
@@ -22,7 +18,7 @@ function toWei(amount: string): BigNumber {
 
 describe("Test Proxy", () => {
   let accounts: string[];
-  let proxiedBridge: Bridge;
+  let proxiedBridge: BridgeV1;
   let randomToken: TestToken;
   let randomToken2: TestToken;
   let defaultAdminSigner: SignerWithAddress;
@@ -33,13 +29,11 @@ describe("Test Proxy", () => {
     defaultAdminSigner = await ethers.getSigner(accounts[0]);
     operationalAdminSigner = await ethers.getSigner(accounts[1]);
     arbitrarySigner = await ethers.getSigner(accounts[2]);
-    const BridgeUpgradeable = await ethers.getContractFactory(
-      "BridgeUpgradeable"
-    );
+    const BridgeUpgradeable = await ethers.getContractFactory("BridgeV1");
     const bridgeUpgradeable = await BridgeUpgradeable.deploy();
     await bridgeUpgradeable.deployed();
     const BridgeProxy = await ethers.getContractFactory("BridgeProxy");
-    const ABI = BridgeUpgradeable__factory.abi;
+    const ABI = BridgeV1__factory.abi;
     const iface = new ethers.utils.Interface(ABI);
     const encodedData = iface.encodeFunctionData("initialize", [
       "CAKE_BRIDGE",
@@ -55,7 +49,7 @@ describe("Test Proxy", () => {
     );
     await bridgeProxy.deployed();
     proxiedBridge = BridgeUpgradeable.attach(bridgeProxy.address);
-
+    // Deploying ERC20 tokens
     const ERC20 = await ethers.getContractFactory("TestToken");
     randomToken = await ERC20.deploy("Rand", "R");
     randomToken2 = await ERC20.deploy("Rand2", "R2");
@@ -551,24 +545,21 @@ describe("Test Proxy", () => {
         const expectedTimestamp = blockBefore.timestamp + 1;
         // Getting decimal power from random token and tx fee from the bridged contract.
         const txFee = await proxiedBridge.transactionFee();
-        // Getting token symbol
-        const symbol = await randomToken.symbol();
         // Calculating amount after tx fees
-        const netAmountAfterFee = calculateFee(
-          BigNumber.from(toWei("10")),
-          txFee
-        );
+        const netAmountAfterFee = calculateFee(toWei("10"), txFee);
+        // Sending 15 Eth as well. Users must not send ERC20 token and ETH together. Depending on token address - only the respected token will be added.
         await expect(
           proxiedBridge.bridgeToDeFiChain(
             ethers.constants.AddressZero,
             randomToken.address,
-            toWei("10")
+            toWei("10"),
+            { value: toWei("15") }
           )
         )
           .to.emit(proxiedBridge, "BRIDGE_TO_DEFI_CHAIN")
           .withArgs(
             ethers.constants.AddressZero,
-            symbol,
+            randomToken.address,
             netAmountAfterFee,
             expectedTimestamp
           );
@@ -783,22 +774,21 @@ describe("Test Proxy", () => {
         // Tx fee
         const txFee = await proxiedBridge.transactionFee();
         // Calculating amount after tx fees
-        const netAmountAfterFee = calculateFee(
-          BigNumber.from(toWei("5")),
-          txFee
-        );
+        const netAmountAfterFee = calculateFee(toWei("3"), txFee);
         // Emitting an event "BRIDGE_TO_DEFI_CHAIN"
+        // Users sending ETH can put any "_amount". Only "value" amount will be counted
         await expect(
           proxiedBridge.bridgeToDeFiChain(
             ethers.constants.AddressZero,
             ethers.constants.AddressZero,
-            toWei("5")
+            toWei("5"),
+            { value: toWei("3") }
           )
         )
           .to.emit(proxiedBridge, "BRIDGE_TO_DEFI_CHAIN")
           .withArgs(
             ethers.constants.AddressZero,
-            "ETH",
+            ethers.constants.AddressZero,
             netAmountAfterFee,
             timestampBefore
           );
@@ -1154,8 +1144,9 @@ describe("Test Proxy", () => {
           expect(
             await ethers.provider.getBalance(proxiedBridge.address)
           ).to.equal(toWei("10"));
+          // Checking balance admin balance before withdrawing 2 ethers
           console.log(
-            "Admin ETH balance before withdrawing: ",
+            "Admin ETH balance before withdrawing 2 ethers: ",
             ethers.utils.formatEther(
               await ethers.provider.getBalance(defaultAdminSigner.address)
             )
@@ -1164,6 +1155,8 @@ describe("Test Proxy", () => {
           await proxiedBridge
             .connect(defaultAdminSigner)
             .withdrawEth(toWei("2"));
+
+          // Checking balance admin balance after withdrawing 2 ethers
           console.log(
             "Admin ETH balance after withdrawing 2 ETH: ",
             ethers.utils.formatEther(

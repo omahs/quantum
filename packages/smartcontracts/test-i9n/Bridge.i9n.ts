@@ -3,8 +3,8 @@ import { ethers } from "ethers";
 import {
   BridgeProxy,
   BridgeProxy__factory,
-  BridgeUpgradeable,
-  BridgeUpgradeable__factory,
+  BridgeV1,
+  BridgeV1__factory,
   EvmContractManager,
   HardhatNetwork,
   HardhatNetworkContainer,
@@ -19,7 +19,7 @@ describe("Bridge Contract", () => {
   let evmContractManager: EvmContractManager;
   let defaultAdmin: TestWalletData;
   let operationalAdmin: TestWalletData;
-  let bridgeUpgradeable: BridgeUpgradeable;
+  let bridgeUpgradeable: BridgeV1;
   let bridgeProxy: BridgeProxy;
 
   beforeAll(async () => {
@@ -29,16 +29,15 @@ describe("Bridge Contract", () => {
     // Default and operational admin account
     defaultAdmin = await hardhatNetwork.createTestWallet();
     operationalAdmin = await hardhatNetwork.createTestWallet();
-    // Deploying BridgeUpgradeable contract
-    bridgeUpgradeable =
-      await evmContractManager.deployContract<BridgeUpgradeable>({
-        deploymentName: "BridgeUpgradeable",
-        contractName: "BridgeUpgradeable",
-        abi: BridgeUpgradeable__factory.abi,
-      });
+    // Deploying BridgeV1 contract
+    bridgeUpgradeable = await evmContractManager.deployContract<BridgeV1>({
+      deploymentName: "BridgeV1",
+      contractName: "BridgeV1",
+      abi: BridgeV1__factory.abi,
+    });
     await hardhatNetwork.generate(1);
     // deployment arguments for the Proxy contract
-    const ABI = BridgeUpgradeable__factory.abi;
+    const ABI = BridgeV1__factory.abi;
     const iface = new ethers.utils.Interface(ABI);
     const encodedData = iface.encodeFunctionData("initialize", [
       "CAKE_BRIDGE",

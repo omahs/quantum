@@ -35,7 +35,7 @@ error ONLY_SUPPORTED_TOKENS();
 */
 error NOT_ENOUGH_ETHEREUM();
 
-contract BridgeUpgradeable is
+contract BridgeV1 is
     UUPSUpgradeable,
     EIP712Upgradeable,
     AccessControlUpgradeable
@@ -102,13 +102,13 @@ contract BridgeUpgradeable is
     /**
      * @notice Emitted when the user bridges token to DefiChain
      * @param defiAddress defiAddress DeFiChain address of user
-     * @param symbol Supported token's being bridged
+     * @param tokenAddress Supported token's being bridged
      * @param amount Amount of the token being bridged
      * @param timestamp TimeStamp of the transcation
      */
     event BRIDGE_TO_DEFI_CHAIN(
         bytes defiAddress,
-        string symbol,
+        address indexed tokenAddress,
         uint256 indexed amount,
         uint256 indexed timestamp
     );
@@ -262,7 +262,7 @@ contract BridgeUpgradeable is
         uint256 _amount
     ) public payable notInChangeAllowancePeriod(_tokenAddress) {
         require(supportedTokens[_tokenAddress], "BC002");
-        uint256 amount = checkValue(_amount, msg.value);
+        uint256 amount = checkValue(_tokenAddress, _amount, msg.value);
         if (
             tokenAllowances[_tokenAddress].prevEpoch + (1 days) >
             block.timestamp
@@ -285,25 +285,23 @@ contract BridgeUpgradeable is
                 "BC004"
             );
         }
-
-        if (_tokenAddress != address(0)) {
+        uint256 netAmountInWei = amountAfterFees(amount);
+        if (_tokenAddress == address(0)) {
+            emit BRIDGE_TO_DEFI_CHAIN(
+                _defiAddress,
+                address(0),
+                netAmountInWei,
+                block.timestamp
+            );
+        } else {
             IERC20(_tokenAddress).transferFrom(
                 msg.sender,
                 address(this),
                 amount
             );
-            uint256 netAmountInWei = amountAfterFees(amount);
             emit BRIDGE_TO_DEFI_CHAIN(
                 _defiAddress,
-                IERC20Metadata(_tokenAddress).symbol(),
-                netAmountInWei,
-                block.timestamp
-            );
-        } else {
-            uint256 netAmountInWei = amountAfterFees(amount);
-            emit BRIDGE_TO_DEFI_CHAIN(
-                _defiAddress,
-                "ETH",
+                _tokenAddress,
                 netAmountInWei,
                 block.timestamp
             );
@@ -379,7 +377,8 @@ contract BridgeUpgradeable is
      */
     function withdrawEth(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (amount > address(this).balance) revert NOT_ENOUGH_ETHEREUM();
-        payable(msg.sender).transfer(amount);
+        (bool sent, bytes memory data) = msg.sender.call{value: amount}("");
+        require(sent, "Failed to send Ether");
         emit ETH_WITHDRAWAL_BY_OWNER(msg.sender, amount);
     }
 
@@ -422,12 +421,12 @@ contract BridgeUpgradeable is
      * @param _value Ideally will be the value of Ether
      * @return uint256 type value that is not undefined
      */
-    function checkValue(uint256 _amount, uint256 _value)
-        internal
-        pure
-        returns (uint256)
-    {
-        if (_amount == 0) {
+    function checkValue(
+        address _token,
+        uint256 _amount,
+        uint256 _value
+    ) internal pure returns (uint256) {
+        if (_token == ETHER) {
             return _value;
         } else return _amount;
     }
