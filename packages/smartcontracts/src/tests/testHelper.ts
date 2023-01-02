@@ -30,7 +30,14 @@ export async function deployContracts() {
   const testToken = await ERC20.deploy('Test', 'T');
   const testToken2 = await ERC20.deploy('Test2', 'T2');
 
-  return { proxyBridge, testToken, testToken2, defaultAdminSigner, operationalAdminSigner, arbitrarySigner };
+  return {
+    proxyBridge,
+    testToken,
+    testToken2,
+    defaultAdminSigner,
+    operationalAdminSigner,
+    arbitrarySigner,
+  };
 }
 
 export function toWei(amount: string): BigNumber {
