@@ -3,8 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { TestToken } from '../../dist';
-import { BridgeV1 } from '../generated';
+import { BridgeV1, TestToken } from '../generated';
 import { deployContracts, toWei } from './testHelper';
 
 describe('DeFiChain --> EVM', () => {
@@ -83,7 +82,7 @@ describe('DeFiChain --> EVM', () => {
         testToken.address,
         signature,
       ),
-    ).to.revertedWith('BC003');
+    ).to.revertedWithCustomError(proxyBridge, 'FAKE_SIGNATURE');
     // Checking Balance after Unsuccessfully claiming fund, should be 0
     expect(await testToken.balanceOf(defaultAdminSigner.address)).to.equal(0);
   });
@@ -99,7 +98,7 @@ describe('DeFiChain --> EVM', () => {
         testToken.address,
         '0x00',
       ),
-    ).to.revertedWith('BC001');
+    ).to.be.revertedWithCustomError(proxyBridge, 'INCORRECT_NONCE');
     // Checking Balance after Unsuccessfully claiming fund, should be 0
     expect(await testToken.balanceOf(defaultAdminSigner.address)).to.equal(0);
   });
@@ -114,7 +113,7 @@ describe('DeFiChain --> EVM', () => {
         testToken2.address,
         '0x00',
       ),
-    ).to.revertedWith('BC002');
+    ).to.be.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
     // Checking Balance after Unsuccessfully claiming fund, should be 0
     expect(await testToken.balanceOf(defaultAdminSigner.address)).to.equal(0);
   });

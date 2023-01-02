@@ -19,7 +19,7 @@ describe('Relayer address change tests', () => {
       expect(await proxyBridge.relayerAddress()).to.equal(defaultAdminSigner.address);
       await expect(
         proxyBridge.connect(defaultAdminSigner).changeRelayerAddress('0x0000000000000000000000000000000000000000'),
-      ).to.revertedWith('BC006');
+      ).to.revertedWithCustomError(proxyBridge, 'NON_ZERO_ADDRESS');
     });
 
     it('Successfully emitted the event on change of relayer address', async () => {
@@ -45,7 +45,7 @@ describe('Relayer address change tests', () => {
       expect(await proxyBridge.relayerAddress()).to.equal(defaultAdminSigner.address);
       await expect(
         proxyBridge.connect(operationalAdminSigner).changeRelayerAddress('0x0000000000000000000000000000000000000000'),
-      ).to.revertedWith('BC006');
+      ).to.revertedWithCustomError(proxyBridge, 'NON_ZERO_ADDRESS');
     });
 
     it('Successfully emitted the event on change of relayer address', async () => {

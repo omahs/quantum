@@ -2,8 +2,7 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { TestToken } from '../../dist';
-import { BridgeV1 } from '../generated';
+import { BridgeV1, TestToken } from '../generated';
 import { deployContracts, toWei } from './testHelper';
 
 describe('Add and Removed Supported ETH and ERC20 tokens', () => {
@@ -33,7 +32,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
         // This test should fail if adding already supported token
         await expect(
           proxyBridge.connect(defaultAdminSigner).addSupportedTokens(testToken.address, toWei('15')),
-        ).to.revertedWith('BC005');
+        ).to.revertedWithCustomError(proxyBridge, 'TOKEN_ALREADY_SUPPORTED');
         expect(await proxyBridge.supportedTokens(testToken.address)).to.equal(true);
       });
 
@@ -46,9 +45,9 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Unable to remove non-existing token from supported list', async () => {
         const { proxyBridge, testToken2, defaultAdminSigner } = await loadFixture(deployContracts);
-        await expect(proxyBridge.connect(defaultAdminSigner).removeSupportedTokens(testToken2.address)).to.revertedWith(
-          'BC002',
-        );
+        await expect(
+          proxyBridge.connect(defaultAdminSigner).removeSupportedTokens(testToken2.address),
+        ).to.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
       });
     });
 
@@ -68,7 +67,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
         // This test should fail if adding already supported token
         await expect(
           proxyBridge.connect(operationalAdminSigner).addSupportedTokens(testToken.address, toWei('15')),
-        ).to.revertedWith('BC005');
+        ).to.revertedWithCustomError(proxyBridge, 'TOKEN_ALREADY_SUPPORTED');
         expect(await proxyBridge.supportedTokens(testToken.address)).to.equal(true);
       });
 
@@ -81,9 +80,9 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Unable to remove non-existing token from supported list', async () => {
         const { proxyBridge, testToken2, defaultAdminSigner } = await loadFixture(deployContracts);
-        await expect(proxyBridge.connect(defaultAdminSigner).removeSupportedTokens(testToken2.address)).to.revertedWith(
-          'BC002',
-        );
+        await expect(
+          proxyBridge.connect(defaultAdminSigner).removeSupportedTokens(testToken2.address),
+        ).to.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
       });
     });
 

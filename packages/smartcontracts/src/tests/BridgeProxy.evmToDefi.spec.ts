@@ -30,7 +30,7 @@ describe('EVM --> DeFiChain', () => {
           testToken.address,
           toWei('10'),
         ),
-      ).to.be.revertedWith('BC002');
+      ).to.be.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
     });
 
     it('Successfully revert if bridging amount exceeds daily allowance', async () => {
@@ -49,7 +49,7 @@ describe('EVM --> DeFiChain', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('20')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 15. Above txn didn't succeed
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('15'));
     });
@@ -70,7 +70,7 @@ describe('EVM --> DeFiChain', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('20')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 15. Above txn didn't succeed
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('15'));
       // Waiting for a day to reset the allowance.
@@ -80,7 +80,7 @@ describe('EVM --> DeFiChain', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('4')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 12
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('12'));
       // Bridging 3 token again. Txn should not revert.
@@ -152,9 +152,9 @@ describe('EVM --> DeFiChain', () => {
       expect((await proxyBridge.tokenAllowances(testToken.address)).inChangeAllowancePeriod).to.equal(true);
       // This txn should be revert with the error "B000"
       // Sending 11 Ether to the bridge
-      await expect(proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, 11)).to.revertedWith(
-        'BC000',
-      );
+      await expect(
+        proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, 11),
+      ).to.be.revertedWithCustomError(proxyBridge, 'STILL_IN_CHANGE_ALLOWANCE_PERIOD');
     });
   });
 
@@ -167,20 +167,20 @@ describe('EVM --> DeFiChain', () => {
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
           value: toWei('1'),
         }),
-      ).to.revertedWith('BC002');
+      ).to.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
     });
 
     it('Successfully revert if bridging amount exceeds daily allowance', async () => {
       const { proxyBridge } = await loadFixture(deployContracts);
       // Set Allowance to 10 ether
       await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, 10);
-      // This txn should be revert with "BC004"
+      // This txn should be revert with custom error "EXCEEDS_DAILY_ALLOWANCE"
       // Sending 11 Ether to the bridge
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
           value: toWei('11'),
         }),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
     });
 
     it('Successfully bridging to DefiChain', async () => {
@@ -242,7 +242,7 @@ describe('EVM --> DeFiChain', () => {
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
           value: toWei('11'),
         }),
-      ).to.revertedWith('BC000');
+      ).to.be.revertedWithCustomError(proxyBridge, 'STILL_IN_CHANGE_ALLOWANCE_PERIOD');
     });
   });
 });

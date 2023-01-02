@@ -37,7 +37,7 @@ describe('Daily allowance tests', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('20')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 15. Above txn didn't succeed
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('15'));
     });
@@ -58,7 +58,7 @@ describe('Daily allowance tests', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('20')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 15. Above txn didn't succeed
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('15'));
       // Waiting for a day to reset the allowance.
@@ -68,7 +68,7 @@ describe('Daily allowance tests', () => {
       // This txn should revert if the exceeding daily balance of 15
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('4')),
-      ).to.revertedWith('BC004');
+      ).to.revertedWithCustomError(proxyBridge, 'EXCEEDS_DAILY_ALLOWANCE');
       // Current daily usage should be 12
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('12'));
       // Bridging 3 token again. Txn should not revert.
@@ -113,8 +113,11 @@ describe('Daily allowance tests', () => {
       // No bridging to defiChain and changeDailyAllowance, result of being in 'CHANGE ALOWANCE PERIOD'
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10')),
-      ).to.be.revertedWith('BC000');
-      await expect(proxyBridge.changeDailyAllowance(testToken.address, toWei('5'))).to.be.revertedWith('BC000');
+      ).to.be.revertedWithCustomError(proxyBridge, 'STILL_IN_CHANGE_ALLOWANCE_PERIOD');
+      await expect(proxyBridge.changeDailyAllowance(testToken.address, toWei('5'))).to.be.revertedWithCustomError(
+        proxyBridge,
+        'STILL_IN_CHANGE_ALLOWANCE_PERIOD',
+      );
       let allowance = await proxyBridge.tokenAllowances(testToken.address);
       expect(allowance[3]).to.equal(true);
       // Increasing time by 1 day (In seconds)
