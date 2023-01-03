@@ -197,13 +197,13 @@ describe('Daily allowance tests', () => {
   describe('Allowance tests - ETH', () => {
     it('Not able to change daily allowance if un-supported token', async () => {
       const { proxyBridge } = await loadFixture(deployContracts);
-      // This should revert with the error "ONLY_SUPPORTED_TOKENS"
+      // This should revert with the error 'ONLY_SUPPORTED_TOKENS'
       await expect(
         proxyBridge.changeDailyAllowance(ethers.constants.AddressZero, toWei('12')),
       ).to.revertedWithCustomError(proxyBridge, 'ONLY_SUPPORTED_TOKENS');
     });
 
-    describe('Daily Allowance change by different accounts ', () => {
+    describe('Daily Allowance change for ETH by different accounts ', () => {
       it('DEFAULT_ADMIN_ROLE', async () => {
         const { proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
         // Set Allowance to 10 ether by admin address

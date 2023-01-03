@@ -2,20 +2,15 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { BridgeV1, TestToken } from '../generated';
 import { deployContracts } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
 
 describe('Add and Removed Supported ETH and ERC20 tokens', () => {
-  async function supportedToken(proxyBridge: BridgeV1, testToken: TestToken) {
-    await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
-  }
-
   describe('ERC20: adding and removing from the supported list', () => {
     describe('DEFAULT_ADMIN_ROLE', () => {
       it('Successfully add token to supported list & allowance by Admin role address', async () => {
         const { proxyBridge, testToken, testToken2, defaultAdminSigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
         // Adding the testToken2 as the supported token by Admin role only.
         expect(await proxyBridge.supportedTokens(testToken2.address)).to.equal(false);
         await proxyBridge.connect(defaultAdminSigner).addSupportedTokens(testToken2.address, toWei('15'));
@@ -29,7 +24,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Unable to add existing token to supported list', async () => {
         const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
         // This test should fail if adding already supported token
         await expect(
           proxyBridge.connect(defaultAdminSigner).addSupportedTokens(testToken.address, toWei('15')),
@@ -39,7 +34,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Successfully remove existing token by Admin address', async () => {
         const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
         await proxyBridge.removeSupportedTokens(testToken.address);
         expect(await proxyBridge.connect(defaultAdminSigner).supportedTokens(testToken.address)).to.equal(false);
       });
@@ -64,7 +59,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Unable to add existing token to supported list', async () => {
         const { proxyBridge, testToken, operationalAdminSigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
         // This test should fail if adding already supported token
         await expect(
           proxyBridge.connect(operationalAdminSigner).addSupportedTokens(testToken.address, toWei('15')),
@@ -74,7 +69,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('Successfully remove existing token by OPERATIONAL_ROLE address', async () => {
         const { proxyBridge, testToken, operationalAdminSigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
         await proxyBridge.removeSupportedTokens(testToken.address);
         expect(await proxyBridge.connect(operationalAdminSigner).supportedTokens(testToken.address)).to.equal(false);
       });
@@ -98,14 +93,15 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
       it('NON-ADMIN_ROLES address unable to remove token', async () => {
         const { proxyBridge, testToken, arbitrarySigner } = await loadFixture(deployContracts);
-        await supportedToken(proxyBridge, testToken);
-        // Error handling for the custom error
+        await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
+        // Revert with the custom error 'NON_AUTHORIZED_ADDRESS'
         await expect(
           proxyBridge.connect(arbitrarySigner).removeSupportedTokens(testToken.address),
         ).to.be.revertedWithCustomError(proxyBridge, 'NON_AUTHORIZED_ADDRESS');
       });
     });
-
+  });
+  describe('Emitted Events', () => {
     it('Successfully emitted the event when the supported token added by Admin Addresses', async () => {
       const { proxyBridge, testToken, testToken2, defaultAdminSigner, operationalAdminSigner } = await loadFixture(
         deployContracts,
@@ -123,7 +119,7 @@ describe('Add and Removed Supported ETH and ERC20 tokens', () => {
 
     it('Successfully emitted the event when the supported token removed by Admin Addresses', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await supportedToken(proxyBridge, testToken);
+      await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
       // Event called REMOVE_SUPPORTED_TOKEN should be emitted when Successfully removed a token from supported list. Only admins are able to call the tokens
       await expect(proxyBridge.connect(defaultAdminSigner).removeSupportedTokens(testToken.address))
         .to.emit(proxyBridge, 'REMOVE_SUPPORTED_TOKEN')

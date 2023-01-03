@@ -11,9 +11,8 @@ export async function deployContracts() {
   const bridgeUpgradeable = await BridgeUpgradeable.deploy();
   await bridgeUpgradeable.deployed();
   const BridgeProxy = await ethers.getContractFactory('BridgeProxy');
-  const ABI = BridgeV1__factory.abi;
-  const iface = new ethers.utils.Interface(ABI);
-  const encodedData = iface.encodeFunctionData('initialize', [
+  // deployment arguments for the Proxy contract
+  const encodedData = BridgeV1__factory.createInterface().encodeFunctionData('initialize', [
     'CAKE_BRIDGE',
     '0.1',
     accounts[0],

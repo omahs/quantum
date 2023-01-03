@@ -5,7 +5,7 @@ export function toWei(amount: string): BigNumber {
   return ethers.utils.parseEther(amount);
 }
 
-export function calculateFee(amount: BigNumber, transactionFee: BigNumber): BigNumber {
+export function amountAfterFee(amount: BigNumber, transactionFee: BigNumber): BigNumber {
   const feeAmount = amount.mul(transactionFee).div(10000);
   const netAmountAfterFee = amount.sub(feeAmount);
   return netAmountAfterFee;

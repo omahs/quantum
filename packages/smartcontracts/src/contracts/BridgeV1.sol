@@ -74,6 +74,11 @@ error NOT_ENOUGH_ETHEREUM();
 */
 error TRANSCATION_FAILED();
 
+/** @notice @dev 
+/* This error occurs when users sends ETHER wlong with other erc20 token.
+*/
+error DO_NOT_SEND_ETHER_WITH_ERC20();
+
 contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     struct TokenAllowance {
         uint256 prevEpoch;
@@ -256,6 +261,9 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 _amount
     ) public payable notInChangeAllowancePeriod(_tokenAddress) {
         if (!supportedTokens[_tokenAddress]) revert TOKEN_NOT_SUPPORTED();
+        if (_tokenAddress != address(0) && msg.value > 0) {
+            revert DO_NOT_SEND_ETHER_WITH_ERC20();
+        }
         uint256 amount = checkValue(_tokenAddress, _amount, msg.value);
         if (tokenAllowances[_tokenAddress].prevEpoch + (1 days) > block.timestamp) {
             tokenAllowances[_tokenAddress].currentDailyUsage += amount;

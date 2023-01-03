@@ -42,6 +42,7 @@ describe('Withdrawal tests', () => {
       it('Unsuccessful withdrawal by Operational Admin', async () => {
         const { proxyBridge, testToken, operationalAdminSigner } = await loadFixture(deployContracts);
         // Withdrawal by Operation Admin should be rejected
+        // address from hardcoded Hardhat network accounts
         await expect(
           proxyBridge.connect(operationalAdminSigner).withdraw(testToken.address, toWei('20')),
         ).to.revertedWith(
@@ -53,6 +54,7 @@ describe('Withdrawal tests', () => {
       it('Unsuccessful withdrawal by other EOA', async () => {
         const { proxyBridge, arbitrarySigner, testToken } = await loadFixture(deployContracts);
         // Withdrawal by another Admin should be rejected
+        // address from hardcoded Hardhat network accounts
         await expect(proxyBridge.connect(arbitrarySigner).withdraw(testToken.address, toWei('20'))).to.revertedWith(
           'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000',
         );
@@ -90,6 +92,7 @@ describe('Withdrawal tests', () => {
           'Admin ETH balance after withdrawing 2 ETH: ',
           ethers.utils.formatEther(await ethers.provider.getBalance(defaultAdminSigner.address)),
         );
+
         // Checking Proxy contract balance. Should be 8
         expect(await ethers.provider.getBalance(proxyBridge.address)).to.equal(toWei('8'));
       });
@@ -97,6 +100,7 @@ describe('Withdrawal tests', () => {
       it('OPERATIONAL_ROLE', async () => {
         const { proxyBridge, operationalAdminSigner } = await loadFixture(deployContracts);
         // This txn should be reverted with the Access control error
+        // address from hardcoded Hardhat network accounts
         await expect(proxyBridge.connect(operationalAdminSigner).withdrawEth(toWei('2'))).to.revertedWith(
           'AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x0000000000000000000000000000000000000000000000000000000000000000',
         );
@@ -105,6 +109,7 @@ describe('Withdrawal tests', () => {
       it('ARBITRARY_EOA', async () => {
         const { proxyBridge, arbitrarySigner } = await loadFixture(deployContracts);
         // This txn should be reverted with the Access control error
+        // address from hardcoded Hardhat network accounts
         await expect(proxyBridge.connect(arbitrarySigner).withdrawEth(toWei('2'))).to.revertedWith(
           'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000',
         );
@@ -113,7 +118,7 @@ describe('Withdrawal tests', () => {
 
     it('Unable to withdraw specified amount', async () => {
       const { proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
-      // This txn should revert with error "NOT_ENOUGH_ETHEREUM". Contract has only 10ETH
+      // This txn should revert with error 'NOT_ENOUGH_ETHEREUM'. Contract has only 10ETH
       await expect(proxyBridge.connect(defaultAdminSigner).withdrawEth(toWei('15'))).to.revertedWithCustomError(
         proxyBridge,
         'NOT_ENOUGH_ETHEREUM',

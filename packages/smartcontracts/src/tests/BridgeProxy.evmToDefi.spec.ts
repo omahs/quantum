@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 import { BridgeV1, TestToken } from '../generated';
 import { deployContracts } from './testUtils/deployment';
-import { calculateFee, toWei } from './testUtils/mathUtils';
+import { amountAfterFee, toWei } from './testUtils/mathUtils';
 
 // initMintAndSupport will mint to the EOA address and approve contractAddress.
 // This is primarily to help avoid the repetition of code
@@ -55,6 +55,17 @@ describe('EVM --> DeFiChain', () => {
       expect((await proxyBridge.tokenAllowances(testToken.address)).currentDailyUsage).to.equal(toWei('15'));
     });
 
+    it('Successfully revert if sending ETHER along with ERC20 token', async () => {
+      const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
+      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      // This txn should fail. User sending 10 ETH along with ERC20 token
+      await expect(
+        proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'), {
+          value: toWei('10'),
+        }),
+      ).to.revertedWithCustomError(proxyBridge, 'DO_NOT_SEND_ETHER_WITH_ERC20');
+    });
+
     it('Successfully bridging after a day', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
       await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
@@ -94,19 +105,31 @@ describe('EVM --> DeFiChain', () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
       await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
       const prevAllowance = await proxyBridge.tokenAllowances(testToken.address);
-      let tx = await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'));
-      await tx.wait();
-      tx = await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('2'));
-      await tx.wait();
+      // Bridging 10 testToken
+      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'));
+      // Bridging 2 testToken
+      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('2'));
       // Increasing time by 2 days and an hr (In seconds)
       await time.increase(60 * 60 * 49);
-      tx = await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('9'));
-      await tx.wait();
+      // Bridging 9 testToken
+      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('9'));
       // Increasing time by 1 day (In seconds)
       await time.increase(60 * 60 * 24);
-      tx = await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('14'));
+      // Event called BRIDGE_TO_DEFI_CHAIN should be emitted when Successfully bridged token to DefiChain
+      // Getting timestamp
+      const blockNumBefore = await ethers.provider.getBlockNumber();
+      const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+      // Need to add to the timestamp of the previous block to match the next block the tx is mined in
+      const expectedTimestamp = blockBefore.timestamp + 1;
+      // Getting tx fee from the bridged contract.
+      const txFee = await proxyBridge.transactionFee();
+      // Calculating amount after tx fees
+      const netAmountAfterFee = amountAfterFee(toWei('14'), txFee);
+      // Bridging 14 testToken
+      await expect(proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('14')))
+        .to.emit(proxyBridge, 'BRIDGE_TO_DEFI_CHAIN')
+        .withArgs(ethers.constants.AddressZero, testToken.address, netAmountAfterFee, expectedTimestamp);
       const allowance = await proxyBridge.tokenAllowances(testToken.address);
-
       // Checking previous epoch
       expect(allowance[0]).to.equal(prevAllowance[0].add(60 * 60 * 72));
       // Checking daily allowance
@@ -115,29 +138,6 @@ describe('EVM --> DeFiChain', () => {
       expect(allowance[2]).to.equal(toWei('14'));
       // Checking the change allowance period
       expect(allowance[3]).to.equal(false);
-    });
-
-    it('Successfully emitted event when bridging to defiChain', async () => {
-      const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
-      // Event called BRIDGE_TO_DEFI_CHAIN should be emitted when Successfully bridged token to DefiChain
-      // Getting timestamp
-      const blockNumBefore = await ethers.provider.getBlockNumber();
-      const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-      // Need to add to the timestamp of the previous block to match the next block the tx is mined in
-      const expectedTimestamp = blockBefore.timestamp + 1;
-      // Getting decimal power from random token and tx fee from the bridged contract.
-      const txFee = await proxyBridge.transactionFee();
-      // Calculating amount after tx fees
-      const netAmountAfterFee = calculateFee(toWei('10'), txFee);
-      // Sending 15 Eth as well. Users must not send ERC20 token and ETH together. Depending on token address - only the respected token will be added.
-      await expect(
-        proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'), {
-          value: toWei('15'),
-        }),
-      )
-        .to.emit(proxyBridge, 'BRIDGE_TO_DEFI_CHAIN')
-        .withArgs(ethers.constants.AddressZero, testToken.address, netAmountAfterFee, expectedTimestamp);
     });
 
     it('No deposit to DefiChain if in change allowance period', async () => {
@@ -151,7 +151,7 @@ describe('EVM --> DeFiChain', () => {
       expect((await proxyBridge.tokenAllowances(testToken.address)).dailyAllowance).to.equal(20);
       // Confirming inChangeAllowancePeriod is true
       expect((await proxyBridge.tokenAllowances(testToken.address)).inChangeAllowancePeriod).to.equal(true);
-      // This txn should be revert with the error "B000"
+      // This txn should be revert with the error 'STILL_IN_CHANGE_ALLOWANCE_PERIOD'
       // Sending 11 Ether to the bridge
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, 11),
@@ -160,7 +160,7 @@ describe('EVM --> DeFiChain', () => {
   });
 
   describe('Bridging ETH token', () => {
-    it('Bridge request before adding support for ETH token', async () => {
+    it('Bridge request should revert before adding support for ETH token', async () => {
       const { proxyBridge } = await loadFixture(deployContracts);
       // This txn should be revert if no allowance added
       // Sending 1 Ether
@@ -175,7 +175,7 @@ describe('EVM --> DeFiChain', () => {
       const { proxyBridge } = await loadFixture(deployContracts);
       // Set Allowance to 10 ether
       await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, 10);
-      // This txn should be revert with custom error "EXCEEDS_DAILY_ALLOWANCE"
+      // This txn should be revert with custom error 'EXCEEDS_DAILY_ALLOWANCE'
       // Sending 11 Ether to the bridge
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
@@ -210,7 +210,7 @@ describe('EVM --> DeFiChain', () => {
       // Tx fee
       const txFee = await proxyBridge.transactionFee();
       // Calculating amount after tx fees
-      const netAmountAfterFee = calculateFee(toWei('3'), txFee);
+      const netAmountAfterFee = amountAfterFee(toWei('3'), txFee);
       // Emitting an event "BRIDGE_TO_DEFI_CHAIN"
       // Users sending ETH can put any "_amount". Only "value" amount will be counted
       await expect(
@@ -237,7 +237,7 @@ describe('EVM --> DeFiChain', () => {
       expect(await (await proxyBridge.tokenAllowances(ethers.constants.AddressZero)).inChangeAllowancePeriod).to.equal(
         true,
       );
-      // This txn should be revert with the error "B000"
+      // This txn should be revert with the error 'STILL_IN_CHANGE_ALLOWANCE_PERIOD'
       // Sending 11 Ether to the bridge
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
