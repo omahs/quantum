@@ -3,7 +3,8 @@ import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
 import { BridgeV1, TestToken } from '../generated';
-import { deployContracts, toWei } from './testHelper';
+import { deployContracts } from './testUtils/deployment';
+import { toWei } from './testUtils/mathUtils';
 
 // initMintAndSupport will mint to the EOA address and approve contractAddress.
 // This is primarily to help avoid the repetition.

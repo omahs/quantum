@@ -2,7 +2,8 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { deployContracts, toWei } from './testHelper';
+import { deployContracts } from './testUtils/deployment';
+import { toWei } from './testUtils/mathUtils';
 
 describe('Withdrawal tests', () => {
   describe('Withdraw ERC20 token', () => {

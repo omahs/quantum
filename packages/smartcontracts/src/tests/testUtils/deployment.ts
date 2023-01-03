@@ -1,7 +1,6 @@
-import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import { BridgeV1__factory } from '../generated';
+import { BridgeV1__factory } from '../../generated';
 
 export async function deployContracts() {
   const accounts = await ethers.provider.listAccounts();
@@ -38,14 +37,4 @@ export async function deployContracts() {
     operationalAdminSigner,
     arbitrarySigner,
   };
-}
-
-export function toWei(amount: string): BigNumber {
-  return ethers.utils.parseEther(amount);
-}
-
-export function calculateFee(amount: BigNumber, transactionFee: BigNumber): BigNumber {
-  const feeAmount = amount.mul(transactionFee).div(10000);
-  const netAmountAfterFee = amount.sub(feeAmount);
-  return netAmountAfterFee;
 }

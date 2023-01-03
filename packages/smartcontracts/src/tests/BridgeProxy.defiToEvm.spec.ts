@@ -4,7 +4,8 @@ import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
 import { BridgeV1, TestToken } from '../generated';
-import { deployContracts, toWei } from './testHelper';
+import { deployContracts } from './testUtils/deployment';
+import { toWei } from './testUtils/mathUtils';
 
 describe('DeFiChain --> EVM', () => {
   let proxyBridge: BridgeV1;

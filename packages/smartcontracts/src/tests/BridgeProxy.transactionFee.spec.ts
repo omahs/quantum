@@ -1,7 +1,7 @@
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 
-import { deployContracts } from './testHelper';
+import { deployContracts } from './testUtils/deployment';
 
 describe('Transaction fee tests', () => {
   describe('DEFAULT_ADMIN_ROLE', () => {

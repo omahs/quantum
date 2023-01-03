@@ -2,7 +2,7 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { deployContracts } from './testHelper';
+import { deployContracts } from './testUtils/deployment';
 
 describe('BridgeV1 deployment test', () => {
   it('BridgeV1 should be deployed with correct Admin, Operational and relayer addresses', async () => {
