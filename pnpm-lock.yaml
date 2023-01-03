@@ -162,7 +162,9 @@ importers:
       '@nomicfoundation/hardhat-toolbox': ^2.0.0
       '@openzeppelin/contracts': ^4.8.0
       '@openzeppelin/contracts-upgradeable': ^4.8.0
+      '@typechain/ethers-v5': 10.1.1
       '@types/chai': 4.3.4
+      '@types/mocha': 10.0.1
       base64-sol: 1.1.0
       chai: 4.3.7
       cross-fetch: ^3.1.5
@@ -179,10 +181,12 @@ importers:
       '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.5_ja2q5v4zhslcm3ppoak5cbvw2i
       '@nomicfoundation/hardhat-network-helpers': 1.0.7_hardhat@2.12.4
-      '@nomicfoundation/hardhat-toolbox': 2.0.0_undiwypasan36xqit5cdvqlaz4
+      '@nomicfoundation/hardhat-toolbox': 2.0.0_b5g6eeyserlyzled3edpziy2fa
       '@openzeppelin/contracts': 4.8.0
       '@openzeppelin/contracts-upgradeable': 4.8.0
+      '@typechain/ethers-v5': 10.1.1_uvzrz6if4akbrktgtw2vfdalai
       '@types/chai': 4.3.4
+      '@types/mocha': 10.0.1
       base64-sol: 1.1.0
       chai: 4.3.7
       cross-fetch: 3.1.5
@@ -3631,7 +3635,7 @@ packages:
       hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
     dev: true
 
-  /@nomicfoundation/hardhat-toolbox/2.0.0_undiwypasan36xqit5cdvqlaz4:
+  /@nomicfoundation/hardhat-toolbox/2.0.0_b5g6eeyserlyzled3edpziy2fa:
     resolution: {integrity: sha512-BoOPbzLQ1GArnBZd4Jz4IU8FY3RY4nUwpXlfymXwxlXNimngkPRJj7ivVNurD7igohEjf90v/Axn2M5WwAdCJQ==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
@@ -3663,7 +3667,7 @@ packages:
       '@typechain/ethers-v5': 10.1.1_uvzrz6if4akbrktgtw2vfdalai
       '@typechain/hardhat': 6.1.5_x6zcho6lo2lfcmjlgmaahzgooe
       '@types/chai': 4.3.4
-      '@types/mocha': 9.1.1
+      '@types/mocha': 10.0.1
       '@types/node': 18.11.11
       chai: 4.3.7
       ethers: 5.7.2
@@ -4645,8 +4649,8 @@ packages:
   /@types/minimatch/5.1.2:
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
 
-  /@types/mocha/9.1.1:
-    resolution: {integrity: sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==}
+  /@types/mocha/10.0.1:
+    resolution: {integrity: sha512-/fvYntiO1GeICvqbQ3doGDIP97vWmvFt83GKguJ6prmQM2iXZfFcq6YE8KteFyRtX2/h5Hf91BYvPodJKFYv5Q==}
     dev: true
 
   /@types/node/10.12.18:
