@@ -145,20 +145,18 @@ describe('Daily allowance tests', () => {
       // Minting (to defaultAdminSigner) and approving testToken2 for proxyBridge.
       await testToken2.mint(defaultAdminSigner.address, toWei('100'));
       await testToken2.approve(proxyBridge.address, ethers.constants.MaxInt256);
-      // Adding testToken2 in supported token with the daily allowance of 15 tokens
-      await proxyBridge.addSupportedTokens(testToken2.address, toWei('15'));
-      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'));
-      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken2.address, toWei('12'));
-      // Checking allowance of testToken
-      let allowance = await proxyBridge.tokenAllowances(testToken.address);
-      expect(allowance[2]).to.equal(toWei('10'));
-      expect(allowance[1]).to.equal(toWei('15'));
-      expect(allowance[3]).to.equal(false);
-      // Checking allowance of testToken2
-      allowance = await proxyBridge.tokenAllowances(testToken2.address);
-      expect(allowance[2]).to.equal(toWei('12'));
-      expect(allowance[1]).to.equal(toWei('15'));
-      expect(allowance[3]).to.equal(false);
+      // Adding testToken2 in supported token with the daily allowance of 20 tokens
+      await proxyBridge.addSupportedTokens(testToken2.address, toWei('20'));
+      // Check on dailyAllowance of testToken and testToken2
+      expect((await proxyBridge.tokenAllowances(testToken.address))[1]).to.equal(toWei('15'));
+      expect((await proxyBridge.tokenAllowances(testToken2.address))[1]).to.equal(toWei('20'));
+      // TestToken allowance set to 15, changing it to 25 tokens
+      await proxyBridge.connect(defaultAdminSigner).changeDailyAllowance(testToken.address, toWei('25'));
+      // TestToken2 allowance set to 20, changing it to 30 tokens
+      await proxyBridge.connect(defaultAdminSigner).changeDailyAllowance(testToken2.address, toWei('30'));
+      // Check on dailyAllowance after changing the dailyAllowance
+      expect((await proxyBridge.tokenAllowances(testToken.address))[1]).to.equal(toWei('25'));
+      expect((await proxyBridge.tokenAllowances(testToken2.address))[1]).to.equal(toWei('30'));
     });
 
     describe('Daily Allowance change by different accounts', async () => {

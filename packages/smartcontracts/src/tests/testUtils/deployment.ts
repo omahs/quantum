@@ -1,8 +1,9 @@
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
 
-import { BridgeV1__factory } from '../../generated';
+import { BridgeV1, BridgeV1__factory, TestToken } from '../../generated';
 
-export async function deployContracts() {
+export async function deployContracts(): Promise<BridgeDeploymentResult> {
   const accounts = await ethers.provider.listAccounts();
   const defaultAdminSigner = await ethers.getSigner(accounts[0]);
   const operationalAdminSigner = await ethers.getSigner(accounts[1]);
@@ -36,4 +37,13 @@ export async function deployContracts() {
     operationalAdminSigner,
     arbitrarySigner,
   };
+}
+
+interface BridgeDeploymentResult {
+  proxyBridge: BridgeV1;
+  testToken: TestToken;
+  testToken2: TestToken;
+  defaultAdminSigner: SignerWithAddress;
+  operationalAdminSigner: SignerWithAddress;
+  arbitrarySigner: SignerWithAddress;
 }

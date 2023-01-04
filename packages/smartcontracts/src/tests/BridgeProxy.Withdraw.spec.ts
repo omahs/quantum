@@ -80,21 +80,13 @@ describe('Withdrawal tests', () => {
         // Checking Proxy contract balance. Should be 10
         expect(await ethers.provider.getBalance(proxyBridge.address)).to.equal(toWei('10'));
         // Checking balance admin balance before withdrawing 2 ethers
-        console.log(
-          'Admin ETH balance before withdrawing 2 ethers: ',
-          ethers.utils.formatEther(await ethers.provider.getBalance(defaultAdminSigner.address)),
-        );
+        const beforeBalance = await ethers.provider.getBalance(defaultAdminSigner.address);
         // 2 ETHER withdrawal by the Admin
-        await proxyBridge.connect(defaultAdminSigner).withdrawEth(toWei('2'));
-
-        // Checking balance admin balance after withdrawing 2 ethers
-        console.log(
-          'Admin ETH balance after withdrawing 2 ETH: ',
-          ethers.utils.formatEther(await ethers.provider.getBalance(defaultAdminSigner.address)),
+        const tx = await proxyBridge.connect(defaultAdminSigner).withdrawEth(toWei('2'));
+        const receipt = await tx.wait();
+        expect(await ethers.provider.getBalance(defaultAdminSigner.address)).to.equal(
+          beforeBalance.add(toWei('2')).sub(receipt.gasUsed.mul(receipt.effectiveGasPrice)),
         );
-
-        // Checking Proxy contract balance. Should be 8
-        expect(await ethers.provider.getBalance(proxyBridge.address)).to.equal(toWei('8'));
       });
 
       it('OPERATIONAL_ROLE', async () => {

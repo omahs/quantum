@@ -164,7 +164,6 @@ importers:
       '@openzeppelin/contracts': ^4.8.0
       '@openzeppelin/contracts-upgradeable': ^4.8.0
       '@typechain/ethers-v5': 10.1.1
-      '@typechain/hardhat': 6.1.5
       '@types/chai': 4.3.4
       '@types/mocha': 10.0.1
       base64-sol: 1.1.0
@@ -172,9 +171,7 @@ importers:
       cross-fetch: ^3.1.5
       ethers: ~5.7.2
       hardhat: 2.12.4
-      hardhat-gas-reporter: 1.0.9
       mocha: 10.2.0
-      solidity-coverage: 0.8.2
       ts-node: 10.9.1
     devDependencies:
       '@birthdayresearch/eslint-config': 0.3.2_typescript@4.9.4
@@ -190,7 +187,6 @@ importers:
       '@openzeppelin/contracts': 4.8.0
       '@openzeppelin/contracts-upgradeable': 4.8.0
       '@typechain/ethers-v5': 10.1.1_uvzrz6if4akbrktgtw2vfdalai
-      '@typechain/hardhat': 6.1.5_x6zcho6lo2lfcmjlgmaahzgooe
       '@types/chai': 4.3.4
       '@types/mocha': 10.0.1
       base64-sol: 1.1.0
@@ -198,9 +194,7 @@ importers:
       cross-fetch: 3.1.5
       ethers: 5.7.2
       hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
-      hardhat-gas-reporter: 1.0.9_hardhat@2.12.4
       mocha: 10.2.0
-      solidity-coverage: 0.8.2_hardhat@2.12.4
       ts-node: 10.9.1_bspv7bpieoza2i5ctiw2ofswem
 
 packages:

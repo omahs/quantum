@@ -185,20 +185,6 @@ describe('EVM --> DeFiChain', () => {
     });
 
     it('Successfully bridging to DefiChain', async () => {
-      const { proxyBridge } = await loadFixture(deployContracts);
-      // set allowance to 10 Ether
-      await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'));
-      // Checking ETHER balance before bridging. Must be 0
-      expect(await ethers.provider.getBalance(proxyBridge.address)).to.equal(0);
-      // Bridging 5 ether
-      await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
-        value: toWei('5'),
-      });
-      // Proxied bridge contract must have the 5 ether now
-      expect(await ethers.provider.getBalance(proxyBridge.address)).to.equal(toWei('5'));
-    });
-
-    it('Successfully emitting events upon bridging', async () => {
       // set allowance to 10 Ether
       const { proxyBridge } = await loadFixture(deployContracts);
       await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'));
