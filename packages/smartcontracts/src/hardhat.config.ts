@@ -1,8 +1,5 @@
-import '@nomiclabs/hardhat-ethers';
 import '@nomicfoundation/hardhat-chai-matchers';
-import '@typechain/hardhat';
-import 'hardhat-gas-reporter';
-import 'solidity-coverage';
+import '@nomicfoundation/hardhat-toolbox';
 
 import { HardhatUserConfig, task, types } from 'hardhat/config';
 
@@ -62,7 +59,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.4',
+        version: '0.8.17',
         settings: {
           optimizer: {
             enabled: true,
