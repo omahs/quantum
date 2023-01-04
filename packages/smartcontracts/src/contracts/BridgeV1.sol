@@ -221,6 +221,16 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     }
 
     /**
+     * @dev Testing need for this fn. Using to test claim ether.
+     */
+    fallback() external payable {}
+
+    /**
+     * @dev Testing need for this fn. Using to test claim ether.
+     */
+    receive() external payable {}
+
+    /**
      * @notice Used to claim the tokens that have been approved by the relayer (for bridging from DeFiChain to Ethereum mainnet)
      * @param _to Address to send the claimed fund
      * @param _amount Amount to be claimed
@@ -243,7 +253,14 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         bytes32 struct_hash = keccak256(abi.encode(DATA_TYPE_HASH, _to, _amount, _nonce, _deadline, _tokenAddress));
         bytes32 msg_hash = _hashTypedDataV4(struct_hash);
         if (ECDSAUpgradeable.recover(msg_hash, signature) != relayerAddress) revert FAKE_SIGNATURE();
-        IERC20(_tokenAddress).transfer(_to, _amount);
+        if (_tokenAddress == address(0)) {
+            if (_amount > address(this).balance) revert NOT_ENOUGH_ETHEREUM();
+            (bool sent, ) = msg.sender.call{value: _amount}('');
+            if (!sent) revert TRANSCATION_FAILED();
+        } else {
+            IERC20(_tokenAddress).transfer(_to, _amount);
+        }
+
         emit CLAIM_FUND(_tokenAddress, _to, _amount);
         eoaAddressToNonce[_to]++;
     }
