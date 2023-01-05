@@ -244,14 +244,15 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         if (ECDSAUpgradeable.recover(msg_hash, signature) != relayerAddress) revert FAKE_SIGNATURE();
         if (_tokenAddress == address(0)) {
             if (_amount > address(this).balance) revert NOT_ENOUGH_ETHEREUM();
+            eoaAddressToNonce[_to]++;
             (bool sent, ) = msg.sender.call{value: _amount}('');
             if (!sent) revert TRANSCATION_FAILED();
         } else {
+            eoaAddressToNonce[_to]++;
             IERC20(_tokenAddress).transfer(_to, _amount);
         }
 
         emit CLAIM_FUND(_tokenAddress, _to, _amount);
-        eoaAddressToNonce[_to]++;
     }
 
     /**
