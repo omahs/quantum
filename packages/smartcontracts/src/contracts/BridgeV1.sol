@@ -8,17 +8,6 @@ import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol'
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import 'hardhat/console.sol';
 
-/**
-/* Errors code. Might switch to custom errors.
-/* BC000: STILL IN CHANGE ALOWANCE PERIOD
-/* BC001: INCORRECT NONCE
-/* BC002: This token is not supported
-/* BC003: Fake Signature
-/* BC004: exceed daily allowance
-/* BC005: Token is already supported
-/* BC006: No Zero Address
-/* BC007: NON AUTHORIZED ADDRESS
-**/
 /** @notice @dev  
 /* This error occurs when token is in change allowance period.
 */
@@ -413,7 +402,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 _amount,
         uint256 _value
     ) internal pure returns (uint256) {
-        if (_token == ETHER) {
+        if (_token == address(0)) {
             return _value;
         } else return _amount;
     }
