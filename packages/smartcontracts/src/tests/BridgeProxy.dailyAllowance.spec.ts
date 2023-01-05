@@ -129,14 +129,15 @@ describe('Daily allowance tests', () => {
       expect(allowance[2]).to.equal(toWei('2'));
       expect(allowance[3]).to.equal(false);
     });
-
-    it('Successfully emitted event when changing allowances', async () => {
-      const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
-      // Event called CHANGE_DAILY_ALLOWANCE should be emitted when changes token's allowances
-      await expect(proxyBridge.changeDailyAllowance(testToken.address, toWei('10')))
-        .to.emit(proxyBridge, 'CHANGE_DAILY_ALLOWANCE')
-        .withArgs(testToken.address, toWei('10'));
+    describe('Emitted Events', () => {
+      it('Successfully emitted event when changing allowances', async () => {
+        const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
+        await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+        // Event called CHANGE_DAILY_ALLOWANCE should be emitted when changes token's allowances
+        await expect(proxyBridge.changeDailyAllowance(testToken.address, toWei('10')))
+          .to.emit(proxyBridge, 'CHANGE_DAILY_ALLOWANCE')
+          .withArgs(testToken.address, toWei('10'));
+      });
     });
 
     it('Changing allowance for two ERC20 tokens', async () => {

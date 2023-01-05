@@ -21,14 +21,6 @@ describe('Relayer address change tests', () => {
         proxyBridge.connect(defaultAdminSigner).changeRelayerAddress('0x0000000000000000000000000000000000000000'),
       ).to.revertedWithCustomError(proxyBridge, 'NON_ZERO_ADDRESS');
     });
-
-    it('Successfully emitted the event on change of relayer address', async () => {
-      const { proxyBridge, defaultAdminSigner, arbitrarySigner } = await loadFixture(deployContracts);
-      // Event called RELAYER_ADDRESS_CHANGED should be emitted on Successful withdrawal by the Admin and Operational addresses only
-      await expect(proxyBridge.connect(defaultAdminSigner).changeRelayerAddress(arbitrarySigner.address))
-        .to.emit(proxyBridge, 'RELAYER_ADDRESS_CHANGED')
-        .withArgs(defaultAdminSigner.address, arbitrarySigner.address);
-    });
   });
 
   describe('OPERATIONAL_ROLE', () => {
@@ -47,16 +39,6 @@ describe('Relayer address change tests', () => {
         proxyBridge.connect(operationalAdminSigner).changeRelayerAddress('0x0000000000000000000000000000000000000000'),
       ).to.revertedWithCustomError(proxyBridge, 'NON_ZERO_ADDRESS');
     });
-
-    it('Successfully emitted the event on change of relayer address', async () => {
-      const { proxyBridge, defaultAdminSigner, operationalAdminSigner, arbitrarySigner } = await loadFixture(
-        deployContracts,
-      );
-      // Event called RELAYER_ADDRESS_CHANGED should be emitted on Successful withdrawal by the Admin and Operational addresses only
-      await expect(proxyBridge.connect(operationalAdminSigner).changeRelayerAddress(arbitrarySigner.address))
-        .to.emit(proxyBridge, 'RELAYER_ADDRESS_CHANGED')
-        .withArgs(defaultAdminSigner.address, arbitrarySigner.address);
-    });
   });
 
   describe('ARBITRARY_EOA', () => {
@@ -70,6 +52,25 @@ describe('Relayer address change tests', () => {
         proxyBridge.connect(arbitrarySigner).changeRelayerAddress(operationalAdminSigner.address),
       ).to.be.revertedWithCustomError(proxyBridge, 'NON_AUTHORIZED_ADDRESS');
       expect(await proxyBridge.relayerAddress()).to.equal(defaultAdminSigner.address);
+    });
+  });
+
+  describe('Emitted Events', () => {
+    it('Successfully emitted the event on change of relayer address by Admin', async () => {
+      const { proxyBridge, defaultAdminSigner, arbitrarySigner } = await loadFixture(deployContracts);
+      // Event called RELAYER_ADDRESS_CHANGED should be emitted on Successful withdrawal by the Admin and Operational addresses only
+      await expect(proxyBridge.connect(defaultAdminSigner).changeRelayerAddress(arbitrarySigner.address))
+        .to.emit(proxyBridge, 'RELAYER_ADDRESS_CHANGED')
+        .withArgs(defaultAdminSigner.address, arbitrarySigner.address);
+    });
+    it('Successfully emitted the event on change of relayer address by Operational', async () => {
+      const { proxyBridge, defaultAdminSigner, operationalAdminSigner, arbitrarySigner } = await loadFixture(
+        deployContracts,
+      );
+      // Event called RELAYER_ADDRESS_CHANGED should be emitted on Successful withdrawal by the Admin and Operational addresses only
+      await expect(proxyBridge.connect(operationalAdminSigner).changeRelayerAddress(arbitrarySigner.address))
+        .to.emit(proxyBridge, 'RELAYER_ADDRESS_CHANGED')
+        .withArgs(defaultAdminSigner.address, arbitrarySigner.address);
     });
   });
 });

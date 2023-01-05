@@ -16,8 +16,11 @@ export async function deployContracts(): Promise<BridgeDeploymentResult> {
   const encodedData = BridgeV1__factory.createInterface().encodeFunctionData('initialize', [
     'CAKE_BRIDGE',
     '0.1',
+    // admin address
     accounts[0],
+    // operational address
     accounts[1],
+    // relayer address
     accounts[0],
     30,
   ]);
