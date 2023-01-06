@@ -8,17 +8,40 @@ import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol'
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import 'hardhat/console.sol';
 
-/**
-/* Errors code. Might switch to custom errors.
-/* BC000: STILL IN CHANGE ALOWANCE PERIOD
-/* BC001: INCORRECT NONCE
-/* BC002: This token is not supported
-/* BC003: Fake Signature
-/* BC004: exceed daily allowance
-/* BC005: Token is already supported
-/* BC006: No Zero Address
-/* BC007: NON AUTHORIZED ADDRESS
-**/
+/** @notice @dev  
+/* This error occurs when token is in change allowance period.
+*/
+error STILL_IN_CHANGE_ALLOWANCE_PERIOD();
+
+/** @notice @dev  
+/* This error occurs when incoorect nonce provided
+*/
+error INCORRECT_NONCE();
+
+/** @notice @dev  
+/* This error occurs when token is not in supported list
+*/
+error TOKEN_NOT_SUPPORTED();
+
+/** @notice @dev  
+/* This error occurs when fake signatures being used to claim fund
+*/
+error FAKE_SIGNATURE();
+
+/** @notice @dev  
+/* This error occurs when bridging amount exceeds dailyAllowance limit
+*/
+error EXCEEDS_DAILY_ALLOWANCE();
+
+/** @notice @dev  
+/* This error occurs when token is already in supported list
+*/
+error TOKEN_ALREADY_SUPPORTED();
+
+/** @notice @dev  
+/* This error occurs when using Zero address
+*/
+error NON_ZERO_ADDRESS();
 
 /** @notice @dev  
 /* This error occurs when the msg.sender doesn't have neither DEFAULT_ADMIN_ROLE or OPERATIONAL_ROLE assigned
@@ -31,9 +54,19 @@ error NON_AUTHORIZED_ADDRESS();
 error ONLY_SUPPORTED_TOKENS();
 
 /** @notice @dev 
-/* This error occurs when the initail daily allowance for ETHER hasn't been set.
+/* This error occurs when this contract doesn't have enough ETH.
 */
 error NOT_ENOUGH_ETHEREUM();
+
+/** @notice @dev 
+/* This error occurs when the txn to withdraw ether by admin doesn't succeed.
+*/
+error TRANSCATION_FAILED();
+
+/** @notice @dev 
+/* This error occurs when users sends ETHER wlong with other erc20 token.
+*/
+error DO_NOT_SEND_ETHER_WITH_ERC20();
 
 contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     struct TokenAllowance {
@@ -69,7 +102,8 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      */
     modifier notInChangeAllowancePeriod(address _tokenAddress) {
         if (tokenAllowances[_tokenAddress].inChangeAllowancePeriod) {
-            require(block.timestamp - tokenAllowances[_tokenAddress].prevEpoch >= 1 days, 'BC000');
+            if (block.timestamp - tokenAllowances[_tokenAddress].prevEpoch < 1 days)
+                revert STILL_IN_CHANGE_ALLOWANCE_PERIOD();
             tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
             _;
         } else {
@@ -176,6 +210,16 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     }
 
     /**
+     * @dev Testing need for this fn. Using to test claim ether.
+     */
+    fallback() external payable {}
+
+    /**
+     * @dev Testing need for this fn. Using to test claim ether.
+     */
+    receive() external payable {}
+
+    /**
      * @notice Used to claim the tokens that have been approved by the relayer (for bridging from DeFiChain to Ethereum mainnet)
      * @param _to Address to send the claimed fund
      * @param _amount Amount to be claimed
@@ -192,15 +236,23 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         address _tokenAddress,
         bytes memory signature
     ) external {
-        require(eoaAddressToNonce[_to] == _nonce, 'BC001');
-        require(supportedTokens[_tokenAddress], 'BC002');
+        if (eoaAddressToNonce[_to] != _nonce) revert INCORRECT_NONCE();
+        if (!supportedTokens[_tokenAddress]) revert TOKEN_NOT_SUPPORTED();
         require(block.timestamp <= _deadline);
         bytes32 struct_hash = keccak256(abi.encode(DATA_TYPE_HASH, _to, _amount, _nonce, _deadline, _tokenAddress));
         bytes32 msg_hash = _hashTypedDataV4(struct_hash);
-        require(ECDSAUpgradeable.recover(msg_hash, signature) == relayerAddress, 'BC003');
-        IERC20(_tokenAddress).transfer(_to, _amount);
+        if (ECDSAUpgradeable.recover(msg_hash, signature) != relayerAddress) revert FAKE_SIGNATURE();
+        if (_tokenAddress == address(0)) {
+            if (_amount > address(this).balance) revert NOT_ENOUGH_ETHEREUM();
+            eoaAddressToNonce[_to]++;
+            (bool sent, ) = msg.sender.call{value: _amount}('');
+            if (!sent) revert TRANSCATION_FAILED();
+        } else {
+            eoaAddressToNonce[_to]++;
+            IERC20(_tokenAddress).transfer(_to, _amount);
+        }
+
         emit CLAIM_FUND(_tokenAddress, _to, _amount);
-        eoaAddressToNonce[_to]++;
     }
 
     /**
@@ -215,23 +267,22 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         address _tokenAddress,
         uint256 _amount
     ) public payable notInChangeAllowancePeriod(_tokenAddress) {
-        require(supportedTokens[_tokenAddress], 'BC002');
+        if (!supportedTokens[_tokenAddress]) revert TOKEN_NOT_SUPPORTED();
+        if (_tokenAddress != address(0) && msg.value > 0) {
+            revert DO_NOT_SEND_ETHER_WITH_ERC20();
+        }
         uint256 amount = checkValue(_tokenAddress, _amount, msg.value);
         if (tokenAllowances[_tokenAddress].prevEpoch + (1 days) > block.timestamp) {
             tokenAllowances[_tokenAddress].currentDailyUsage += amount;
-            require(
-                tokenAllowances[_tokenAddress].currentDailyUsage <= tokenAllowances[_tokenAddress].dailyAllowance,
-                'BC004'
-            );
+            if (tokenAllowances[_tokenAddress].currentDailyUsage > tokenAllowances[_tokenAddress].dailyAllowance)
+                revert EXCEEDS_DAILY_ALLOWANCE();
         } else {
             tokenAllowances[_tokenAddress].prevEpoch +=
                 ((block.timestamp - tokenAllowances[_tokenAddress].prevEpoch) / (1 days)) *
                 (1 days);
             tokenAllowances[_tokenAddress].currentDailyUsage = amount;
-            require(
-                tokenAllowances[_tokenAddress].currentDailyUsage <= tokenAllowances[_tokenAddress].dailyAllowance,
-                'BC004'
-            );
+            if (tokenAllowances[_tokenAddress].currentDailyUsage > tokenAllowances[_tokenAddress].dailyAllowance)
+                revert EXCEEDS_DAILY_ALLOWANCE();
         }
         uint256 netAmountInWei = amountAfterFees(amount);
         if (_tokenAddress == address(0)) {
@@ -244,33 +295,33 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
 
     /**
      * @notice Used by addresses with Admin and Operational roles to add a new supported token and daily allowance
-     * @param _token The token address to be added to supported list
+     * @param _tokenAddress The token address to be added to supported list
      * @param _dailyAllowance Daily allowance set for the token
      */
-    function addSupportedTokens(address _token, uint256 _dailyAllowance) external {
+    function addSupportedTokens(address _tokenAddress, uint256 _dailyAllowance) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
-        require(!supportedTokens[_token], 'BC005');
-        supportedTokens[_token] = true;
-        tokenAllowances[_token].prevEpoch = block.timestamp;
-        tokenAllowances[_token].dailyAllowance = _dailyAllowance;
-        tokenAllowances[_token].currentDailyUsage = 0;
-        tokenAllowances[_token].inChangeAllowancePeriod = false;
-        emit ADD_SUPPORTED_TOKEN(_token, _dailyAllowance);
+        if (supportedTokens[_tokenAddress]) revert TOKEN_ALREADY_SUPPORTED();
+        supportedTokens[_tokenAddress] = true;
+        tokenAllowances[_tokenAddress].prevEpoch = block.timestamp;
+        tokenAllowances[_tokenAddress].dailyAllowance = _dailyAllowance;
+        tokenAllowances[_tokenAddress].currentDailyUsage = 0;
+        tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
+        emit ADD_SUPPORTED_TOKEN(_tokenAddress, _dailyAllowance);
     }
 
     /**
      * @notice Used by addresses with Admin and Operational roles to remove an exisiting supported token
-     * @param _token The token address to be removed from supported list
+     * @param _tokenAddress The token address to be removed from supported list
      */
-    function removeSupportedTokens(address _token) external {
+    function removeSupportedTokens(address _tokenAddress) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
-        require(supportedTokens[_token], 'BC002');
-        supportedTokens[_token] = false;
-        tokenAllowances[_token].prevEpoch = 0;
-        tokenAllowances[_token].dailyAllowance = 0;
-        tokenAllowances[_token].currentDailyUsage = 0;
-        tokenAllowances[_token].inChangeAllowancePeriod = false;
-        emit REMOVE_SUPPORTED_TOKEN(_token);
+        if (!supportedTokens[_tokenAddress]) revert TOKEN_NOT_SUPPORTED();
+        supportedTokens[_tokenAddress] = false;
+        tokenAllowances[_tokenAddress].prevEpoch = 0;
+        tokenAllowances[_tokenAddress].dailyAllowance = 0;
+        tokenAllowances[_tokenAddress].currentDailyUsage = 0;
+        tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
+        emit REMOVE_SUPPORTED_TOKEN(_tokenAddress);
     }
 
     /**
@@ -307,7 +358,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     function withdrawEth(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (amount > address(this).balance) revert NOT_ENOUGH_ETHEREUM();
         (bool sent, ) = msg.sender.call{value: amount}('');
-        require(sent, 'Failed to send Ether');
+        if (!sent) revert TRANSCATION_FAILED();
         emit ETH_WITHDRAWAL_BY_OWNER(msg.sender, amount);
     }
 
@@ -317,7 +368,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      */
     function changeRelayerAddress(address _relayerAddress) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
-        require(_relayerAddress != address(0), 'BC006');
+        if (_relayerAddress == address(0)) revert NON_ZERO_ADDRESS();
         address oldRelayerAddress = relayerAddress;
         relayerAddress = _relayerAddress;
         emit RELAYER_ADDRESS_CHANGED(oldRelayerAddress, _relayerAddress);
@@ -352,7 +403,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 _amount,
         uint256 _value
     ) internal pure returns (uint256) {
-        if (_token == ETHER) {
+        if (_token == address(0)) {
             return _value;
         } else return _amount;
     }

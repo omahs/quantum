@@ -10,15 +10,14 @@ import {
   HardhatNetworkContainer,
   StartedHardhatNetworkContainer,
 } from '../src';
-import { TestWalletData } from '../src/containers/HardhatNetwork';
 
 describe('Bridge Contract', () => {
   const container = new HardhatNetworkContainer();
   let startedHardhatContainer: StartedHardhatNetworkContainer;
   let hardhatNetwork: HardhatNetwork;
   let evmContractManager: EvmContractManager;
-  let defaultAdminAddress: TestWalletData;
-  let operationalAdminAddress: TestWalletData;
+  let defaultAdminAddress: string;
+  let operationalAdminAddress: string;
   let bridgeUpgradeable: BridgeV1;
   let bridgeProxy: BridgeProxy;
 
@@ -27,8 +26,8 @@ describe('Bridge Contract', () => {
     hardhatNetwork = await startedHardhatContainer.ready();
     evmContractManager = hardhatNetwork.contracts;
     // Default and operational admin account
-    defaultAdminAddress = await hardhatNetwork.createTestWallet();
-    operationalAdminAddress = await hardhatNetwork.createTestWallet();
+    ({ testWalletAddress: defaultAdminAddress } = await hardhatNetwork.createTestWallet());
+    ({ testWalletAddress: operationalAdminAddress } = await hardhatNetwork.createTestWallet());
     // Deploying BridgeV1 contract
     bridgeUpgradeable = await evmContractManager.deployContract<BridgeV1>({
       deploymentName: 'BridgeV1',
@@ -37,13 +36,12 @@ describe('Bridge Contract', () => {
     });
     await hardhatNetwork.generate(1);
     // deployment arguments for the Proxy contract
-
     const encodedData = BridgeV1__factory.createInterface().encodeFunctionData('initialize', [
       'CAKE_BRIDGE',
       '0.1',
-      defaultAdminAddress.testWalletAddress,
-      operationalAdminAddress.testWalletAddress,
-      defaultAdminAddress.testWalletAddress,
+      defaultAdminAddress,
+      operationalAdminAddress,
+      defaultAdminAddress,
       30, // 0.3% txn fee
     ]);
     // Deploying proxy contract
@@ -70,14 +68,14 @@ describe('Bridge Contract', () => {
     });
     it('Admin address should be Default Admin address', async () => {
       const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
-      expect(await bridgeUpgradeable.hasRole(DEFAULT_ADMIN_ROLE, defaultAdminAddress.testWalletAddress)).toBe(true);
+      expect(await bridgeUpgradeable.hasRole(DEFAULT_ADMIN_ROLE, defaultAdminAddress)).toBe(true);
     });
     it('Operational address should be Operational Admin address', async () => {
       const OPERATIONAL_ROLE = ethers.utils.solidityKeccak256(['string'], ['OPERATIONAL_ROLE']);
-      expect(await bridgeUpgradeable.hasRole(OPERATIONAL_ROLE, operationalAdminAddress.testWalletAddress)).toBe(true);
+      expect(await bridgeUpgradeable.hasRole(OPERATIONAL_ROLE, operationalAdminAddress)).toBe(true);
     });
     it('Relayer address should be Default Admin address', async () => {
-      expect(await bridgeUpgradeable.relayerAddress()).toBe(defaultAdminAddress.testWalletAddress);
+      expect(await bridgeUpgradeable.relayerAddress()).toBe(defaultAdminAddress);
     });
     it('Successfully implemented the 0.3% txn fee', async () => {
       expect((await bridgeUpgradeable.transactionFee()).toString()).toBe('30');
