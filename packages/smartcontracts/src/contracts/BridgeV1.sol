@@ -11,7 +11,7 @@ import 'hardhat/console.sol';
 /** @notice @dev  
 /* This error occurs when token is in change allowance period.
 */
-error STILL_IN_CHANGE_ALLOWANCE_PERIOD();
+error STILL_IN_CHANGE_PERIOD();
 
 /** @notice @dev  
 /* This error occurs when incoorect nonce provided
@@ -68,12 +68,18 @@ error TRANSCATION_FAILED();
 */
 error DO_NOT_SEND_ETHER_WITH_ERC20();
 
+/** @notice @dev
+ * This occurs when the input for time in day is larger than 24 hours
+ */
+error TIME_IN_DAY_TOO_LARGE();
+
 contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     struct TokenAllowance {
         uint256 prevEpoch;
         uint256 dailyAllowance;
         uint256 currentDailyUsage;
-        bool inChangeAllowancePeriod;
+        uint256 nextActivatedEpoch;
+        bool inChange;
     }
     address constant ETHER = address(0);
 
@@ -100,11 +106,15 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      * @notice Use to check if the token is still in allowance period.
      * @param _tokenAddress address of the respected token
      */
-    modifier notInChangeAllowancePeriod(address _tokenAddress) {
-        if (tokenAllowances[_tokenAddress].inChangeAllowancePeriod) {
-            if (block.timestamp - tokenAllowances[_tokenAddress].prevEpoch < 1 days)
-                revert STILL_IN_CHANGE_ALLOWANCE_PERIOD();
-            tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
+    modifier notInChangePeriod(address _tokenAddress) {
+        if (tokenAllowances[_tokenAddress].inChange) {
+            if (
+                block.timestamp - tokenAllowances[_tokenAddress].prevEpoch <
+                tokenAllowances[_tokenAddress].nextActivatedEpoch
+            ) revert STILL_IN_CHANGE_PERIOD();
+            tokenAllowances[_tokenAddress].inChange = false;
+            tokenAllowances[_tokenAddress].currentDailyUsage = 0;
+            tokenAllowances[_tokenAddress].prevEpoch = tokenAllowances[_tokenAddress].nextActivatedEpoch;
             _;
         } else {
             _;
@@ -199,7 +209,8 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         address _initialAdmin,
         address _initialOperational,
         address _relayerAddress,
-        uint256 _fee
+        uint256 _fee,
+        uint256 _timeInDay
     ) external initializer {
         __UUPSUpgradeable_init();
         __EIP712_init(_name, _version);
@@ -266,7 +277,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         bytes memory _defiAddress,
         address _tokenAddress,
         uint256 _amount
-    ) public payable notInChangeAllowancePeriod(_tokenAddress) {
+    ) public payable notInChangePeriod(_tokenAddress) {
         if (!supportedTokens[_tokenAddress]) revert TOKEN_NOT_SUPPORTED();
         if (_tokenAddress != address(0) && msg.value > 0) {
             revert DO_NOT_SEND_ETHER_WITH_ERC20();
@@ -298,14 +309,22 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      * @param _tokenAddress The token address to be added to supported list
      * @param _dailyAllowance Daily allowance set for the token
      */
-    function addSupportedTokens(address _tokenAddress, uint256 _dailyAllowance) external {
+    function addSupportedTokens(
+        address _tokenAddress,
+        uint256 _dailyAllowance,
+        uint256 _timeInDay
+    ) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
         if (supportedTokens[_tokenAddress]) revert TOKEN_ALREADY_SUPPORTED();
         supportedTokens[_tokenAddress] = true;
-        tokenAllowances[_tokenAddress].prevEpoch = block.timestamp;
+        uint256 currTimeInDay = block.timestamp % (1 days);
+        uint256 latestDay = block.timestamp / (1 days);
+        tokenAllowances[_tokenAddress].prevEpoch = (currTimeInDay < _timeInDay)
+            ? ((latestDay - 1) * (1 days) + _timeInDay)
+            : (latestDay * (1 days) + _timeInDay);
         tokenAllowances[_tokenAddress].dailyAllowance = _dailyAllowance;
         tokenAllowances[_tokenAddress].currentDailyUsage = 0;
-        tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
+        tokenAllowances[_tokenAddress].inChange = false;
         emit ADD_SUPPORTED_TOKEN(_tokenAddress, _dailyAllowance);
     }
 
@@ -320,7 +339,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         tokenAllowances[_tokenAddress].prevEpoch = 0;
         tokenAllowances[_tokenAddress].dailyAllowance = 0;
         tokenAllowances[_tokenAddress].currentDailyUsage = 0;
-        tokenAllowances[_tokenAddress].inChangeAllowancePeriod = false;
+        tokenAllowances[_tokenAddress].inChange = false;
         emit REMOVE_SUPPORTED_TOKEN(_tokenAddress);
     }
 
@@ -332,13 +351,26 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      */
     function changeDailyAllowance(address _tokenAddress, uint256 _dailyAllowance)
         external
-        notInChangeAllowancePeriod(_tokenAddress)
+        notInChangePeriod(_tokenAddress)
     {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
         if (!supportedTokens[_tokenAddress]) revert ONLY_SUPPORTED_TOKENS();
-        tokenAllowances[_tokenAddress].inChangeAllowancePeriod = true;
+        tokenAllowances[_tokenAddress].inChange = true;
         tokenAllowances[_tokenAddress].dailyAllowance = _dailyAllowance;
+        tokenAllowances[_tokenAddress].nextActivatedEpoch =
+            block.timestamp -
+            ((block.timestamp - tokenAllowances[_tokenAddress].prevEpoch) % (1 days)) +
+            1 days;
         emit CHANGE_DAILY_ALLOWANCE(_tokenAddress, _dailyAllowance);
+    }
+
+    function resetTime(address _tokenAddress, uint256 _timeInDay) external notInChangePeriod(_tokenAddress) {
+        if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
+        if (!supportedTokens[_tokenAddress]) revert ONLY_SUPPORTED_TOKENS();
+        if (_timeInDay >= 1 days) revert TIME_IN_DAY_TOO_LARGE();
+        uint256 latestDate = block.timestamp / (1 days);
+        tokenAllowances[_tokenAddress].nextActivatedEpoch = (latestDate + 1) * (1 days) + _timeInDay;
+        tokenAllowances[_tokenAddress].inChange = true;
     }
 
     /**
