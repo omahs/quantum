@@ -69,9 +69,9 @@ error TRANSCATION_FAILED();
 error DO_NOT_SEND_ETHER_WITH_ERC20();
 
 /** @notice @dev
- * This occurs when the input for time in day is larger than 24 hours
+ * This occurs when the timestamp to reset is already in the past
  */
-error TIME_IN_DAY_TOO_LARGE();
+error TIMESTAMP_ALR_IN_THE_PAST();
 
 contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     struct TokenAllowance {
@@ -108,10 +108,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
      */
     modifier notInChangePeriod(address _tokenAddress) {
         if (tokenAllowances[_tokenAddress].inChange) {
-            if (
-                block.timestamp - tokenAllowances[_tokenAddress].prevEpoch <
-                tokenAllowances[_tokenAddress].nextActivatedEpoch
-            ) revert STILL_IN_CHANGE_PERIOD();
+            if (block.timestamp < tokenAllowances[_tokenAddress].nextActivatedEpoch) revert STILL_IN_CHANGE_PERIOD();
             tokenAllowances[_tokenAddress].inChange = false;
             tokenAllowances[_tokenAddress].currentDailyUsage = 0;
             tokenAllowances[_tokenAddress].prevEpoch = tokenAllowances[_tokenAddress].nextActivatedEpoch;
@@ -209,8 +206,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         address _initialAdmin,
         address _initialOperational,
         address _relayerAddress,
-        uint256 _fee,
-        uint256 _timeInDay
+        uint256 _fee
     ) external initializer {
         __UUPSUpgradeable_init();
         __EIP712_init(_name, _version);
@@ -312,16 +308,13 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     function addSupportedTokens(
         address _tokenAddress,
         uint256 _dailyAllowance,
-        uint256 _timeInDay
+        uint256 _timestamp
     ) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
         if (supportedTokens[_tokenAddress]) revert TOKEN_ALREADY_SUPPORTED();
+        if (block.timestamp >= _timestamp) revert TIMESTAMP_ALR_IN_THE_PAST();
         supportedTokens[_tokenAddress] = true;
-        uint256 currTimeInDay = block.timestamp % (1 days);
-        uint256 latestDay = block.timestamp / (1 days);
-        tokenAllowances[_tokenAddress].prevEpoch = (currTimeInDay < _timeInDay)
-            ? ((latestDay - 1) * (1 days) + _timeInDay)
-            : (latestDay * (1 days) + _timeInDay);
+        tokenAllowances[_tokenAddress].prevEpoch = _timestamp;
         tokenAllowances[_tokenAddress].dailyAllowance = _dailyAllowance;
         tokenAllowances[_tokenAddress].currentDailyUsage = 0;
         tokenAllowances[_tokenAddress].inChange = false;
@@ -364,12 +357,11 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         emit CHANGE_DAILY_ALLOWANCE(_tokenAddress, _dailyAllowance);
     }
 
-    function resetTime(address _tokenAddress, uint256 _timeInDay) external notInChangePeriod(_tokenAddress) {
+    function resetTime(address _tokenAddress, uint256 _timestamp) external notInChangePeriod(_tokenAddress) {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
         if (!supportedTokens[_tokenAddress]) revert ONLY_SUPPORTED_TOKENS();
-        if (_timeInDay >= 1 days) revert TIME_IN_DAY_TOO_LARGE();
-        uint256 latestDate = block.timestamp / (1 days);
-        tokenAllowances[_tokenAddress].nextActivatedEpoch = (latestDate + 1) * (1 days) + _timeInDay;
+        if (_timestamp <= block.timestamp) revert TIMESTAMP_ALR_IN_THE_PAST();
+        tokenAllowances[_tokenAddress].nextActivatedEpoch = _timestamp;
         tokenAllowances[_tokenAddress].inChange = true;
     }
 
