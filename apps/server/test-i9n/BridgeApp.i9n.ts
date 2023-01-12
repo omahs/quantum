@@ -1,38 +1,38 @@
-import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigModule, registerAs } from '@nestjs/config';
 import { HardhatNetwork, HardhatNetworkContainer, StartedHardhatNetworkContainer } from 'smartcontracts';
 
-import { AppModule } from '../src/AppModule';
 import { BridgeServerTestingApp } from '../src/BridgeServerTestingApp';
-
-@Module({})
-export class TestingExampleModule {
-  static register(startedHardhatContainer: StartedHardhatNetworkContainer): DynamicModule {
-    const hardhatConfig = registerAs('blockchain', () => ({
-      ethereumRpcUrl: startedHardhatContainer.rpcUrl,
-    }));
-
-    return {
-      module: TestingExampleModule,
-      imports: [AppModule, ConfigModule.forFeature(hardhatConfig)],
-    };
-  }
-}
+import { RedisContainer, StartedRedisContainer } from '../testing/RedisContainer';
+import { buildTestConfig, TestingExampleModule } from '../testing/TestingExampleModule';
 
 describe('Bridge Service Integration Tests', () => {
   let startedHardhatContainer: StartedHardhatNetworkContainer;
+  let startedRedisContainer: StartedRedisContainer;
   let hardhatNetwork: HardhatNetwork;
   let testing: BridgeServerTestingApp;
 
   beforeAll(async () => {
     startedHardhatContainer = await new HardhatNetworkContainer().start();
+    startedRedisContainer = await new RedisContainer().start();
     hardhatNetwork = await startedHardhatContainer.ready();
-    testing = new BridgeServerTestingApp(TestingExampleModule.register(startedHardhatContainer));
+    testing = new BridgeServerTestingApp(
+      TestingExampleModule.register(buildTestConfig(startedHardhatContainer, startedRedisContainer)),
+    );
     await testing.start();
   });
 
   afterAll(async () => {
     await hardhatNetwork.stop();
+    await startedRedisContainer.stop();
+    await testing.stop();
+  });
+
+  it('should be able to start successfully', async () => {
+    const initialResponse = await testing.inject({
+      method: 'GET',
+      url: '/',
+    });
+
+    await expect(initialResponse).toStrictEqual(expect.any(Object));
   });
 
   it('should be able to make calls to the underlying hardhat node', async () => {
@@ -57,13 +57,26 @@ describe('Bridge Service Integration Tests', () => {
   });
 
   // Sample only, will re-org once we have proper layers
-  it('should be able to make calls to DeFiChain server', async () => {
+  it('should be able to make calls to DeFiChain server /stats', async () => {
     const initialResponse = await testing.inject({
       method: 'GET',
       url: '/defichain/stats?network=regtest',
     });
 
     await expect(initialResponse.statusCode).toStrictEqual(200);
+  });
+
+  // Sample only, this currently does nothing at all
+  it('should be able to make calls to DeFiChain server /confirmer', async () => {
+    const initialResponse = await testing.inject({
+      method: 'POST',
+      url: '/defichain/confirmer',
+      payload: {
+        transactionId: 'weNeedAnId',
+      },
+    });
+
+    await expect(initialResponse.statusCode).toStrictEqual(201);
   });
 
   it('should fail network validation', async () => {
