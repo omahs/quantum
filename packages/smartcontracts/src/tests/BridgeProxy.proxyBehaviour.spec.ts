@@ -85,7 +85,26 @@ describe('Test Behaviour related to proxy', () => {
       defaultAdminSigner = bridgeDeploymentResult.defaultAdminSigner;
     });
 
-    it('Send no data and send some ether to the smart contract', async () => {
+    //              yes --> proxy's receive is called --> implementation's receive is called
+    //               /
+    // msg.data == empty
+    //               \
+    //               no --> proxy's fallback is called, passes msg.data and msg.value to implementation
+    //                  --> evm matches the function signature in msg.data and the ones in the implementation contract's abi
+    //                          /         \
+    //                       no match      \
+    //                         |            \
+    //                        fail           match
+    //                                      /     \
+    //                       function is payable   \
+    //                                   /        function is not payable
+    //                  succeeds if all goes well       /           \
+    //                                                 /             \
+    //                                          msg.value == 0      msg.value > 0
+    //                                              |                 |
+    //                            succeeds if all goes well         fail
+
+    it('Sucessful when sending no data and send some ether to the smart contract', async () => {
       const prevETHBalance = await ethers.provider.getBalance(proxyBridge.address);
       const tx = await defaultAdminSigner.sendTransaction({
         to: proxyBridge.address,
@@ -104,13 +123,13 @@ describe('Test Behaviour related to proxy', () => {
       expect(afterETHBalance.sub(prevETHBalance)).to.equal(toWei('1'));
     });
 
-    it('Call a method that is not in the implementation interface', async () => {
+    it('Revert when calling a method that is not in the implementation interface', async () => {
       const TestTokenFactory = await ethers.getContractFactory('TestToken');
       const attachedToken = TestTokenFactory.attach(proxyBridge.address);
       await expect(attachedToken.totalSupply()).to.reverted;
     });
 
-    it('Call a method that is in the implementation interface that is not payable, without sending ether', async () => {
+    it('Successful when calling a method that is in the implementation interface that is not payable, without sending ether (if all goes well)', async () => {
       await defaultAdminSigner.sendTransaction({
         to: proxyBridge.address,
         data:
@@ -120,7 +139,7 @@ describe('Test Behaviour related to proxy', () => {
       expect(await proxyBridge.supportedTokens(ethers.constants.AddressZero)).to.equal(true);
     });
 
-    it('Call a method that is in the implementation interface that is not payable, and send ether', async () => {
+    it('Revert when calling a method that is in the implementation interface that is not payable, and send ether', async () => {
       await expect(
         defaultAdminSigner.sendTransaction({
           to: proxyBridge.address,
@@ -132,7 +151,7 @@ describe('Test Behaviour related to proxy', () => {
       ).to.reverted;
     });
 
-    it('Call a method that is in the implementation interface that is payable, and send ether', async () => {
+    it('Successful when calling a method that is in the implementation interface that is payable, and send ether (if all goes well)', async () => {
       await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('15'));
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
@@ -141,7 +160,7 @@ describe('Test Behaviour related to proxy', () => {
       ).to.emit(proxyBridge, 'BRIDGE_TO_DEFI_CHAIN');
     });
 
-    it('Call a method that is in the implementation interface that is payable, without sending any ether', async () => {
+    it('Successful when calling a method that is in the implementation interface that is payable, without sending any ether (if all goes well)', async () => {
       await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('15'));
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0),
