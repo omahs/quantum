@@ -6,12 +6,11 @@ import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable
 contract NewImplementation is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     // respect the old storage slots order
     struct TokenAllowance {
-        uint256 prev_epoch;
-        uint256 daily_allowance;
-        uint256 curr_daily_usage;
-        bool in_change_allowance_period;
+        uint256 prevEpoch;
+        uint256 dailyAllowance;
+        uint256 currentDailyUsage;
+        bool inChangeAllowancePeriod;
     }
-
     mapping(address => uint256) public eoaAddressToNonce;
     mapping(address => bool) public supportedTokens;
     address public relayerAddress;
