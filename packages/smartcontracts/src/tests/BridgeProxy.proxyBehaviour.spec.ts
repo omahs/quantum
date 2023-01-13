@@ -48,7 +48,8 @@ describe('Test Behaviour related to proxy', () => {
 
       // upgrade to the new contract
       await proxyBridge.upgradeTo(newImplementation.address);
-      // check the implementation slot
+      // check the implementation slot according to EIP1967, for reference:
+      // https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/65420cb9c943c32eb7e8c9da60183a413d90067a/contracts/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol#L34
       expect(
         `0x${(
           await ethers.provider.getStorageAt(
