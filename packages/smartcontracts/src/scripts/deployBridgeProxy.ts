@@ -7,7 +7,7 @@ const OPERATIONAL_ADDRESS = '';
 const RELAYER_ADDRESS = '';
 const TRANSACTION_FEE = 30;
 const BRIDGE_IMPLEMENTATION_ADDRESS = '';
-// npx hardhat run --network goerli ./contracts/deployBridgeImplementation.ts
+// npx hardhat run --network goerli ./scripts/deployBridgeImplementation.ts
 async function main() {
   const BridgeProxy = await ethers.getContractFactory('BridgeProxy');
   const encodedData = BridgeV1__factory.createInterface().encodeFunctionData('initialize', [

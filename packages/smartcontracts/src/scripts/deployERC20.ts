@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 
 // npx hardhat run --network goerli ./scripts/deployERC20.ts
-const TOKEN_ADMIN_ADDRESS = '0x17D6bb95cCF124324995F08204132cdf75048284';
+const TOKEN_ADMIN_ADDRESS = '';
 async function main() {
   const ERC20 = await ethers.getContractFactory('GoerliTestToken');
   const testToken = await ERC20.deploy('Test', 'T', TOKEN_ADMIN_ADDRESS);
