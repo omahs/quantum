@@ -21,9 +21,9 @@ describe('Bridge Service Integration Tests', () => {
   });
 
   afterAll(async () => {
+    await testing.stop();
     await hardhatNetwork.stop();
     await startedRedisContainer.stop();
-    await testing.stop();
   });
 
   it('should be able to start successfully', async () => {
