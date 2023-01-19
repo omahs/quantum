@@ -15,6 +15,12 @@ import NumericFormat from "@components/commons/NumericFormat";
 import BrLogoIcon from "@components/icons/BrLogoIcon";
 import DeFiChainToERC20Transfer from "@components/erc-transfer/DeFiChainToERC20Transfer";
 import { CONSORTIUM_INFO, DISCLAIMER_MESSAGE, FEES_INFO } from "../constants";
+import { utils } from "ethers";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 
 interface RowDataI {
   address: string;
@@ -118,8 +124,36 @@ function RowData({
   );
 }
 
-function ERC20ToDeFiChainTransfer() {
+function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
   const { isMobile } = useResponsive();
+
+  const { config } = usePrepareContractWrite({
+    address: process.env.BRIDGE_CONTRACT_ADDRESS,
+    abi: [
+      {
+        name: "bridgeToDeFiChain",
+        type: "function",
+        stateMutability: "payable",
+        inputs: [
+          { internalType: "bytes", name: "_defiAddress", type: "bytes" },
+          { internalType: "address", name: "_tokenAddress", type: "address" },
+          { internalType: "uint256", name: "_amount", type: "uint256" },
+        ],
+        outputs: [],
+      },
+    ],
+    functionName: "bridgeToDeFiChain",
+    args: [
+      utils.hexlify(utils.toUtf8Bytes(data.to.address)) as `0x${string}`,
+      "0x0000000000000000000000000000000000000000" as `0x${string}`,
+      utils.parseUnits(data.to.amount.toString(), "gwei"),
+    ],
+  });
+  const { data: bridgeContract, write } = useContractWrite(config);
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: bridgeContract?.hash,
+  }); // TODO: Handle `isSuccess`
+
   return (
     <>
       <AlertInfoMessage
@@ -128,10 +162,10 @@ function ERC20ToDeFiChainTransfer() {
         textStyle="text-xs"
       />
       <div className={clsx("px-6 py-8", "md:px-[72px] md:pt-16")}>
-        {/* TODO: Add onClick function */}
         <ActionButton
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
-          onClick={() => {}}
+          onClick={() => write?.()}
+          isLoading={isLoading}
         />
       </div>
     </>
@@ -270,7 +304,7 @@ export default function ConfirmTransferModal({
           </div>
 
           {isSendingToDFC ? (
-            <ERC20ToDeFiChainTransfer />
+            <ERC20ToDeFiChainTransfer data={data} />
           ) : (
             <DeFiChainToERC20Transfer />
           )}
