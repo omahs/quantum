@@ -17,12 +17,10 @@ async function initMintAndSupport(
 ) {
   await testToken.mint(eoaAddress, toWei('100'));
   await testToken.approve(contractAddress, ethers.constants.MaxInt256);
+  const currentTime = additionalTime ? getCurrentTimeStamp({ additionalTime }) : getCurrentTimeStamp();
   // Daily allowance amount set to 15 testToken
-  await proxyBridge.addSupportedTokens(
-    testToken.address,
-    ethers.utils.parseEther('15'),
-    additionalTime ? getCurrentTimeStamp({ additionalTime }) : getCurrentTimeStamp(),
-  );
+  await proxyBridge.addSupportedTokens(testToken.address, ethers.utils.parseEther('15'), currentTime);
+  return currentTime;
 }
 describe('EVM --> DeFiChain', () => {
   describe('Bridging ERC20 token', () => {
@@ -41,7 +39,13 @@ describe('EVM --> DeFiChain', () => {
 
     it('Successfully revert if bridging amount exceeds daily allowance', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       // Testing with testToken (already added in supported token)
       // Daily allowance is 15. Should revert with the error if exceeding daily allowance
       // Current daily usage should be zero
@@ -80,7 +84,13 @@ describe('EVM --> DeFiChain', () => {
 
     it('Successfully bridging after a day', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address, 60 * 60 * 24);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+        60 * 60 * 24,
+      );
       // Testing with testToken (already added in supported token)
       // Daily allowance is 15. Should revert with the error if exceeding daily allowance
       // Current daily usage should be zero
@@ -92,6 +102,7 @@ describe('EVM --> DeFiChain', () => {
       await expect(
         proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10')),
       ).to.be.revertedWithCustomError(proxyBridge, 'STILL_IN_CHANGE_ALLOWANCE_PERIOD');
+      await time.increaseTo(currentTime);
       // Contract address balance should be zero
       expect(await testToken.balanceOf(proxyBridge.address)).to.equal(0);
       // increasing time by 1 day.
@@ -104,7 +115,14 @@ describe('EVM --> DeFiChain', () => {
     describe('Emitted Events: ERC20', () => {
       it('Successfully bridging over multiple days', async () => {
         const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-        await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address, 60 * 60 * 24);
+        const currentTime = await initMintAndSupport(
+          proxyBridge,
+          testToken,
+          defaultAdminSigner.address,
+          proxyBridge.address,
+          60 * 60 * 24,
+        );
+        await time.increaseTo(currentTime);
         // increasing time by 1 day.
         await time.increase(60 * 60 * 24);
         await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('8'));
@@ -185,8 +203,10 @@ describe('EVM --> DeFiChain', () => {
 
     it('Successfully revert if bridging amount exceeds daily allowance', async () => {
       const { proxyBridge } = await loadFixture(deployContracts);
+      const currentTime = getCurrentTimeStamp();
       // Set Allowance to 10 ether
-      await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'), getCurrentTimeStamp());
+      await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'), currentTime);
+      await time.increaseTo(currentTime);
       // This txn should be revert with custom error 'EXCEEDS_DAILY_ALLOWANCE'
       // Sending 11 Ether to the bridge
       await expect(
@@ -210,7 +230,9 @@ describe('EVM --> DeFiChain', () => {
       it('Successfully bridging to DefiChain', async () => {
         // set allowance to 10 Ether
         const { proxyBridge } = await loadFixture(deployContracts);
-        await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'), getCurrentTimeStamp());
+        const currentTime = getCurrentTimeStamp();
+        await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('10'), currentTime);
+        await time.increaseTo(currentTime);
         // Getting timestamp
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);

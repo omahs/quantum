@@ -273,6 +273,8 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
             revert DO_NOT_SEND_ETHER_WITH_ERC20();
         }
         uint256 tokenAllowanceStartTime = tokenAllowances[_tokenAddress].latestResetTimestamp;
+        console.log('Current blovk time: ', block.timestamp);
+        console.log('Add supported token: ', tokenAllowanceStartTime);
         if (block.timestamp < tokenAllowanceStartTime) revert STILL_IN_CHANGE_ALLOWANCE_PERIOD();
         uint256 amount = checkValue(_tokenAddress, _amount, msg.value);
         require(amount > 0);

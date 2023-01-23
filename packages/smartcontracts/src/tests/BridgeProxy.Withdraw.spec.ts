@@ -1,4 +1,4 @@
-import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
+import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
@@ -65,10 +65,12 @@ describe('Withdrawal tests', () => {
   describe('Withdraw ETHER', () => {
     async function bridge() {
       const { proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
+      const currentTime = getCurrentTimeStamp();
       // Adding init allowance for 10 ETHER
       await proxyBridge
         .connect(defaultAdminSigner)
-        .addSupportedTokens(ethers.constants.AddressZero, toWei('10'), getCurrentTimeStamp());
+        .addSupportedTokens(ethers.constants.AddressZero, toWei('10'), currentTime);
+      await time.increaseTo(currentTime);
       // Bridging 10 ETHER
       await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
         value: toWei('10'),

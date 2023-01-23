@@ -16,15 +16,23 @@ async function initMintAndSupport(
 ) {
   await testToken.mint(eoaAddress, toWei('100'));
   await testToken.approve(contractAddress, ethers.constants.MaxInt256);
+  const currentTime = getCurrentTimeStamp();
   // Daily allowance amount set to 15 testToken
-  await proxyBridge.addSupportedTokens(testToken.address, toWei('15'), getCurrentTimeStamp());
+  await proxyBridge.addSupportedTokens(testToken.address, toWei('15'), currentTime);
+  return currentTime;
 }
 
 describe('Daily allowance tests', () => {
   describe('Allowance tests - ERC20', () => {
     it('Successfully revert if exceed daily allowance', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       // Testing with testToken (already added in supported token)
       // Daily allowance is 15. Should revert with the error if exceeding daily allowance
       // Current daily usage should be zero
@@ -47,7 +55,13 @@ describe('Daily allowance tests', () => {
 
     it('Resetting daily allowance after a day', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       // Testing with testToken (already added in supported token)
       // Daily allowance is 15. Should revert with the error if exceeding daily allowance
       // Current daily usage should be zero
@@ -82,7 +96,13 @@ describe('Daily allowance tests', () => {
 
     it('Resetting daily allowance in span of multiple days', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       const prevAllowance = await proxyBridge.tokenAllowances(testToken.address);
       await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'));
 
@@ -107,7 +127,13 @@ describe('Daily allowance tests', () => {
 
     it('Change daily allowance and reset time', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       await proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, testToken.address, toWei('10'));
       const timeStamp2Days = getCurrentTimeStamp({ additionalTime: 60 * 60 * 49 });
       // Setting daily allowance to 5 tokens
@@ -173,9 +199,15 @@ describe('Daily allowance tests', () => {
 
     it('Successfully revert if the new reset time before current time stamp', async () => {
       const { proxyBridge, testToken, defaultAdminSigner } = await loadFixture(deployContracts);
-      await initMintAndSupport(proxyBridge, testToken, defaultAdminSigner.address, proxyBridge.address);
+      const currentTime = await initMintAndSupport(
+        proxyBridge,
+        testToken,
+        defaultAdminSigner.address,
+        proxyBridge.address,
+      );
+      await time.increaseTo(currentTime);
       // Current time - 1 day
-      const timeInPast = getCurrentTimeStamp() - 60 * 60 * 24;
+      const timeInPast = currentTime - 60 * 60 * 24;
       await expect(
         proxyBridge.changeDailyAllowance(testToken.address, toWei('10'), timeInPast),
       ).to.be.revertedWithCustomError(proxyBridge, 'INVALID_RESET_EPOCH_TIME');
