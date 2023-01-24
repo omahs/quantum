@@ -81,6 +81,7 @@ export default function BridgeForm() {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
+  // TODO: Get balance for specific token
   const { data } = useBalance({ address });
   const maxAmount = new BigNumber(data?.formatted ?? 0);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
