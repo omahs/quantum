@@ -17,7 +17,7 @@ const securityHeaders = [
       `font-src fonts.gstatic.com;` +
       `connect-src 'self' ${
         process.env.NODE_ENV === "development"
-          ? `localhost:* 127.0.0.1:* cloudflare-eth.com ws://localhost:3000/_next/webpack-hmr`
+          ? `localhost:* 127.0.0.1:* cloudflare-eth.com eth-goerli.g.alchemy.com rpc.ankr.com ws://localhost:3000/_next/webpack-hmr`
           : ""
       };` +
       `prefetch-src 'self';`,

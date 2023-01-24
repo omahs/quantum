@@ -15,12 +15,15 @@ import NumericFormat from "@components/commons/NumericFormat";
 import BrLogoIcon from "@components/icons/BrLogoIcon";
 import DeFiChainToERC20Transfer from "@components/erc-transfer/DeFiChainToERC20Transfer";
 import { CONSORTIUM_INFO, DISCLAIMER_MESSAGE, FEES_INFO } from "../constants";
-import { utils } from "ethers";
+
+import { ethers, utils } from "ethers";
 import {
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
+import { useContractContext } from "@contexts/ContractContext";
+import BridgeV1ABI from "../abis/BridgeV1.json";
 
 interface RowDataI {
   address: string;
@@ -126,29 +129,29 @@ function RowData({
 
 function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
   const { isMobile } = useResponsive();
+  const contractConfig = useContractContext();
+  const sendingFromETH = data.from.tokenName === "ETH";
 
   const { config } = usePrepareContractWrite({
-    address: process.env.BRIDGE_CONTRACT_ADDRESS,
-    abi: [
-      {
-        name: "bridgeToDeFiChain",
-        type: "function",
-        stateMutability: "payable",
-        inputs: [
-          { internalType: "bytes", name: "_defiAddress", type: "bytes" },
-          { internalType: "address", name: "_tokenAddress", type: "address" },
-          { internalType: "uint256", name: "_amount", type: "uint256" },
-        ],
-        outputs: [],
-      },
-    ],
+    address: sendingFromETH
+      ? ethers.constants.AddressZero
+      : contractConfig.BridgeProxyContractAddress,
+    abi: BridgeV1ABI,
     functionName: "bridgeToDeFiChain",
     args: [
       utils.hexlify(utils.toUtf8Bytes(data.to.address)) as `0x${string}`,
-      "0x0000000000000000000000000000000000000000" as `0x${string}`,
-      utils.parseUnits(data.to.amount.toString(), "gwei"),
+      contractConfig.Erc20Tokens[data.from.tokenName],
+      utils.parseUnits(data.to.amount.toString(), "18"), // TODO: Check how to get decimal set for selected token
     ],
+    ...(sendingFromETH
+      ? {
+          overrides: {
+            value: ethers.utils.parseEther(data.to.amount.toString()),
+          },
+        }
+      : {}),
   });
+
   const { data: bridgeContract, write } = useContractWrite(config);
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: bridgeContract?.hash,
