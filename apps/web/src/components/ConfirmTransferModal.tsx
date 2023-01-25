@@ -23,7 +23,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useContractContext } from "@contexts/ContractContext";
-import BridgeV1ABI from "../abis/BridgeV1.json";
+import BridgeV1Abi from "../config/BridgeV1Abi.json";
 
 interface RowDataI {
   address: string;
@@ -136,7 +136,7 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
     address: sendingFromETH
       ? ethers.constants.AddressZero
       : contractConfig.BridgeProxyContractAddress,
-    abi: BridgeV1ABI,
+    abi: BridgeV1Abi,
     functionName: "bridgeToDeFiChain",
     args: [
       utils.hexlify(utils.toUtf8Bytes(data.to.address)) as `0x${string}`,
