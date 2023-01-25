@@ -56,3 +56,9 @@ export interface UnconfirmedTxnI {
   fromAddress: string;
   dfcUniqueAddress?: string;
 }
+
+type Erc20Token = "wBTC" | "USDT" | "USDC" | "ETH";
+export interface ContractContextI {
+  BridgeProxyContractAddress: `0x${string}`;
+  Erc20Tokens: Record<Erc20Token, `0x${string}`>;
+}
