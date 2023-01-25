@@ -1,8 +1,9 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import Image from "next/image";
+import { useEffect } from "react";
 import { NetworkName } from "types";
-import { FiXCircle } from "react-icons/fi";
+import { FiXCircle, FiCheck } from "react-icons/fi";
 import { Dialog } from "@headlessui/react";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import useResponsive from "@hooks/useResponsive";
@@ -14,7 +15,6 @@ import ActionButton from "@components/commons/ActionButton";
 import NumericFormat from "@components/commons/NumericFormat";
 import BrLogoIcon from "@components/icons/BrLogoIcon";
 import DeFiChainToERC20Transfer from "@components/erc-transfer/DeFiChainToERC20Transfer";
-import { CONSORTIUM_INFO, DISCLAIMER_MESSAGE, FEES_INFO } from "../constants";
 
 import { ethers, utils } from "ethers";
 import {
@@ -23,6 +23,14 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useContractContext } from "@contexts/ContractContext";
+import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
+import { setStorageItem } from "@utils/localStorage";
+import {
+  CONSORTIUM_INFO,
+  DISCLAIMER_MESSAGE,
+  FEES_INFO,
+  STORAGE_TXN_KEY,
+} from "../constants";
 import BridgeV1Abi from "../config/BridgeV1Abi.json";
 
 interface RowDataI {
@@ -129,6 +137,7 @@ function RowData({
 
 function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
   const { isMobile } = useResponsive();
+  const { networkEnv } = useNetworkEnvironmentContext();
   const contractConfig = useContractContext();
   const sendingFromETH = data.from.tokenName === "ETH";
 
@@ -155,7 +164,14 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
   const { data: bridgeContract, write } = useContractWrite(config);
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: bridgeContract?.hash,
-  }); // TODO: Handle `isSuccess`
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      const TXN_KEY = `${networkEnv}.${STORAGE_TXN_KEY}`;
+      setStorageItem(TXN_KEY, null);
+    }
+  }, [isSuccess]);
 
   return (
     <>
@@ -169,8 +185,15 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
           onClick={() => write?.()}
           isLoading={isLoading}
+          disabled={isSuccess}
         />
       </div>
+      {/* TODO: Update screen shown for successful transfer */}
+      {isSuccess && (
+        <div className="flex justify-center items-center text-valid">
+          Transfer successful! <FiCheck size={20} className="text-valid ml-1" />
+        </div>
+      )}
     </>
   );
 }
