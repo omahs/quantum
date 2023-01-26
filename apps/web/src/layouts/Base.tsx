@@ -101,7 +101,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
       </Head>
 
       <WagmiConfig client={client}>
-        <ConnectKitProvider mode="dark">
+        <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
           {mounted && (
             <NetworkProvider>
               <NetworkEnvironmentProvider>
