@@ -15,9 +15,9 @@ const securityHeaders = [
       };` +
       `style-src 'self' fonts.googleapis.com 'unsafe-inline';` +
       `font-src fonts.gstatic.com;` +
-      `connect-src 'self' ${
+      `connect-src 'self' cloudflare-eth.com eth-goerli.g.alchemy.com rpc.ankr.com ${
         process.env.NODE_ENV === "development"
-          ? `localhost:* 127.0.0.1:* cloudflare-eth.com eth-goerli.g.alchemy.com rpc.ankr.com ws://localhost:3000/_next/webpack-hmr`
+          ? `localhost:* 127.0.0.1:* ws://localhost:3000/_next/webpack-hmr`
           : ""
       };` +
       `prefetch-src 'self';`,
