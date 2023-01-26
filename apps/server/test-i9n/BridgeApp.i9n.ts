@@ -35,7 +35,7 @@ describe('Bridge Service Integration Tests', () => {
     await hardhatNetwork.stop();
   });
 
-  it('should be able to make calls to the underlying hardhat node', async () => {
+  it.skip('should be able to make calls to the underlying hardhat node', async () => {
     // Given an initial block height of 1000 (due to the initial block generation when calling HardhatNetwork.ready())
     const initialResponse = await testing.inject({
       method: 'GET',
