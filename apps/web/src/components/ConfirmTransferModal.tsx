@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { NetworkName } from "types";
-import { FiXCircle, FiCheck } from "react-icons/fi";
-import { Dialog } from "@headlessui/react";
+import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import useResponsive from "@hooks/useResponsive";
 import useDisableEscapeKey from "@hooks/useDisableEscapeKey";
@@ -12,6 +12,7 @@ import truncateTextFromMiddle from "@utils/textHelper";
 import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import IconTooltip from "@components/commons/IconTooltip";
 import ActionButton from "@components/commons/ActionButton";
+import Modal from "@components/commons/Modal";
 import NumericFormat from "@components/commons/NumericFormat";
 import BrLogoIcon from "@components/icons/BrLogoIcon";
 import DeFiChainToERC20Transfer from "@components/erc-transfer/DeFiChainToERC20Transfer";
@@ -136,6 +137,9 @@ function RowData({
 }
 
 function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
+  const [hasError, setHasError] = useState(false);
+
+  const router = useRouter();
   const { isMobile } = useResponsive();
   const { networkEnv } = useNetworkEnvironmentContext();
   const contractConfig = useContractContext();
@@ -159,11 +163,13 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
           },
         }
       : {}),
+    onError: () => setHasError(true),
   });
 
   const { data: bridgeContract, write } = useContractWrite(config);
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: bridgeContract?.hash,
+    onError: () => setHasError(true),
   });
 
   useEffect(() => {
@@ -175,6 +181,47 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
 
   return (
     <>
+      {isLoading && (
+        <Modal isOpen={isLoading}>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <div className="w-24 h-24 border border-brand-200 border-b-transparent rounded-full animate-spin" />
+            <span className="font-bold text-2xl text-dark-900 mt-12">
+              Waiting for confirmation
+            </span>
+            <span className="text-dark-900 mt-2">
+              Confirm this transaction in your Wallet.
+            </span>
+          </div>
+        </Modal>
+      )}
+      {isSuccess && (
+        // TODO: Replace success ui/message
+        <Modal isOpen={isSuccess} onClose={() => router.reload()}>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <FiCheck className="text-8xl text-valid ml-1" />
+            <span className="font-bold text-2xl text-dark-900 mt-12">
+              Transaction confirmed
+            </span>
+            <span className="text-dark-900 mt-2">
+              Funds will be transferred to your DefiChain wallet shortly.
+            </span>
+          </div>
+        </Modal>
+      )}
+      {hasError && (
+        // TODO: Replace error ui/message
+        <Modal isOpen={hasError} onClose={() => router.reload()}>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <FiAlertCircle className="text-8xl text-error ml-1" />
+            <span className="font-bold text-2xl text-dark-900 mt-12">
+              Transaction error
+            </span>
+            <span className="text-dark-900 mt-2">
+              The transaction verification has failed.
+            </span>
+          </div>
+        </Modal>
+      )}
       <AlertInfoMessage
         message={DISCLAIMER_MESSAGE}
         containerStyle="px-5 py-4 mt-8"
@@ -217,7 +264,6 @@ export default function ConfirmTransferModal({
     selectedNetworkB,
     selectedTokensB,
   } = useNetworkContext();
-  const { isMobile } = useResponsive();
   useDisableEscapeKey(show);
 
   // Direction of transfer
@@ -246,96 +292,67 @@ export default function ConfirmTransferModal({
   const consortiumAddress = "df10szLaksgysjl088man5vfmsm6wsstquabds9123";
 
   return (
-    <Dialog as="div" className="relative z-10" open={show} onClose={onClose}>
-      <Dialog.Panel className="transform transition-all fixed inset-0 bg-dark-00 bg-opacity-70 backdrop-blur-[18px] overflow-auto">
-        <div
-          className={clsx(
-            "relative w-full h-full dark-card-bg-image border-dark-card-stroke backdrop-blur-[18px] m-auto px-6 pt-8 pb-12",
-            "md:w-[626px] md:h-auto md:top-[calc(50%+30px)] md:-translate-y-1/2 md:rounded-xl md:border md:p-8 overflow-auto"
-          )}
-        >
-          <Dialog.Title
-            as="div"
-            className="flex items-center justify-between mb-8 md:mb-6"
-          >
-            <h3
-              className={clsx(
-                "text-2xl font-bold text-dark-900",
-                "md:font-semibold md:leading-9 md:tracking-wide"
-              )}
-            >
-              Transfer
-            </h3>
-            <FiXCircle
-              size={isMobile ? 24 : 28}
-              className="text-dark-900 cursor-pointer hover:opacity-70 text-2xl md:text-[28px]"
-              onClick={onClose}
-            />
-          </Dialog.Title>
-          <RowData
-            data={data.from}
-            label="FROM"
-            networkLabel="Source"
-            isSendingToDFC={isSendingToDFC}
-          />
-          <RowData data={data.to} label="TO" networkLabel="Destination" />
-          <div className="w-full border-t border-t-dark-200 md:mt-3" />
+    <Modal title="Transfer" isOpen={show} onClose={onClose}>
+      <RowData
+        data={data.from}
+        label="FROM"
+        networkLabel="Source"
+        isSendingToDFC={isSendingToDFC}
+      />
+      <RowData data={data.to} label="TO" networkLabel="Destination" />
+      <div className="w-full border-t border-t-dark-200 md:mt-3" />
 
-          {/* Fees */}
-          <div className="flex justify-between mt-6 md:mt-5 py-2">
-            <div className="inline-flex items-center">
-              <span className="text-dark-700 text-sm md:text-base">Fees</span>
-              <div className="ml-2">
-                <IconTooltip
-                  title={FEES_INFO.title}
-                  content={FEES_INFO.content}
-                  position="right"
-                />
-              </div>
-            </div>
-            <NumericFormat
-              className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal"
-              value={0}
-              decimalScale={2}
-              thousandSeparator
-              suffix=" DFI" // TODO: Create hook to get fee based on source/destination
+      {/* Fees */}
+      <div className="flex justify-between mt-6 md:mt-5 py-2">
+        <div className="inline-flex items-center">
+          <span className="text-dark-700 text-sm md:text-base">Fees</span>
+          <div className="ml-2">
+            <IconTooltip
+              title={FEES_INFO.title}
+              content={FEES_INFO.content}
+              position="right"
             />
           </div>
-
-          {/* Consortium */}
-          <div className="flex justify-between items-baseline mt-4 md:mt-2 py-2">
-            <div className="inline-flex items-center">
-              <span className="text-dark-700 text-sm md:text-base">
-                Consortium
-              </span>
-              <div className="ml-2">
-                <IconTooltip
-                  title={CONSORTIUM_INFO.title}
-                  content={CONSORTIUM_INFO.content}
-                  position="right"
-                />
-              </div>
-            </div>
-            <div>
-              <span className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal">
-                {truncateTextFromMiddle(consortiumAddress, 8)}
-              </span>
-              <div className="flex items-center mt-2 md:mt-1">
-                <BrLogoIcon />
-                <span className="text-xs md:text-sm text-dark-700 ml-2">
-                  Birthday Research
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {isSendingToDFC ? (
-            <ERC20ToDeFiChainTransfer data={data} />
-          ) : (
-            <DeFiChainToERC20Transfer />
-          )}
         </div>
-      </Dialog.Panel>
-    </Dialog>
+        <NumericFormat
+          className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal"
+          value={0}
+          decimalScale={2}
+          thousandSeparator
+          suffix=" DFI" // TODO: Create hook to get fee based on source/destination
+        />
+      </div>
+
+      {/* Consortium */}
+      <div className="flex justify-between items-baseline mt-4 md:mt-2 py-2">
+        <div className="inline-flex items-center">
+          <span className="text-dark-700 text-sm md:text-base">Consortium</span>
+          <div className="ml-2">
+            <IconTooltip
+              title={CONSORTIUM_INFO.title}
+              content={CONSORTIUM_INFO.content}
+              position="right"
+            />
+          </div>
+        </div>
+        <div>
+          <span className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal">
+            {truncateTextFromMiddle(consortiumAddress, 8)}
+          </span>
+          <div className="flex items-center mt-2 md:mt-1">
+            <BrLogoIcon />
+            <span className="text-xs md:text-sm text-dark-700 ml-2">
+              Birthday Research
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {isSendingToDFC ? (
+        <ERC20ToDeFiChainTransfer data={data} />
+      ) : (
+        <DeFiChainToERC20Transfer />
+      )}
+    </Modal>
   );
 }
