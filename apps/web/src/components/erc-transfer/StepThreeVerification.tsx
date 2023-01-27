@@ -34,7 +34,6 @@ export default function StepThreeVerification({
 
   useEffect(() => {
     // TODO: Replace with real loading time from api
-    // setTimeout(() => goToNextStep(), 3000);
     setTimeout(() => {
       setValidationSuccess(true);
       setIsValidating(false);
