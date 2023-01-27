@@ -15,6 +15,7 @@ import {
   NetworkName,
   UnconfirmedTxnI,
 } from "types";
+import { useWhaleApiClient } from "@waveshq/walletkit-ui/dist/contexts";
 import SwitchIcon from "@components/icons/SwitchIcon";
 import ArrowDownIcon from "@components/icons/ArrowDownIcon";
 import ActionButton from "@components/commons/ActionButton";
@@ -79,6 +80,9 @@ export default function BridgeForm() {
   const [addressInput, setAddressInput] = useState<string>("");
   const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+
+  const client = useWhaleApiClient();
+  const [fee, setFee] = useState<BigNumber>(new BigNumber(0.0001));
 
   const { address, isConnected } = useAccount();
   // TODO: Get balance for specific token
@@ -148,6 +152,13 @@ export default function BridgeForm() {
         return "Connect wallet";
     }
   };
+
+  useEffect(() => {
+    client.fee
+      .estimate()
+      .then((f) => setFee(new BigNumber(f)))
+      .catch((error) => console.error(error));
+  }, []);
 
   useEffect(() => {
     const localData = getStorageItem<UnconfirmedTxnI>(TXN_KEY);
@@ -324,10 +335,9 @@ export default function BridgeForm() {
         </div>
         <NumericFormat
           className="text-left text-xs text-dark-1000 lg:text-base"
-          value={0}
-          decimalScale={2}
+          value={fee}
           thousandSeparator
-          suffix=" DFI" // TODO: Create hook to get fee based on source/destination
+          suffix=" DFI"
         />
       </div>
       <div className="block md:hidden px-5 mt-4">

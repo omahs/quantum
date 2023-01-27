@@ -20,6 +20,12 @@ import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 import { NetworkEnvironmentProvider } from "@contexts/NetworkEnvironmentContext";
 import { NetworkProvider } from "@contexts/NetworkContext";
 import { ContractProvider } from "@contexts/ContractContext";
+import {
+  NetworkProvider as WhaleNetworkProvider,
+  WhaleProvider,
+} from "@waveshq/walletkit-ui";
+import SecuredStoreAPI from "@api/secure-storage";
+import Logging from "@api/logging";
 
 const metamask = new MetaMaskConnector({
   chains: [mainnet, goerli, localhost, hardhat],
@@ -104,20 +110,24 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
           {mounted && (
             <NetworkProvider>
-              <NetworkEnvironmentProvider>
-                <ContractProvider>
-                  <ThemeProvider theme={initialTheme}>
-                    <div className="relative">
-                      <Header />
-                      <main className="relative z-[1] flex-grow">
-                        {children}
-                      </main>
-                      <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
-                      <Footer />
-                    </div>
-                  </ThemeProvider>
-                </ContractProvider>
-              </NetworkEnvironmentProvider>
+              <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+                <WhaleProvider>
+                  <NetworkEnvironmentProvider>
+                    <ContractProvider>
+                      <ThemeProvider theme={initialTheme}>
+                        <div className="relative">
+                          <Header />
+                          <main className="relative z-[1] flex-grow">
+                            {children}
+                          </main>
+                          <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
+                          <Footer />
+                        </div>
+                      </ThemeProvider>
+                    </ContractProvider>
+                  </NetworkEnvironmentProvider>
+                </WhaleProvider>
+              </WhaleNetworkProvider>
             </NetworkProvider>
           )}
         </ConnectKitProvider>
