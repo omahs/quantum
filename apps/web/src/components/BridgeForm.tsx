@@ -16,6 +16,7 @@ import {
   UnconfirmedTxnI,
 } from "types";
 import { useWhaleApiClient } from "@waveshq/walletkit-ui/dist/contexts";
+import Logging from "@api/logging";
 import SwitchIcon from "@components/icons/SwitchIcon";
 import ArrowDownIcon from "@components/icons/ArrowDownIcon";
 import ActionButton from "@components/commons/ActionButton";
@@ -157,7 +158,7 @@ export default function BridgeForm() {
     client.fee
       .estimate()
       .then((f) => setFee(new BigNumber(f)))
-      .catch((error) => console.error(error));
+      .catch(Logging.error);
   }, []);
 
   useEffect(() => {
