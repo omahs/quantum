@@ -13,7 +13,6 @@
     "cypress:open": "cypress open",
     "cypress:build": "CYPRESS=true next build",
     "cypress:run": "TZ=UTC cypress run --headless --browser chrome",
-    "synpress:run": "SKIP_METAMASK_SETUP=true synpress run -cf cypress.config.js --config supportFile='cypress/support/e2e.ts'",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -37,7 +36,6 @@
     "@cypress/code-coverage": "^3.10.0",
     "@netlify/plugin-lighthouse": "^4.0.7",
     "@netlify/plugin-nextjs": "^4.30.2",
-    "@synthetixio/synpress": "^1.2.0",
     "@tailwindcss/typography": "^0.5.9",
     "@testing-library/cypress": "^8.0.7",
     "@waveshq/standard-web-linter": "^0.34.3",

@@ -15,7 +15,6 @@
 
 import "@cypress/code-coverage/support";
 import "./commands";
-import "@synthetixio/synpress/support";
 
 Cypress.on("uncaught:exception", (err) => {
   if (
