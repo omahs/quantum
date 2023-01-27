@@ -24,6 +24,7 @@ export const networks = [
   {
     name: Network.Ethereum,
     icon: "/tokens/Ethereum.svg",
+    // 4 available tokens to mint from as of now
     tokens: [
       {
         tokenA: {

@@ -46,19 +46,14 @@ export default function TimeLimitCounter({
   };
 
   return (
-    <div
-      className={clsx(
-        "flex flex-wrap items-center mt-auto gap-1",
-        "md:mt-4 md:gap-3"
-      )}
-    >
-      <div className="w-full md:w-3/5">
+    <div className={clsx("flex-1 items-center gap-1", "md:mt-4 md:gap-3")}>
+      <div className="w-full">
         <ProgressBar
           progressPercentage={timeLimitPercentage}
           fillColor={getFillColor()}
         />
       </div>
-      <span className="text-xs md:text-sm font-semibold tracking-wide text-dark-1000">
+      <span className="text-xs md:text-sm font-semibold tracking-wide text-dark-1000 items-center flex justify-center">
         {getDuration(timeRemaining.toNumber())}
       </span>
     </div>
