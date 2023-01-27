@@ -7,16 +7,19 @@ export default function ActionButton({
   disabled = false,
   isLoading = false,
   variant = "primary",
+  testId,
 }: {
   label: string;
   onClick?: () => void;
   disabled?: boolean;
   isLoading?: boolean;
   variant?: "primary" | "secondary";
+  testId?: string;
 }) {
   const isPrimary = variant === "primary";
   return (
     <button
+      data-testid={testId ?? "action-btn"}
       type="button"
       className={clsx(
         "w-full flex items-center justify-center rounded-[92px] text-lg font-bold p-3.5",

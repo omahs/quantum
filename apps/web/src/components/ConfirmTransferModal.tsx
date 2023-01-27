@@ -229,6 +229,7 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
       />
       <div className={clsx("px-6 py-8", "md:px-[72px] md:pt-16")}>
         <ActionButton
+          testId="confirm-transfer-btn"
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
           onClick={() => write?.()}
           isLoading={isLoading}

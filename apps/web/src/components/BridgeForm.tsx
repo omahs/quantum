@@ -337,6 +337,7 @@ export default function BridgeForm() {
         <ConnectKitButton.Custom>
           {({ show }) => (
             <ActionButton
+              testId="transfer-btn"
               label={getActionBtnLabel()}
               disabled={isConnected && !isFormValid}
               onClick={!isConnected ? show : () => onTransferTokens()}
