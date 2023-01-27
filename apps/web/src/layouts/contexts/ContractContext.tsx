@@ -22,11 +22,11 @@ export function ContractProvider({
   const [config, setConfig] = useState(MAINNET_CONFIG);
 
   useEffect(() => {
-    if (networkEnv === NetworkEnvironment.mainnet) {
-      setConfig(MAINNET_CONFIG);
-    } else {
-      setConfig(TESTNET_CONFIG);
-    }
+    const contractConfig =
+      networkEnv === NetworkEnvironment.mainnet
+        ? MAINNET_CONFIG
+        : TESTNET_CONFIG;
+    setConfig(contractConfig);
   }, [networkEnv]);
 
   return (

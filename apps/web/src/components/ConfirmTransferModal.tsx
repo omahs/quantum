@@ -203,7 +203,7 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
               Transaction confirmed
             </span>
             <span className="text-dark-900 mt-2">
-              Funds will be transferred to your DefiChain wallet shortly.
+              Funds will be transferred to your DeFiChain wallet shortly.
             </span>
           </div>
         </Modal>
@@ -336,6 +336,7 @@ export default function ConfirmTransferModal({
             />
           </div>
         </div>
+        {/* TODO: Add link to Scan once available */}
         <div>
           <span className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal">
             {truncateTextFromMiddle(consortiumAddress, 8)}
