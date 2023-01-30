@@ -29,6 +29,7 @@ import { setStorageItem } from "@utils/localStorage";
 import {
   CONSORTIUM_INFO,
   DISCLAIMER_MESSAGE,
+  ETHEREUM_SYMBOL,
   FEES_INFO,
   STORAGE_TXN_KEY,
 } from "../constants";
@@ -143,7 +144,7 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
   const { isMobile } = useResponsive();
   const { networkEnv } = useNetworkEnvironmentContext();
   const contractConfig = useContractContext();
-  const sendingFromETH = data.from.tokenName === "ETH";
+  const sendingFromETH = data.from.tokenName === ETHEREUM_SYMBOL;
 
   const { config } = usePrepareContractWrite({
     address: sendingFromETH

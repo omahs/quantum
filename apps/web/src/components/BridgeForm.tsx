@@ -29,7 +29,12 @@ import InputSelector from "./InputSelector";
 import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
 import ConfirmTransferModal from "./ConfirmTransferModal";
-import { FEES_INFO, STORAGE_DFC_ADDR_KEY, STORAGE_TXN_KEY } from "../constants";
+import {
+  ETHEREUM_SYMBOL,
+  FEES_INFO,
+  STORAGE_DFC_ADDR_KEY,
+  STORAGE_TXN_KEY,
+} from "../constants";
 
 function SwitchButton({
   onClick,
@@ -88,10 +93,13 @@ export default function BridgeForm() {
 
   const { address, isConnected } = useAccount();
   const contractConfig = useContractContext();
+  const sendingFromETH = selectedTokensA.tokenA.name === ETHEREUM_SYMBOL;
   const { data } = useBalance({
     address,
-    token: contractConfig.Erc20Tokens[selectedTokensA.tokenA.name],
     watch: true,
+    ...(!sendingFromETH && {
+      token: contractConfig.Erc20Tokens[selectedTokensA.tokenA.name],
+    }),
   });
 
   const maxAmount = new BigNumber(data?.formatted ?? 0);
