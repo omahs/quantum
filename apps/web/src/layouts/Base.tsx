@@ -40,9 +40,9 @@ const { chains, provider } = configureChains(
 const client = createClient(
   getDefaultClient({
     autoConnect: true,
+    chains: [localhost, hardhat, mainnet, goerli],
     appName,
     connectors: [metamask, new InjectedConnector({ chains })],
-    provider,
   })
 );
 

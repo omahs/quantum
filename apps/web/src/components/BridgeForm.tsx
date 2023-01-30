@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useProvider, useNetwork } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
@@ -27,6 +27,7 @@ import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
 import ConfirmTransferModal from "./ConfirmTransferModal";
 import { FEES_INFO, STORAGE_DFC_ADDR_KEY, STORAGE_TXN_KEY } from "../constants";
+import { useContractContext } from "@contexts/ContractContext";
 
 function SwitchButton({
   onClick,
@@ -81,8 +82,13 @@ export default function BridgeForm() {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
-  // TODO: Get balance for specific token
-  const { data } = useBalance({ address });
+  const contractConfig = useContractContext();
+  const { data } = useBalance({
+    address,
+    token: contractConfig.Erc20Tokens[selectedTokensA.tokenA.name],
+    watch: true,
+  });
+
   const maxAmount = new BigNumber(data?.formatted ?? 0);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
   const [hasUnconfirmedTxn, setHasUnconfirmedTxn] = useState(false);
