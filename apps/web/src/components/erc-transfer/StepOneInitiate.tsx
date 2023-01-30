@@ -42,7 +42,7 @@ export default function StepOneInitiate({
         <div
           className={clsx(
             "absolute hidden",
-            "md:left-[280px] md:bottom-[230px] md:block"
+            "md:left-[282px] md:top-[683px] md:block"
           )}
         >
           {/* TODO bug with position of tooltip */}
