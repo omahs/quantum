@@ -7,7 +7,7 @@ export default function StepLastClaim({
   goToNextStep: () => void;
 }) {
   return (
-    <div className={clsx("mt-14 px-6", "md:mt-4 md:px-[73px] md:py-6")}>
+    <div className={clsx("pt-4 px-6", "md:px-[73px] md:pt-4 md:pb-6")}>
       <span className="font-semibold block text-center text-dark-900 tracking-[0.01em] md:tracking-wider text-2xl">
         Ready for claiming
       </span>

@@ -21,8 +21,8 @@ export default function StepOneInitiate({
 
   return (
     <div className={clsx("flex flex-col mt-6", "md:flex-row md:gap-7 md:mt-4")}>
-      <div className="flex flex-col justify-center grow">
-        <span className="font-semibold tracking-wider text-dark-900">
+      <div className="flex flex-col justify-center grow px-8">
+        <span className="font-semibold text-dark-900 tracking-[0.01em]">
           Getting started
         </span>
         <p className={clsx("text-sm text-dark-900 mt-1", "md:mt-2")}>
@@ -32,14 +32,20 @@ export default function StepOneInitiate({
         </p>
         <p
           className={clsx(
-            "text-sm text-dark-900 mt-1 relative",
+            "flex text-sm text-dark-900 mt-1 relative",
             "md:block md:mt-2 hidden"
           )}
         >
           Provide your DeFiChain wallet address below in the event that there is
           a need for a refund.
         </p>
-        <div className="absolute md:bottom-[202px] md:left-[180px] hidden md:block">
+        <div
+          className={clsx(
+            "absolute hidden",
+            "md:left-[280px] md:bottom-[230px] md:block"
+          )}
+        >
+          {/* TODO bug with position of tooltip */}
           <IconTooltip
             title={TRANSACTION_ERROR_INFO.title}
             content={TRANSACTION_ERROR_INFO.content}
@@ -50,8 +56,8 @@ export default function StepOneInitiate({
         {/* Mobile view */}
         <p
           className={clsx(
-            "text-sm text-dark-900 items-center md:hidden block",
-            "md:mt-2"
+            "text-sm text-dark-900 items-center block",
+            "md:mt-2 md:hidden"
           )}
         >
           Provide your DeFiChain wallet address below in the event that there is
@@ -79,8 +85,14 @@ export default function StepOneInitiate({
             variant="primary"
             needsResponsiveSizing={false}
             disabled={hasAddressInputErr}
+            // TODO to save return address to the localstorage - have to move the entire saving of unconfirmed txn
             onClick={goToNextStep}
           />
+          {hasAddressInputErr && (
+            <div className="text-dark-500 text-center text-xs pt-3">
+              You must enter an address for refund to continue.
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import useResponsive from "@hooks/useResponsive";
 import { getStorageItem, setStorageItem } from "@utils/localStorage";
 import Tooltip from "@components/commons/Tooltip";
 import UtilityButton from "@components/commons/UtilityButton";
+import { useRouter } from "next/router";
 import TimeLimitCounter from "./TimeLimitCounter";
 import { STORAGE_DFC_ADDR_KEY } from "../../constants";
 
@@ -63,7 +64,6 @@ function SuccessCopy({
   );
 }
 
-// TODO: @chloe rename to steptwo
 export default function StepTwoSendConfirmation({
   goToNextStep,
 }: {
@@ -75,6 +75,7 @@ export default function StepTwoSendConfirmation({
 
   const { isMobile } = useResponsive();
   const { copy } = useCopyToClipboard();
+  const router = useRouter();
 
   const handleConfirmClick = () => {
     goToNextStep();
@@ -178,11 +179,10 @@ export default function StepTwoSendConfirmation({
               )}
               {!isMobile && !hasTimeElapsed && (
                 <TimeLimitCounter
-                  // onTimeElapsed={() => {}}
                   onTimeElapsed={() => setHasTimeElapsed(true)}
                 />
               )}
-            </div>{" "}
+            </div>
           </>
         )}
       </div>
@@ -197,7 +197,14 @@ export default function StepTwoSendConfirmation({
         </p>
         <p className={clsx("text-sm text-warning mt-1", "md:mt-2")}>
           Transactions in this Bridge, as with all other on-chain transactions,
-          are irreversible. For more details, read FAQs and terms of use.
+          are irreversible. For more details,
+          <button
+            type="button"
+            className="underline underline-offset-1 text-warning pl-1"
+            onClick={() => router.push("/faq")}
+          >
+            read FAQs and terms of use.
+          </button>
         </p>
 
         <div className={clsx("hidden mt-12", "md:block")}>

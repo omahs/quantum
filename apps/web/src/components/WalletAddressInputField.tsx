@@ -50,6 +50,7 @@ export function VerifiedBadge({
   );
 }
 
+// TODO @chloe reused existing component WalletAddressInput
 export default function WalletAddressInputField({
   blockchain,
   label,

@@ -40,7 +40,7 @@ export default function MobileBottomMenu() {
   return (
     <>
       <nav>
-        <ul className="grid grid-cols-3 gap-2">
+        <ul className="grid grid-cols-3 gap-2 bg-light-200">
           {menuList.map(({ icon: Icon, ...item }) => (
             <li key={item.title}>
               <button
