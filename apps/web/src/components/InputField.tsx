@@ -20,7 +20,7 @@ interface Props {
 }
 
 /**
- * Displays wallet address with verified badge
+ * Input field with verified badge
  * Acts like a 'clone' for textarea, since ::after pseudo doesnt work for textarea
  * When displayed, textarea is hidden
  */
@@ -50,8 +50,7 @@ export function VerifiedBadge({
   );
 }
 
-// TODO @chloe reused existing component WalletAddressInput
-export default function WalletAddressInputField({
+export default function InputField({
   blockchain,
   label,
   disabled = false,

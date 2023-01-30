@@ -5,7 +5,7 @@ import ActionButton from "@components/commons/ActionButton";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import { Network } from "types";
 import { useAccount } from "wagmi";
-import WalletAddressInputField from "@components/WalletAddressInputField";
+import InputField from "@components/InputField";
 import { TRANSACTION_ERROR_INFO } from "../../constants";
 
 export default function StepOneInitiate({
@@ -45,7 +45,6 @@ export default function StepOneInitiate({
             "md:left-[282px] md:top-[683px] md:block"
           )}
         >
-          {/* TODO bug with position of tooltip */}
           <IconTooltip
             title={TRANSACTION_ERROR_INFO.title}
             content={TRANSACTION_ERROR_INFO.content}
@@ -71,7 +70,7 @@ export default function StepOneInitiate({
           </div>
         </p>
 
-        <WalletAddressInputField
+        <InputField
           label=""
           blockchain={selectedNetworkA.name as Network}
           addressInput={addressInput}
