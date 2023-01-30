@@ -24,12 +24,12 @@ import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import IconTooltip from "@components/commons/IconTooltip";
 import NumericFormat from "@components/commons/NumericFormat";
 import { QuickInputCard } from "@components/commons/QuickInputCard";
+import { useContractContext } from "@contexts/ContractContext";
 import InputSelector from "./InputSelector";
 import WalletAddressInput from "./WalletAddressInput";
 import DailyLimit from "./DailyLimit";
 import ConfirmTransferModal from "./ConfirmTransferModal";
 import { FEES_INFO, STORAGE_DFC_ADDR_KEY, STORAGE_TXN_KEY } from "../constants";
-import { useContractContext } from "@contexts/ContractContext";
 
 function SwitchButton({
   onClick,
