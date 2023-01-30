@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
-import { useAccount, useBalance, useProvider, useNetwork } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { shift, autoUpdate, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";

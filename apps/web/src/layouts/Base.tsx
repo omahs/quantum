@@ -25,7 +25,7 @@ const metamask = new MetaMaskConnector({
   chains: [mainnet, goerli, localhost, hardhat],
 });
 
-const { chains, provider } = configureChains(
+const { chains } = configureChains(
   [localhost, hardhat, mainnet, goerli],
   [
     jsonRpcProvider({
