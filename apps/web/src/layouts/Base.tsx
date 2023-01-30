@@ -31,7 +31,7 @@ const metamask = new MetaMaskConnector({
   chains: [mainnet, goerli, localhost, hardhat],
 });
 
-const { chains, provider } = configureChains(
+const { chains } = configureChains(
   [localhost, hardhat, mainnet, goerli],
   [
     jsonRpcProvider({
@@ -46,9 +46,9 @@ const { chains, provider } = configureChains(
 const client = createClient(
   getDefaultClient({
     autoConnect: true,
+    chains: [localhost, hardhat, mainnet, goerli],
     appName,
     connectors: [metamask, new InjectedConnector({ chains })],
-    provider,
   })
 );
 
