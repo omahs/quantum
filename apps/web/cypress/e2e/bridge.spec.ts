@@ -1,6 +1,6 @@
 // TODO: Mock wallet data
 
-describe.only("Bridge from Ethereum to DeFiChain", () => {
+describe("Bridge from Ethereum to DeFiChain", () => {
   it("should connect to MetaMask wallet", () => {
     cy.visit("http://localhost:3000");
     cy.contains("Connect wallet").should("exist");
