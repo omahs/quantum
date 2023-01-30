@@ -47,8 +47,19 @@ export function NetworkEnvironmentProvider({
   );
 
   const handleNetworkEnvChange = (value: NetworkEnvironment) => {
+    const networkDisplayName = NETWORK_ENV_DISPLAY_NAME[value];
     setNetworkEnv(value);
-    setNetworkEnvDisplayName(NETWORK_ENV_DISPLAY_NAME[value]);
+    setNetworkEnvDisplayName(networkDisplayName);
+    if (networkQuery && networkQuery !== networkDisplayName) {
+      router.replace(
+        {
+          pathname: "/",
+          query: { network: networkDisplayName.toLowerCase() },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
   };
 
   const resetNetworkEnv = () => {
@@ -56,7 +67,8 @@ export function NetworkEnvironmentProvider({
   };
 
   useEffect(() => {
-    handleNetworkEnvChange(initialNetwork);
+    setNetworkEnv(initialNetwork);
+    setNetworkEnvDisplayName(NETWORK_ENV_DISPLAY_NAME[initialNetwork]);
   }, [initialNetwork]);
 
   const context: NetworkContextI = useMemo(
