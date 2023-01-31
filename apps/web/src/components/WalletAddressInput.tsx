@@ -219,6 +219,7 @@ export default function WalletAddressInput({
 
         {/* Textarea input */}
         <textarea
+          data-testid="receiver-address"
           ref={textAreaRef}
           className={clsx(
             `w-full max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
