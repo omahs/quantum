@@ -7,6 +7,7 @@ import { Network } from "types";
 import { useAccount } from "wagmi";
 import InputField from "@components/InputField";
 import { TRANSACTION_ERROR_INFO } from "../../constants";
+import WalletAddressInput from "@components/WalletAddressInput";
 
 export default function StepOneInitiate({
   goToNextStep,
@@ -30,26 +31,18 @@ export default function StepOneInitiate({
           details are correct and funds are sent in a single transaction, with a
           stable network connection.
         </p>
-        <p
-          className={clsx(
-            "flex text-sm text-dark-900 mt-1 relative",
-            "md:block md:mt-2 hidden"
-          )}
-        >
-          Provide your DeFiChain wallet address below in the event that there is
-          a need for a refund.
-        </p>
-        <div
-          className={clsx(
-            "absolute hidden",
-            "md:left-[282px] md:top-[683px] md:block"
-          )}
-        >
-          <IconTooltip
-            title={TRANSACTION_ERROR_INFO.title}
-            content={TRANSACTION_ERROR_INFO.content}
-            customIconColor="text-dark-900"
-          />
+        <div>
+          <span className={clsx("text-sm text-dark-900 mt-1")}>
+            Provide your DeFiChain wallet address below in the event that there
+            is a need for a refund.
+          </span>
+          <button type="button" className="ml-1 align-middle">
+            <IconTooltip
+              title={TRANSACTION_ERROR_INFO.title}
+              content={TRANSACTION_ERROR_INFO.content}
+              customIconColor="text-dark-900"
+            />
+          </button>
         </div>
 
         {/* Mobile view */}
@@ -77,6 +70,15 @@ export default function StepOneInitiate({
           onAddressInputChange={(addrInput) => setAddressInput(addrInput)}
           onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
           disabled={!isConnected}
+        />
+        <WalletAddressInput
+          label=""
+          blockchain={selectedNetworkA.name as Network}
+          addressInput={addressInput}
+          onAddressInputChange={(addrInput) => setAddressInput(addrInput)}
+          onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
+          disabled={!isConnected}
+          isPrimary={false}
         />
         <div className="pt-5">
           <ActionButton

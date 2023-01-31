@@ -20,6 +20,7 @@ interface Props {
   addressInput: string;
   onAddressInputChange: (address: string) => void;
   onAddressInputError: (hasError: boolean) => void;
+  isPrimary?: boolean;
 }
 
 /**
@@ -30,19 +31,22 @@ interface Props {
 function AddressWithVerifiedBadge({
   value,
   onClick,
+  isPrimary,
 }: {
   value: string;
   onClick: () => void;
+  isPrimary: boolean;
 }): JSX.Element {
   const { isLg } = useResponsive();
   return (
     <div
       role="button"
       className={clsx(
-        "relative mr-10 w-full break-all bg-transparent text-sm text-dark-1000 after:absolute focus:outline-none lg:text-xl",
+        "relative mr-10 w-full break-all bg-transparent  text-dark-1000 after:absolute focus:outline-none ",
         isLg
           ? "after:-bottom-1 after:ml-2 after:content-[url('/verified-24x24.svg')]"
-          : "after:ml-1 after:content-[url('/verified-20x20.svg')]"
+          : "after:ml-1 after:content-[url('/verified-20x20.svg')]",
+        isPrimary ? "text-sm lg:text-xl" : "text-sm"
       )}
       onClick={() => onClick()}
       onKeyDown={() => {}}
@@ -61,6 +65,7 @@ export default function WalletAddressInput({
   addressInput,
   onAddressInputChange,
   onAddressInputError,
+  isPrimary = true,
 }: Props): JSX.Element {
   const [isValidAddress, setIsValidAddress] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -162,7 +167,7 @@ export default function WalletAddressInput({
         <span className="pl-5 text-xs font-semibold xl:tracking-wider lg:text-base text-dark-900">
           {label}
         </span>
-        {blockchain === Network.DeFiChain && (
+        {blockchain === Network.DeFiChain && isPrimary && (
           <EnvironmentNetworkSwitch onChange={() => onAddressInputChange("")} />
         )}
         <div
@@ -194,26 +199,29 @@ export default function WalletAddressInput({
         )}
       >
         {/* Paste icon with tooltip */}
-        <Tooltip
-          content="Paste from clipboard"
-          containerClass={clsx("mr-3 lg:mr-6 shrink-0", {
-            "cursor-pointer hover:bg-dark-200 active:dark-btn-pressed":
-              !disabled,
-          })}
-          disableTooltip={disabled || isMobile} // Disable tooltip for mobile
-        >
-          <FiClipboard
-            size={20}
-            className="text-dark-1000"
-            onMouseDown={handlePasteBtnClick}
-          />
-        </Tooltip>
+        {isPrimary && (
+          <Tooltip
+            content="Paste from clipboard"
+            containerClass={clsx("mr-3 lg:mr-6 shrink-0", {
+              "cursor-pointer hover:bg-dark-200 active:dark-btn-pressed":
+                !disabled,
+            })}
+            disableTooltip={disabled || isMobile} // Disable tooltip for mobile
+          >
+            <FiClipboard
+              size={20}
+              className="text-dark-1000"
+              onMouseDown={handlePasteBtnClick}
+            />
+          </Tooltip>
+        )}
 
         {/* Copy of textarea */}
         {showVerifiedBadge && (
           <AddressWithVerifiedBadge
             value={addressInput}
             onClick={handleFocusWithCursor}
+            isPrimary={isPrimary}
           />
         )}
 
@@ -221,11 +229,14 @@ export default function WalletAddressInput({
         <textarea
           ref={textAreaRef}
           className={clsx(
-            `w-full max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 placeholder:text-sm focus:outline-none lg:text-xl lg:placeholder:text-xl`,
+            `w-full max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 focus:outline-none`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
-              : "placeholder:text-dark-500"
+              : "placeholder:text-dark-500",
+            isPrimary
+              ? "text-sm tracking-[0.01em] text-dark-1000 placeholder:text-sm lg:text-xl lg:placeholder:text-xl"
+              : "text-sm tracking-[0.01em] text-dark-1000 placeholder:text-sm"
           )}
           placeholder={placeholder}
           value={addressInput}
