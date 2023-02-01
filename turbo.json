@@ -24,6 +24,9 @@
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
       "dependsOn": ["^build"]
     },
+    "playground:start": {
+      "cache": false
+    },
     "generate:schema": {
       "outputs": ["dist/**"],
       "dependsOn": ["^build"]

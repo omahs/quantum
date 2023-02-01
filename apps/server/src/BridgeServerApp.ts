@@ -44,8 +44,8 @@ export class BridgeServerApp<App extends NestFastifyApplication = NestFastifyApp
     app.useLogger(app.get(Logger));
     app.enableCors({
       origin: '*',
-      methods: ['GET', 'PUT', 'POST', 'DELETE'],
       allowedHeaders: ['Content-Type'],
+      methods: ['GET', 'PUT', 'POST', 'DELETE'],
       maxAge: 60 * 24 * 7,
     });
     await app.register(helmet);

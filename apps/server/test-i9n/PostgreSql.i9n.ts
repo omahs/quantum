@@ -2,7 +2,7 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresear
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { execSync } from 'child_process';
 
-import { prisma } from '../prisma/client';
+import { Prisma } from '../src/prisma/Client';
 
 describe('PostgreSql container', () => {
   const container = new PostgreSqlContainer();
@@ -37,8 +37,8 @@ describe('PostgreSql container', () => {
         address: 'Address 1',
       },
     ];
-    await prisma.pathIndex.createMany({ data });
-    const count = await prisma.pathIndex.count();
+    await Prisma.pathIndex.createMany({ data });
+    const count = await Prisma.pathIndex.count();
     expect(count).toStrictEqual(2);
   });
 
@@ -47,8 +47,8 @@ describe('PostgreSql container', () => {
       index: 2,
       address: 'Address 2',
     };
-    await prisma.pathIndex.create({ data });
-    await expect(prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientKnownRequestError);
+    await Prisma.pathIndex.create({ data });
+    await expect(Prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientKnownRequestError);
   });
 
   it('should throw error by passing wrong index type', async () => {
@@ -57,7 +57,7 @@ describe('PostgreSql container', () => {
       address: 'Address 0',
     };
     // @ts-ignore
-    await expect(prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientValidationError);
+    await expect(Prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientValidationError);
   });
 
   it('should save valid data in database', async () => {
@@ -65,8 +65,8 @@ describe('PostgreSql container', () => {
       index: 3,
       address: 'Address 3',
     };
-    await prisma.pathIndex.create({ data });
-    const response = await prisma.pathIndex.findFirst({
+    await Prisma.pathIndex.create({ data });
+    const response = await Prisma.pathIndex.findFirst({
       where: { index: data.index },
     });
     expect(Number(response?.index)).toEqual(data.index);

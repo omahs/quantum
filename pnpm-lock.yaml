@@ -102,6 +102,7 @@ importers:
       '@headlessui/react': ^1.7.7
       '@netlify/plugin-lighthouse': ^4.0.7
       '@netlify/plugin-nextjs': ^4.30.2
+      '@reduxjs/toolkit': ^1.9.1
       '@tailwindcss/line-clamp': ^0.4.2
       '@tailwindcss/typography': ^0.5.9
       '@testing-library/cypress': ^8.0.7
@@ -127,6 +128,7 @@ importers:
       '@babel/types': 7.20.7
       '@floating-ui/react-dom': 1.2.1_biqbaboplfbrettd7655fr4n2y
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@reduxjs/toolkit': 1.9.1_react@18.2.0
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
       '@waveshq/standard-web': 0.34.3_gai3vsyrnzjq6oj2ng7h54nq6a
       axios: 1.2.5
@@ -3305,7 +3307,7 @@ packages:
       chalk: 4.1.2
       destr: 1.2.2
       execa: 5.1.1
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 10.1.0
       globby: 11.1.0
       merge-stream: 2.0.0
@@ -4079,7 +4081,25 @@ packages:
     dependencies:
       immer: 9.0.18
       react: 18.2.0
-      react-redux: 8.0.5_h5t5tebtdnuja5nsxmc56ookni
+      react-redux: 8.0.5_sfvtgtw6zg4uu5uf4vg7hgzorm
+      redux: 4.2.0
+      redux-thunk: 2.4.2_redux@4.2.0
+      reselect: 4.1.7
+    dev: false
+
+  /@reduxjs/toolkit/1.9.1_react@18.2.0:
+    resolution: {integrity: sha512-HikrdY+IDgRfRYlCTGUQaiCxxDDgM1mQrRbZ6S1HFZX5ZYuJ4o8EstNmhTwHdPl2rTmLxzwSu0b3AyeyTlR+RA==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18
+      react-redux: ^7.2.1 || ^8.0.2
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-redux:
+        optional: true
+    dependencies:
+      immer: 9.0.18
+      react: 18.2.0
       redux: 4.2.0
       redux-thunk: 2.4.2_redux@4.2.0
       reselect: 4.1.7
@@ -5686,7 +5706,7 @@ packages:
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
       '@types/react': 18.0.27
       '@types/react-dom': 18.0.10
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       next: 13.1.5_zfxcdih27xecqpvxqrdjl5dz5e
       next-sitemap: 3.1.47_csmsbcsbfdx2cjngizs3en5eh4
       nextjs-progressbar: 0.0.16_next@13.1.5+react@18.2.0
@@ -6514,7 +6534,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -6522,7 +6542,7 @@ packages:
   /axios/1.2.5:
     resolution: {integrity: sha512-9pU/8mmjSSOb4CXVsvGIevN+MlO/t9OWtKadTaLuN85Gge3HGorUckgp8A/2FH4V4hJ7JuQ3LIeI7KAV9ITZrQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -9844,7 +9864,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
@@ -9856,6 +9875,7 @@ packages:
         optional: true
     dependencies:
       debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -13280,7 +13300,7 @@ packages:
       '@corex/deepmerge': 4.0.29
       '@next/env': 13.1.5
       minimist: 1.2.7
-      next: 13.1.5_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.5_672uxklweod7ene3nqtsh262ca
     dev: false
 
   /next/13.1.5_672uxklweod7ene3nqtsh262ca:
@@ -13378,7 +13398,7 @@ packages:
       react: '>= 16.0.0'
     dependencies:
       '@types/nprogress': 0.2.0
-      next: 13.1.5_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.5_672uxklweod7ene3nqtsh262ca
       nprogress: 0.2.0
       prop-types: 15.8.1
       react: 18.2.0

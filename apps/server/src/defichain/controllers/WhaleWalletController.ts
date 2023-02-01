@@ -10,7 +10,7 @@ export class WhaleWalletController {
 
   @Throttle(5, 60)
   @Get('generate-address')
-  async get(@Query() query: NetworkDto): Promise<string> {
+  async get(@Query() query: NetworkDto): Promise<{ address: string }> {
     return this.whaleWalletService.generateAddress(query.network);
   }
 }

@@ -14,14 +14,14 @@ import { WhaleApiService } from '../services/WhaleApiService';
 export class WhaleWalletProvider {
   constructor(private readonly whaleClient: WhaleApiService, private readonly configService: ConfigService) {}
 
-  createWallet(network: SupportedNetwork = SupportedNetwork.mainnet) {
+  createWallet(network: SupportedNetwork = SupportedNetwork.mainnet, index: number = 2) {
     const mappedNetwork = this.mapNetwork(network);
     const mnemonic = this.configService.get(`defichain.${network}`);
     const data = this.toData(mnemonic.split(' '), mappedNetwork);
     const provider = this.initProvider(data, mappedNetwork);
 
     const whaleApiClient = this.whaleClient.getClient(network);
-    return this.initJellyfishWallet(provider, mappedNetwork, whaleApiClient).get(1);
+    return this.initJellyfishWallet(provider, mappedNetwork, whaleApiClient).get(index);
   }
 
   private initProvider(
