@@ -14,6 +14,8 @@ const NETWORK_ENV_DISPLAY_NAME: Record<NetworkEnvironment, string> = {
   mainnet: "MainNet",
   testnet: "TestNet",
   regtest: "Local",
+  devnet: "DevNet",
+  local: "Local",
 };
 
 interface NetworkContextI {
@@ -45,7 +47,6 @@ export function NetworkEnvironmentProvider({
   const [networkEnvDisplayName, setNetworkEnvDisplayName] = useState<string>(
     NETWORK_ENV_DISPLAY_NAME[initialNetwork]
   );
-
   const handleNetworkEnvChange = (value: NetworkEnvironment) => {
     const networkDisplayName = NETWORK_ENV_DISPLAY_NAME[value];
     setNetworkEnv(value);

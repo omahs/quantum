@@ -8,9 +8,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Network {
+  mainnet
+  testnet
+  regtest
+  devnet
+  local
+}
+
 model PathIndex {
   id        BigInt   @id @default(autoincrement())
   index     Int      @unique
   address   String
+  network   Network
   createdAt DateTime @default(now())
 }

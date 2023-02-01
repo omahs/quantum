@@ -1,3 +1,4 @@
+import React from "react";
 import Head from "next/head";
 import { PropsWithChildren, useEffect, useState } from "react";
 import {

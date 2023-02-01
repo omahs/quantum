@@ -4,6 +4,7 @@ export enum SupportedNetwork {
   mainnet = 'mainnet',
   testnet = 'testnet',
   regtest = 'regtest',
+  devnet = 'devnet',
   local = 'local',
 }
 export class NetworkDto {

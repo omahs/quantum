@@ -7,8 +7,9 @@ export const bridgeApi = createApi({
   }),
   endpoints: (builder) => ({
     generateAddress: builder.mutation<{ address: string }, any>({
-      query: () => ({
-        url: "/wallet/generate-address?network=regtest",
+      query: ({ network }) => ({
+        url: "/wallet/generate-address",
+        params: { network },
         method: "GET",
         headers: {
           "Access-Control-Allow-Origin": "*",

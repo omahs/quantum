@@ -15,7 +15,9 @@ export enum NetworkName {
 export enum NetworkEnvironment {
   mainnet = "mainnet",
   testnet = "testnet",
-  local = "regtest",
+  regtest = "regtest",
+  devnet = "devnet",
+  local = "local",
 }
 
 export interface TokenDetailI {

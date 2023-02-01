@@ -13,6 +13,7 @@ import { useGenerateAddressMutation } from "@store/website";
 import AddressError from "@components/commons/AddressError";
 import TimeLimitCounter from "./TimeLimitCounter";
 import { STORAGE_DFC_ADDR_KEY } from "../../constants";
+import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 
 function debounce(func, wait) {
   let timeout;
@@ -74,6 +75,7 @@ export default function StepTwoSendConfirmation({
   const [showSuccessCopy, setShowSuccessCopy] = useState(false);
   const [hasTimeElapsed, setHasTimeElapsed] = useState(false);
 
+  const { networkEnv } = useNetworkEnvironmentContext();
   const [throttleError, setThrottleError] = useState("");
   const [generateAddress] = useGenerateAddressMutation();
   const { isMobile } = useResponsive();
@@ -95,7 +97,7 @@ export default function StepTwoSendConfirmation({
       if (localDfcAddress) {
         setDfcUniqueAddress(localDfcAddress);
       } else {
-        generateAddress({})
+        generateAddress({ network: networkEnv })
           .unwrap()
           .then((data) => {
             setStorageItem<string>(STORAGE_DFC_ADDR_KEY, data.address);

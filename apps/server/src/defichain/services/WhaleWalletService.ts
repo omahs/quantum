@@ -11,6 +11,9 @@ export class WhaleWalletService {
   async generateAddress(network: SupportedNetwork = SupportedNetwork.mainnet): Promise<{ address: string }> {
     try {
       const lastIndex = await Prisma.pathIndex.findFirst({
+        where: {
+          network,
+        },
         orderBy: [{ index: 'desc' }],
       });
       const index = lastIndex?.index;
@@ -21,6 +24,7 @@ export class WhaleWalletService {
         data: {
           index: nextIndex,
           address,
+          network,
         },
       });
       return { address };
