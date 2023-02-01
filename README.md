@@ -108,9 +108,13 @@ This follows the [proxy pattern](https://blog.openzeppelin.com/proxy-patterns/),
 Before running the above command, following `vars` need to be addressed:
 `ADMIN_ADDRESS`, `OPERATIONAL_ADDRESS`, `RELAYER_ADDRESS`, `TRANSACTION_FEE` & `BRIDGE_IMPLEMENTATION_ADDRESS` aka `BridgeV1` contract address.
 
-## Mint and Approve on Testnet
+## Mint and Approve on Goerli Testnet
 
 To Mint the test tokens and Approve the Bridge Contract devs will have to run a command `npx hardhat run --network goerli ./scripts/mintTestToken.ts` in smartContract directory. Script will mint `100_000` tokens.
+
+### MWBTC
+
+MWBTC Contract address: [0xD723D679d1A3b23d0Aafe4C0812f61DDA84fc043](https://goerli.etherscan.io/address/0xd723d679d1a3b23d0aafe4c0812f61dda84fc043)
 
 ### MUSDT
 

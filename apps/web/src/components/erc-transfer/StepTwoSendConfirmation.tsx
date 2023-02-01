@@ -1,17 +1,17 @@
 import clsx from "clsx";
 import { useState, useEffect, useCallback } from "react";
-import { FiCopy } from "react-icons/fi";
+import { FiAlertCircle, FiCopy } from "react-icons/fi";
 import QRCode from "react-qr-code";
 import useCopyToClipboard from "@hooks/useCopyToClipboard";
 import useResponsive from "@hooks/useResponsive";
 import { getStorageItem, setStorageItem } from "@utils/localStorage";
-import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import Tooltip from "@components/commons/Tooltip";
 import UtilityButton from "@components/commons/UtilityButton";
+import { useRouter } from "next/router";
 import { useGenerateAddressMutation } from "@store/website";
 import AddressError from "@components/commons/AddressError";
 import TimeLimitCounter from "./TimeLimitCounter";
-import { DISCLAIMER_MESSAGE, STORAGE_DFC_ADDR_KEY } from "../../constants";
+import { STORAGE_DFC_ADDR_KEY } from "../../constants";
 
 function debounce(func, wait) {
   let timeout;
@@ -25,17 +25,17 @@ function debounce(func, wait) {
   };
 }
 
-function ConfirmButton({
-  onConfirm,
+function VerifyButton({
+  onVerify,
   disabled = false,
 }: {
-  onConfirm: () => void;
+  onVerify: () => void;
   disabled?: boolean;
 }) {
   return (
     <UtilityButton
-      label="Confirm send"
-      onClick={onConfirm}
+      label="Verify transfer"
+      onClick={onVerify}
       disabled={disabled}
       withArrowIcon
     />
@@ -64,7 +64,7 @@ function SuccessCopy({
   );
 }
 
-export default function StepOneSendConfirmation({
+export default function StepTwoSendConfirmation({
   goToNextStep,
 }: {
   goToNextStep: () => void;
@@ -77,6 +77,7 @@ export default function StepOneSendConfirmation({
   const [generateAddress] = useGenerateAddressMutation();
   const { isMobile } = useResponsive();
   const { copy } = useCopyToClipboard();
+  const router = useRouter();
 
   const handleConfirmClick = () => {
     goToNextStep();
@@ -135,10 +136,10 @@ export default function StepOneSendConfirmation({
           { "justify-center": hasTimeElapsed }
         )}
       >
-        {throttleError !== "" ? (
+        {hasTimeElapsed ? (
           <AddressError
-            error={throttleError}
-            onClick={async () => generateDfcUniqueAddress()}
+            error="Address has expired and is now unavailable for use."
+            onClick={async () => handleGenerateNewDfcAddress()}
           />
         ) : (
           <div>
@@ -149,20 +150,10 @@ export default function StepOneSendConfirmation({
               />
             ) : (
               <>
-                {dfcUniqueAddress !== "" && (
-                  <div className="w-[164px] h-[164px] bg-dark-1000 p-0.5 md:rounded">
-                    <QRCode value={dfcUniqueAddress} size={160} />
-                  </div>
-                )}
+                <div className="w-[164px] h-[164px] bg-dark-1000 p-0.5 md:rounded">
+                  <QRCode value={dfcUniqueAddress} size={160} />
+                </div>
                 <div className="flex flex-col">
-                  <div
-                    className={clsx(
-                      "text-xs font-semibold text-dark-700 text-left",
-                      "md:text-center md:mt-3"
-                    )}
-                  >
-                    Unique DFC address
-                  </div>
                   <Tooltip
                     content="Click to copy address"
                     containerClass={clsx("relative pt-0 mt-1", {
@@ -212,6 +203,11 @@ export default function StepOneSendConfirmation({
                       )}
                     </>
                   )}
+                  {!isMobile && !hasTimeElapsed && (
+                    <TimeLimitCounter
+                      onTimeElapsed={() => setHasTimeElapsed(true)}
+                    />
+                  )}
                 </div>
               </>
             )}
@@ -220,35 +216,41 @@ export default function StepOneSendConfirmation({
       </div>
       <div className="flex flex-col justify-center grow">
         <span className="font-semibold tracking-wider text-dark-900">
-          Transfer DFC tokens
+          Transfer funds for release
         </span>
         <p className={clsx("text-sm text-dark-700 mt-1", "md:mt-2")}>
-          Send your DFC tokens to the unique DFC address to start the withdrawal
-          process. This address is only valid for 30 minutes.
+          Use your DeFiChain wallet to send the amount that you want to transfer
+          through the Bridge. Make sure you send the correct amount to the
+          correct address.
         </p>
-        {!isMobile && !hasTimeElapsed && (
-          <TimeLimitCounter onTimeElapsed={() => setHasTimeElapsed(true)} />
-        )}
+        <span className={clsx("text-sm text-warning mt-1", "md:mt-2")}>
+          Transactions in this Bridge, as with all other on-chain transactions,
+          are irreversible. For more details, read
+          <button
+            type="button"
+            className="underline underline-offset-1 text-warning"
+            onClick={() => router.push("/faq")}
+          >
+            FAQs and terms of use.
+          </button>
+        </span>
 
         <div className={clsx("hidden mt-12", "md:block")}>
-          {/* Web confirm button */}
-          <ConfirmButton
-            onConfirm={handleConfirmClick}
-            disabled={hasTimeElapsed}
-          />
+          <div className="float-right">
+            {/* Web confirm button */}
+            <VerifyButton
+              onVerify={handleConfirmClick}
+              disabled={hasTimeElapsed}
+            />
+          </div>
         </div>
       </div>
 
       <div className={clsx("order-last pt-6", "md:hidden")}>
-        <AlertInfoMessage
-          message={DISCLAIMER_MESSAGE}
-          containerStyle="px-5 py-4"
-          textStyle="text-xs"
-        />
         <div className={clsx("px-6 pt-12", "md:px-0")}>
           {/* Mobile confirm button */}
-          <ConfirmButton
-            onConfirm={handleConfirmClick}
+          <VerifyButton
+            onVerify={handleConfirmClick}
             disabled={hasTimeElapsed}
           />
         </div>
