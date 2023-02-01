@@ -112,11 +112,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
           {mounted && (
             <NetworkProvider>
-              <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-                <WhaleProvider>
-                  <NetworkEnvironmentProvider>
-                    <ContractProvider>
-                      <ApiProvider api={bridgeApi}>
+              <ApiProvider api={bridgeApi}>
+                <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+                  <WhaleProvider>
+                    <NetworkEnvironmentProvider>
+                      <ContractProvider>
                         <ThemeProvider theme={initialTheme}>
                           <div className="relative">
                             <Header />
@@ -127,11 +127,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                             <Footer />
                           </div>
                         </ThemeProvider>
-                      </ApiProvider>
-                    </ContractProvider>
-                  </NetworkEnvironmentProvider>
-                </WhaleProvider>
-              </WhaleNetworkProvider>
+                      </ContractProvider>
+                    </NetworkEnvironmentProvider>
+                  </WhaleProvider>
+                </WhaleNetworkProvider>
+              </ApiProvider>
             </NetworkProvider>
           )}
         </ConnectKitProvider>

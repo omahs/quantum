@@ -1,6 +1,7 @@
 import clsx from "clsx";
+import React from "react";
 import { useState, useEffect, useCallback } from "react";
-import { FiAlertCircle, FiCopy } from "react-icons/fi";
+import { FiCopy } from "react-icons/fi";
 import QRCode from "react-qr-code";
 import useCopyToClipboard from "@hooks/useCopyToClipboard";
 import useResponsive from "@hooks/useResponsive";
@@ -136,10 +137,10 @@ export default function StepTwoSendConfirmation({
           { "justify-center": hasTimeElapsed }
         )}
       >
-        {hasTimeElapsed ? (
+        {throttleError !== "" ? (
           <AddressError
-            error="Address has expired and is now unavailable for use."
-            onClick={async () => handleGenerateNewDfcAddress()}
+            error={throttleError}
+            onClick={async () => generateDfcUniqueAddress()}
           />
         ) : (
           <div>
@@ -149,67 +150,76 @@ export default function StepTwoSendConfirmation({
                 onClick={async () => handleGenerateNewDfcAddress()}
               />
             ) : (
-              <>
-                <div className="w-[164px] h-[164px] bg-dark-1000 p-0.5 md:rounded">
-                  <QRCode value={dfcUniqueAddress} size={160} />
-                </div>
-                <div className="flex flex-col">
-                  <Tooltip
-                    content="Click to copy address"
-                    containerClass={clsx("relative pt-0 mt-1", {
-                      "cursor-default": isMobile,
-                    })}
-                    disableTooltip={isMobile}
-                  >
-                    <button
-                      type="button"
-                      className={clsx(
-                        "text-sm text-dark-900 text-left break-all focus-visible:outline-none",
-                        "md:text-xs md:text-center md:cursor-pointer md:hover:underline"
-                      )}
-                      onClick={() =>
-                        !isMobile && handleOnCopy(dfcUniqueAddress)
-                      }
-                    >
-                      {dfcUniqueAddress}
-                    </button>
-                    {!isMobile && (
-                      <SuccessCopy
-                        containerClass="bottom-11"
-                        show={showSuccessCopy}
-                      />
-                    )}
-                  </Tooltip>
-                  {isMobile && (
-                    <>
-                      <button
-                        type="button"
-                        className="relative flex items-center text-dark-700 active:text-dark-900 mt-2"
-                        onClick={() => handleOnCopy(dfcUniqueAddress)}
+              <div>
+                {hasTimeElapsed ? (
+                  <AddressError
+                    error="Address has expired and is now unavailable for use."
+                    onClick={async () => handleGenerateNewDfcAddress()}
+                  />
+                ) : (
+                  <>
+                    <div className="w-[164px] h-[164px] bg-dark-1000 p-0.5 md:rounded">
+                      <QRCode value={dfcUniqueAddress} size={160} />
+                    </div>
+                    <div className="flex flex-col">
+                      <Tooltip
+                        content="Click to copy address"
+                        containerClass={clsx("relative pt-0 mt-1", {
+                          "cursor-default": isMobile,
+                        })}
+                        disableTooltip={isMobile}
                       >
-                        <FiCopy size={16} className="mr-2" />
-                        <span className="text-sm font-semibold">
-                          Copy address
-                        </span>
-                        <SuccessCopy
-                          containerClass="bottom-7"
-                          show={showSuccessCopy}
-                        />
-                      </button>
-                      {!hasTimeElapsed && (
+                        <button
+                          type="button"
+                          className={clsx(
+                            "text-sm text-dark-900 text-left break-all focus-visible:outline-none",
+                            "md:text-xs md:text-center md:cursor-pointer md:hover:underline"
+                          )}
+                          onClick={() =>
+                            !isMobile && handleOnCopy(dfcUniqueAddress)
+                          }
+                        >
+                          {dfcUniqueAddress}
+                        </button>
+                        {!isMobile && (
+                          <SuccessCopy
+                            containerClass="bottom-11"
+                            show={showSuccessCopy}
+                          />
+                        )}
+                      </Tooltip>
+                      {isMobile && (
+                        <>
+                          <button
+                            type="button"
+                            className="relative flex items-center text-dark-700 active:text-dark-900 mt-2"
+                            onClick={() => handleOnCopy(dfcUniqueAddress)}
+                          >
+                            <FiCopy size={16} className="mr-2" />
+                            <span className="text-sm font-semibold">
+                              Copy address
+                            </span>
+                            <SuccessCopy
+                              containerClass="bottom-7"
+                              show={showSuccessCopy}
+                            />
+                          </button>
+                          {!hasTimeElapsed && (
+                            <TimeLimitCounter
+                              onTimeElapsed={() => setHasTimeElapsed(true)}
+                            />
+                          )}
+                        </>
+                      )}
+                      {!isMobile && !hasTimeElapsed && (
                         <TimeLimitCounter
                           onTimeElapsed={() => setHasTimeElapsed(true)}
                         />
                       )}
-                    </>
-                  )}
-                  {!isMobile && !hasTimeElapsed && (
-                    <TimeLimitCounter
-                      onTimeElapsed={() => setHasTimeElapsed(true)}
-                    />
-                  )}
-                </div>
-              </>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}

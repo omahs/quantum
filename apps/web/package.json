@@ -40,7 +40,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@testing-library/cypress": "^8.0.7",
     "@types/node": "18.11.11",
-    "@waveshq/standard-web-linter": "^0.34.3",
+    "@waveshq/standard-web-linter": "^0.37.0",
     "autoprefixer": "^10.4.13",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-jsx-remove-data-test-id": "^3.0.0",
