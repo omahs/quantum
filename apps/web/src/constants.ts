@@ -27,6 +27,12 @@ export const DAILY_LIMIT_INFO: TooltipInfoI = {
     "DeFiChain Bridge has a daily hard cap for each token pair. Once this limit is reached, you will not be able to transfer to DeFiChain or Ethereum until the next day.",
 };
 
+export const TRANSACTION_ERROR_INFO: TooltipInfoI = {
+  title: "Transaction Error",
+  content:
+    "In case of any transaction errors, we will fully refund your dTokens to the below address.",
+};
+
 export const DISCLAIMER_MESSAGE =
   "Transactions are irreversible. Make sure that you send the exact amount to the correct destination address for your DeFiChain wallet.";
 
