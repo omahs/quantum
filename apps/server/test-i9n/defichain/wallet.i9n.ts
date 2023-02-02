@@ -1,16 +1,31 @@
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 import { fromAddress } from '@defichain/jellyfish-address';
+import { execSync } from 'child_process';
 import { HardhatNetwork, HardhatNetworkContainer, StartedHardhatNetworkContainer } from 'smartcontracts';
 
 import { BridgeServerTestingApp } from '../../src/BridgeServerTestingApp';
 import { buildTestConfig, TestingExampleModule } from '../BridgeApp.i9n';
 
 describe('DeFiChain Wallet Integration Testing', () => {
+  const container = new PostgreSqlContainer();
+  let postgreSqlContainer: StartedPostgreSqlContainer;
   let startedHardhatContainer: StartedHardhatNetworkContainer;
   let hardhatNetwork: HardhatNetwork;
   let testing: BridgeServerTestingApp;
   const WALLET_ENDPOINT = `/defichain/wallet/`;
 
   beforeAll(async () => {
+    postgreSqlContainer = await container
+      .withDatabase('bridge')
+      .withUsername('playground')
+      .withPassword('playground')
+      .withExposedPorts({
+        container: 5432,
+        host: 5432,
+      })
+      .start();
+    // deploy migration
+    execSync('pnpm run migration:deploy');
     startedHardhatContainer = await new HardhatNetworkContainer().start();
     hardhatNetwork = await startedHardhatContainer.ready();
     testing = new BridgeServerTestingApp(TestingExampleModule.register(buildTestConfig({ startedHardhatContainer })));
@@ -19,6 +34,7 @@ describe('DeFiChain Wallet Integration Testing', () => {
 
   afterAll(async () => {
     await hardhatNetwork.stop();
+    await postgreSqlContainer.stop();
   });
 
   it('should be able to generate a wallet address', async () => {
@@ -26,9 +42,9 @@ describe('DeFiChain Wallet Integration Testing', () => {
       method: 'GET',
       url: `${WALLET_ENDPOINT}generate-address?network=regtest`,
     });
-
     await expect(initialResponse.statusCode).toStrictEqual(200);
-    const decodedAddress = fromAddress(initialResponse.body, 'regtest');
+    const response = JSON.parse(initialResponse.body);
+    const decodedAddress = fromAddress(response.address, 'regtest');
     await expect(decodedAddress).not.toBeUndefined();
   });
 
@@ -40,7 +56,8 @@ describe('DeFiChain Wallet Integration Testing', () => {
 
     await expect(initialResponse.statusCode).toStrictEqual(200);
     // will return undefined if the address is not a valid address or not a network address
-    const decodedAddress = fromAddress(initialResponse.body, 'mainnet');
+    const response = JSON.parse(initialResponse.body);
+    const decodedAddress = fromAddress(response.address, 'mainnet');
     await expect(decodedAddress).toBeUndefined();
   });
 
