@@ -127,19 +127,24 @@ export default function EvmToDeFiChainTransfer({
 
   return (
     <>
-      {(showLoader || isApproveTxnLoading || isBridgeTxnLoading) && (
-        <Modal isOpen={showLoader}>
-          <div className="flex flex-col items-center mt-6 mb-14">
-            <div className="w-24 h-24 border border-brand-200 border-b-transparent rounded-full animate-spin" />
-            <span className="font-bold text-2xl text-dark-900 mt-12">
-              Waiting for confirmation
-            </span>
-            <span className="text-dark-900 mt-2">
-              Confirm this transaction in your Wallet.
-            </span>
-          </div>
-        </Modal>
-      )}
+      {(showLoader || isApproveTxnLoading || isBridgeTxnLoading) &&
+        !errorMessage && (
+          <Modal isOpen={showLoader}>
+            <div className="flex flex-col items-center mt-6 mb-14">
+              <div className="w-24 h-24 border border-brand-200 border-b-transparent rounded-full animate-spin" />
+              <span className="font-bold text-2xl text-dark-900 mt-12">
+                {requiresApproval && !isApproveTxnSuccess
+                  ? `Waiting for approval`
+                  : `Waiting for confirmation`}
+              </span>
+              <span className="text-dark-900 mt-2">
+                {requiresApproval && !isApproveTxnSuccess
+                  ? `Requesting permission to access your ${data.from.tokenName} funds.`
+                  : `Confirm this transaction in your Wallet.`}
+              </span>
+            </div>
+          </Modal>
+        )}
       {isBridgeTxnSuccess && (
         // TODO: Replace success ui/message
         <Modal isOpen={isBridgeTxnSuccess} onClose={() => router.reload()}>
