@@ -94,6 +94,8 @@ const config: HardhatUserConfig = {
       // We need to allow large contract sizes since contract sizes
       // could be larger than the stipulated max size in EIP-170
       allowUnlimitedContractSize: true,
+      // can enable logging to see the calls to node
+      // loggingEnabled: true,
     },
 
     development: {

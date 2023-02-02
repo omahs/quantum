@@ -1,10 +1,11 @@
+import { AbiCoder } from '@ethersproject/abi';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { BridgeV1 } from '../generated';
-import { BridgeDeploymentResult, deployContracts } from './testUtils/deployment';
+import { NewImplementation } from '../generated';
+import { deployContracts } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
 
 describe('Test Behaviour related to proxy', () => {
@@ -13,12 +14,12 @@ describe('Test Behaviour related to proxy', () => {
       const { testToken, proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
       const accounts = await ethers.provider.listAccounts();
 
-      const NewImplementation = await ethers.getContractFactory('NewImplementation');
-      const newImplementation = await NewImplementation.deploy();
+      const NewImplementationFactory = await ethers.getContractFactory('NewImplementation');
+      const newImplementation = await NewImplementationFactory.deploy();
       await newImplementation.deployed();
 
       await testToken.mint(proxyBridge.address, toWei('100'));
-      await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
+      await proxyBridge.addSupportedTokens(testToken.address, toWei('15'), 0);
 
       const eip712Types = {
         CLAIM: [
@@ -59,7 +60,7 @@ describe('Test Behaviour related to proxy', () => {
         ).substring(26)}`,
       ).to.equal(newImplementation.address.toLowerCase());
       // check admin role and other storage slots
-      const upgradedProxyBridge = NewImplementation.attach(proxyBridge.address);
+      const upgradedProxyBridge = NewImplementationFactory.attach(proxyBridge.address);
       expect(
         await upgradedProxyBridge.hasRole(
           '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -75,15 +76,22 @@ describe('Test Behaviour related to proxy', () => {
   });
 
   describe('Test different situations of calling the proxy contract', () => {
-    let abiCoder: any;
-    let proxyBridge: BridgeV1;
+    let abiCoder: AbiCoder;
+    let proxyBridge: NewImplementation;
     let defaultAdminSigner: SignerWithAddress;
 
     beforeEach(async () => {
+      const NewImplementationFactory = await ethers.getContractFactory('NewImplementation');
+      const newImplementation = await NewImplementationFactory.deploy();
+      await newImplementation.deployed();
+      const BridgeProxy = await ethers.getContractFactory('BridgeProxy');
+      const bridgeProxy = await BridgeProxy.deploy(newImplementation.address, '0x');
+      // console.log('Bridge Proxy ', bridgeProxy);
+      await bridgeProxy.deployed();
+      proxyBridge = NewImplementationFactory.attach(bridgeProxy.address);
       abiCoder = new ethers.utils.AbiCoder();
-      const bridgeDeploymentResult: BridgeDeploymentResult = await loadFixture(deployContracts);
-      proxyBridge = bridgeDeploymentResult.proxyBridge;
-      defaultAdminSigner = bridgeDeploymentResult.defaultAdminSigner;
+      const accounts = await ethers.provider.listAccounts();
+      defaultAdminSigner = await ethers.getSigner(accounts[0]);
     });
 
     //              yes --> proxy's receive is called --> implementation's receive is called
@@ -125,47 +133,44 @@ describe('Test Behaviour related to proxy', () => {
     });
 
     it('Revert when calling a method that is not in the implementation interface', async () => {
-      const TestTokenFactory = await ethers.getContractFactory('TestToken');
-      const attachedToken = TestTokenFactory.attach(proxyBridge.address);
-      await expect(attachedToken.totalSupply()).to.reverted;
+      const RandomContract = await ethers.getContractFactory('RandomContract');
+      const attachedToken = RandomContract.attach(proxyBridge.address);
+      await expect(attachedToken.randomFunctionToTest()).to.be.reverted;
     });
 
     it('Successful when calling a method that is in the implementation interface that is not payable, without sending ether (if all goes well)', async () => {
+      expect(await proxyBridge.notPayableFunctionCalled()).to.equal(false);
       await defaultAdminSigner.sendTransaction({
         to: proxyBridge.address,
-        data:
-          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('addSupportedTokens(address,uint256)')).substring(0, 10) +
-          abiCoder.encode(['address', 'uint256'], [ethers.constants.AddressZero, toWei('10')]).substring(2),
+        data: ethers.utils.keccak256(ethers.utils.toUtf8Bytes('notPayableFunction()')).substring(0, 10),
       });
-      expect(await proxyBridge.supportedTokens(ethers.constants.AddressZero)).to.equal(true);
+      expect(await proxyBridge.notPayableFunctionCalled()).to.equal(true);
     });
 
     it('Revert when calling a method that is in the implementation interface that is not payable, and send ether', async () => {
+      expect(await proxyBridge.notPayableFunctionCalled()).to.equal(false);
       await expect(
         defaultAdminSigner.sendTransaction({
           to: proxyBridge.address,
-          data:
-            ethers.utils.keccak256(ethers.utils.toUtf8Bytes('addSupportedTokens(address,uint256)')).substring(0, 10) +
-            abiCoder.encode(['address', 'uint256'], [ethers.constants.AddressZero, toWei('10')]).substring(2),
+          data: ethers.utils.keccak256(ethers.utils.toUtf8Bytes('notPayableFunction()')).substring(0, 10),
           value: 100,
         }),
-      ).to.reverted;
+      ).to.be.reverted;
+      expect(await proxyBridge.notPayableFunctionCalled()).to.equal(false);
     });
 
     it('Successful when calling a method that is in the implementation interface that is payable, and send ether (if all goes well)', async () => {
-      await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('15'));
-      await expect(
-        proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0, {
-          value: toWei('10'),
-        }),
-      ).to.emit(proxyBridge, 'BRIDGE_TO_DEFI_CHAIN');
+      // view function, ethers make eth_call behind the scene
+      expect(await proxyBridge.payableFunctionCalled()).to.equal(false);
+      // non-pure, non-view function, ethers makes eth_sendTransaction instead
+      await proxyBridge.payableFunction({ value: toWei('10') });
+      expect(await proxyBridge.payableFunctionCalled()).to.equal(true);
     });
 
     it('Successful when calling a method that is in the implementation interface that is payable, without sending any ether (if all goes well)', async () => {
-      await proxyBridge.addSupportedTokens(ethers.constants.AddressZero, toWei('15'));
-      await expect(
-        proxyBridge.bridgeToDeFiChain(ethers.constants.AddressZero, ethers.constants.AddressZero, 0),
-      ).to.emit(proxyBridge, 'BRIDGE_TO_DEFI_CHAIN');
+      expect(await proxyBridge.payableFunctionCalled()).to.equal(false);
+      await proxyBridge.payableFunction();
+      expect(await proxyBridge.payableFunctionCalled()).to.equal(true);
     });
   });
 });
