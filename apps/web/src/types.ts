@@ -61,7 +61,7 @@ export type Erc20Token = "wBTC" | "USDT" | "USDC" | "ETH";
 
 interface ContractConfigI {
   address: `0x${string}`;
-  abi: any;
+  abi?: any;
 }
 
 export interface ContractContextI {
