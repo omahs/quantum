@@ -1,6 +1,6 @@
-import BridgeV1 from "../config/ABIs/mainnet/BridgeV1.json";
-import BridgeV1Testnet from "../config/ABIs/mainnet/BridgeV1.json";
 import { ContractContextI } from "types";
+import BridgeV1 from "./ABIs/mainnet/BridgeV1.json";
+import BridgeV1Testnet from "./ABIs/testnet/BridgeV1.json";
 
 export const MAINNET_CONFIG: ContractContextI = {
   BridgeV1: {

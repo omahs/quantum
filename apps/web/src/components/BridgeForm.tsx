@@ -87,7 +87,7 @@ export default function BridgeForm() {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   // TODO: Set fee to 0.3% of source token
-  const [fee, setFee] = useState<BigNumber>(new BigNumber(0.0001));
+  const [fee] = useState<BigNumber>(new BigNumber(0.0001));
 
   const { address, isConnected } = useAccount();
   const { Erc20Tokens } = useContractContext();

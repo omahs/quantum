@@ -2,6 +2,8 @@
  * Place for common types we want to reuse in entire app
  */
 
+import BigNumber from "bignumber.js";
+
 export enum Network {
   Ethereum = "Ethereum",
   DeFiChain = "DeFiChain",
@@ -55,6 +57,20 @@ export interface UnconfirmedTxnI {
   toAddress: string;
   fromAddress: string;
   dfcUniqueAddress?: string;
+}
+
+export interface RowDataI {
+  address: string;
+  networkName: NetworkName;
+  networkIcon: string;
+  tokenName: string;
+  tokenIcon: string;
+  amount: BigNumber;
+}
+
+export interface TransferData {
+  from: RowDataI;
+  to: RowDataI;
 }
 
 export type Erc20Token = "wBTC" | "USDT" | "USDC" | "ETH";

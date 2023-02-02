@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import Image from "next/image";
-import { NetworkName } from "types";
+import { NetworkName, RowDataI, TransferData } from "types";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import useDisableEscapeKey from "@hooks/useDisableEscapeKey";
 import truncateTextFromMiddle from "@utils/textHelper";
@@ -12,20 +12,6 @@ import BrLogoIcon from "@components/icons/BrLogoIcon";
 import DeFiChainToERC20Transfer from "@components/erc-transfer/DeFiChainToERC20Transfer";
 import EvmToDeFiChainTransfer from "@components/erc-transfer/EvmToDeFiChainTransfer";
 import { CONSORTIUM_INFO, FEES_INFO } from "../constants";
-
-interface RowDataI {
-  address: string;
-  networkName: NetworkName;
-  networkIcon: string;
-  tokenName: string;
-  tokenIcon: string;
-  amount: BigNumber;
-}
-
-export interface TransferData {
-  from: RowDataI;
-  to: RowDataI;
-}
 
 function RowData({
   data,

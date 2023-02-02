@@ -1,40 +1,24 @@
 import { ethers, utils } from "ethers";
-import {
-  erc20ABI,
-  useContractReads,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from "wagmi";
+import { erc20ABI, useContractReads } from "wagmi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FiAlertCircle, FiCheck } from "react-icons/fi";
-import useResponsive from "@hooks/useResponsive";
-import AlertInfoMessage from "@components/commons/AlertInfoMessage";
-import ActionButton from "@components/commons/ActionButton";
-import Modal from "@components/commons/Modal";
-import { TransferData } from "@components/ConfirmTransferModal";
+import clsx from "clsx";
 import { useContractContext } from "@contexts/ContractContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import { setStorageItem } from "@utils/localStorage";
+import useResponsive from "@hooks/useResponsive";
+import useWriteApproveToken from "@hooks/useWriteApproveToken";
+import useWriteBridgeToDeFiChain from "@hooks/useWriteBridgeToDeFiChain";
+import AlertInfoMessage from "@components/commons/AlertInfoMessage";
+import ActionButton from "@components/commons/ActionButton";
+import Modal from "@components/commons/Modal";
+import { Erc20Token, TransferData } from "types";
 import {
-  DEFAULT_SPENDING_LIMIT,
   DISCLAIMER_MESSAGE,
   ETHEREUM_SYMBOL,
   STORAGE_TXN_KEY,
 } from "../../constants";
-import clsx from "clsx";
-import BigNumber from "bignumber.js";
-
-function getSpendLimitToApprove(
-  transferAmount: BigNumber,
-  tokenAllowance: string | number
-) {
-  if (transferAmount.gt(tokenAllowance)) {
-    return transferAmount.plus(0.1).toString();
-  }
-  return DEFAULT_SPENDING_LIMIT;
-}
 
 export default function EvmToDeFiChainTransfer({
   data,
@@ -43,8 +27,6 @@ export default function EvmToDeFiChainTransfer({
 }) {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [showLoader, setShowLoader] = useState(false);
-  const [requiresApproval, setRequiresApproval] = useState(false);
-  const [refetchedBridgeFn, setRefetchedBridgeFn] = useState(false);
 
   const router = useRouter();
   const { isMobile } = useResponsive();
@@ -77,97 +59,40 @@ export default function EvmToDeFiChainTransfer({
     readTokenData?.[0] ?? ethers.BigNumber.from(0)
   );
 
-  // Prepare write contract for `bridgeToDeFiChain` function
-  const { config: bridgeConfig, refetch: refetchBridge } =
-    usePrepareContractWrite({
-      address: BridgeV1.address,
-      abi: BridgeV1.abi,
-      functionName: "bridgeToDeFiChain",
-      args: [
-        utils.hexlify(utils.toUtf8Bytes(data.to.address)) as `0x${string}`,
-        Erc20Tokens[data.from.tokenName].address,
-        utils.parseUnits(data.to.amount.toString(), tokenDecimals),
-      ],
-      ...(sendingFromETH
-        ? {
-            overrides: {
-              value: ethers.utils.parseEther(data.to.amount.toString()),
-            },
-          }
-        : {}),
-      onError: (err) => {
-        if (err.message.includes("insufficient allowance")) {
-          // Need to request approval from user
-          setRequiresApproval(true);
-        } else {
-          // Display error message
-          setErrorMessage(err.message);
-        }
-      },
-    });
-
-  // Write contract for `bridgeToDeFiChain` function
   const {
-    data: bridgeContract,
-    write: writeBridgeToDeFiChain,
-    error: writeBridgeTxnError,
-  } = useContractWrite(bridgeConfig);
-
-  // Wait and get result from write contract for `bridgeToDeFiChain` function
-  const {
-    error: bridgeTxnError,
-    isSuccess: isBridgeTxnSuccess,
-    isLoading: isBridgeTxnLoading,
-  } = useWaitForTransaction({
-    hash: bridgeContract?.hash,
-    onSettled: () => setShowLoader(false),
+    isBridgeTxnLoading,
+    isBridgeTxnSuccess,
+    errorMessage: bridgeErrorMessage,
+    refetchBridge,
+    requiresApproval,
+    writeBridgeToDeFiChain,
+  } = useWriteBridgeToDeFiChain({
+    receiverAddress: data.to.address,
+    transferAmount: data.to.amount,
+    tokenName: data.from.tokenName,
+    tokenDecimals,
+    onBridgeTxnSettled: () => setShowLoader(false),
   });
 
-  // Prepare write (ERC20 token) contract for `approve` function
-  const { config: tokenConfig } = usePrepareContractWrite({
-    ...erc20TokenContract,
-    functionName: "approve",
-    args: [
-      BridgeV1.address,
-      utils.parseUnits(
-        getSpendLimitToApprove(data.to.amount, tokenAllowance),
-        tokenDecimals
-      ),
-    ],
-  });
-
-  // Write (ERC20 token) contract for `approve` function
   const {
-    data: tokenContract,
-    write: writeApprove,
-    error: writeApproveError,
-  } = useContractWrite(tokenConfig);
-
-  // Wait and get result from write (ERC20 token) contract for `approve` function
-  const {
-    error: approveTxnError,
-    isSuccess: isApproveTxnSuccess,
-    isLoading: isApproveTxnLoading,
-  } = useWaitForTransaction({
-    hash: tokenContract?.hash,
-    onSuccess: () => refetchBridge().then(() => setRefetchedBridgeFn(true)),
+    isApproveTxnLoading,
+    isApproveTxnSuccess,
+    errorMessage: approveErrorMessage,
+    refetchedBridgeFn,
+    writeApprove,
+  } = useWriteApproveToken({
+    transferAmount: data.to.amount,
+    tokenName: data.from.tokenName as Erc20Token,
+    tokenDecimals,
+    tokenAllowance,
+    refetchBridge,
   });
 
   useEffect(() => {
-    if (
-      writeBridgeTxnError ||
-      writeApproveError ||
-      approveTxnError ||
-      bridgeTxnError
-    ) {
-      setErrorMessage(
-        writeBridgeTxnError?.message ??
-          writeApproveError?.message ??
-          approveTxnError?.message ??
-          bridgeTxnError?.message
-      );
+    if (bridgeErrorMessage || approveErrorMessage) {
+      setErrorMessage(bridgeErrorMessage ?? approveErrorMessage);
     }
-  }, [writeBridgeTxnError, writeApproveError, approveTxnError, bridgeTxnError]);
+  }, [bridgeErrorMessage, approveErrorMessage]);
 
   useEffect(() => {
     // Trigger `bridgeToDeFiChain` once allowance is approved
@@ -196,7 +121,7 @@ export default function EvmToDeFiChainTransfer({
       writeApprove?.();
       return;
     }
-    // If no approval required, perform bridge directly
+    // If no approval required, perform bridge function directly
     writeBridgeToDeFiChain?.();
   };
 
