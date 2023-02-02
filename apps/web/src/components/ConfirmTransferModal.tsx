@@ -4,6 +4,7 @@ import Image from "next/image";
 import { NetworkName, RowDataI, TransferData } from "types";
 import { useNetworkContext } from "@contexts/NetworkContext";
 import useDisableEscapeKey from "@hooks/useDisableEscapeKey";
+import useTransferFee from "@hooks/useTransferFee";
 import truncateTextFromMiddle from "@utils/textHelper";
 import IconTooltip from "@components/commons/IconTooltip";
 import Modal from "@components/commons/Modal";
@@ -71,15 +72,16 @@ function RowData({
             "md:self-end md:w-auto"
           )}
         >
-          <span
+          <NumericFormat
             className={clsx(
               "!text-xl font-bold leading-6 text-right",
               "md:text-lg md:font-semibold",
               data.amount.isPositive() ? "text-valid" : "text-error"
             )}
-          >
-            {data.amount.toFixed(2)}
-          </span>
+            value={data.amount}
+            thousandSeparator
+            trimTrailingZeros
+          />
           <div className="flex items-center justify-end gap-1">
             <Image
               width={100}
@@ -121,6 +123,8 @@ export default function ConfirmTransferModal({
     selectedTokensB,
   } = useNetworkContext();
   useDisableEscapeKey(show);
+
+  const [fee, feeSymbol] = useTransferFee(amount);
 
   // Direction of transfer
   const isSendingToDFC = selectedNetworkB.name === NetworkName.DeFiChain;
@@ -172,10 +176,10 @@ export default function ConfirmTransferModal({
         </div>
         <NumericFormat
           className="text-right text-dark-900 tracking-[0.01em] md:tracking-normal"
-          value={0}
-          decimalScale={2}
+          value={fee}
           thousandSeparator
-          suffix=" DFI" // TODO: Create hook to get fee based on source/destination
+          suffix={` ${feeSymbol}`}
+          trimTrailingZeros
         />
       </div>
 
