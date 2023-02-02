@@ -15,8 +15,6 @@ import {
   NetworkName,
   UnconfirmedTxnI,
 } from "types";
-import { useWhaleApiClient } from "@waveshq/walletkit-ui/dist/contexts";
-import Logging from "@api/logging";
 import SwitchIcon from "@components/icons/SwitchIcon";
 import ArrowDownIcon from "@components/icons/ArrowDownIcon";
 import ActionButton from "@components/commons/ActionButton";
@@ -88,17 +86,17 @@ export default function BridgeForm() {
   const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
-  const client = useWhaleApiClient();
+  // TODO: Set fee to 0.3% of source token
   const [fee, setFee] = useState<BigNumber>(new BigNumber(0.0001));
 
   const { address, isConnected } = useAccount();
-  const contractConfig = useContractContext();
+  const { Erc20Tokens } = useContractContext();
   const sendingFromETH = selectedTokensA.tokenA.name === ETHEREUM_SYMBOL;
   const { data } = useBalance({
     address,
     watch: true,
     ...(!sendingFromETH && {
-      token: contractConfig.Erc20Tokens[selectedTokensA.tokenA.name],
+      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
     }),
   });
 
@@ -170,13 +168,6 @@ export default function BridgeForm() {
         return "Connect wallet";
     }
   };
-
-  useEffect(() => {
-    client.fee
-      .estimate()
-      .then((f) => setFee(new BigNumber(f)))
-      .catch(Logging.error);
-  }, []);
 
   useEffect(() => {
     if (amount) {

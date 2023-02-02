@@ -59,7 +59,12 @@ export interface UnconfirmedTxnI {
 
 export type Erc20Token = "wBTC" | "USDT" | "USDC" | "ETH";
 
+interface ContractConfigI {
+  address: `0x${string}`;
+  abi: any;
+}
+
 export interface ContractContextI {
-  BridgeProxyContractAddress: `0x${string}`;
-  Erc20Tokens: Record<Erc20Token, `0x${string}`>;
+  BridgeV1: ContractConfigI;
+  Erc20Tokens: Record<Erc20Token, ContractConfigI>;
 }
