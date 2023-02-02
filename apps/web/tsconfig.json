@@ -1,7 +1,6 @@
 {
   "extends": "@waveshq/standard-web/tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
     "baseUrl": "src"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
