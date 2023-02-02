@@ -37,12 +37,6 @@ export function NetworkEnvironmentProvider({
   const router = useRouter();
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = router.query.network;
-  const initialNetwork = getNetwork(networkQuery as EnvironmentNetwork);
-  const [networkEnv, setNetworkEnv] =
-    useState<EnvironmentNetwork>(initialNetwork);
-  const [networkEnvDisplayName, setNetworkEnvDisplayName] = useState<string>(
-    NETWORK_ENV_DISPLAY_NAME[initialNetwork]
-  );
 
   function getNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
     if (env.networks.includes(n)) {
@@ -50,6 +44,13 @@ export function NetworkEnvironmentProvider({
     }
     return EnvironmentNetwork.MainNet;
   }
+
+  const initialNetwork = getNetwork(networkQuery as EnvironmentNetwork);
+  const [networkEnv, setNetworkEnv] =
+    useState<EnvironmentNetwork>(initialNetwork);
+  const [networkEnvDisplayName, setNetworkEnvDisplayName] = useState<string>(
+    NETWORK_ENV_DISPLAY_NAME[initialNetwork]
+  );
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     const networkDisplayName = NETWORK_ENV_DISPLAY_NAME[value];

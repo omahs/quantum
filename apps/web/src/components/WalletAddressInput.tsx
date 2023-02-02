@@ -8,13 +8,13 @@ import { fromAddress } from "@defichain/jellyfish-address";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import useResponsive from "@hooks/useResponsive";
 import useAutoResizeTextArea from "@hooks/useAutoResizeTextArea";
-import { Network, NetworkName } from "types";
-import Tooltip from "./commons/Tooltip";
-import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
 import {
   EnvironmentNetwork,
   getJellyfishNetwork,
 } from "@waveshq/walletkit-core";
+import { Network, NetworkName } from "types";
+import Tooltip from "./commons/Tooltip";
+import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
 
 interface Props {
   blockchain: Network;

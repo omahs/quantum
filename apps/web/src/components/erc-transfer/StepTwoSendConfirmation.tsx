@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { FiCopy } from "react-icons/fi";
 import QRCode from "react-qr-code";
@@ -11,10 +10,10 @@ import UtilityButton from "@components/commons/UtilityButton";
 import { useRouter } from "next/router";
 import { useGenerateAddressMutation } from "@store/website";
 import AddressError from "@components/commons/AddressError";
+import { getJellyfishNetwork } from "@waveshq/walletkit-core";
+import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import TimeLimitCounter from "./TimeLimitCounter";
 import { STORAGE_DFC_ADDR_KEY } from "../../constants";
-import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
-import { getJellyfishNetwork } from "@waveshq/walletkit-core";
 
 function debounce(func, wait) {
   let timeout;

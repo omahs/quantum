@@ -6,9 +6,9 @@ import React, {
   PropsWithChildren,
 } from "react";
 import { ContractContextI } from "types";
+import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "../../config/contractAddresses";
-import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 
 const ContractContext = createContext<ContractContextI>(undefined as any);
 
