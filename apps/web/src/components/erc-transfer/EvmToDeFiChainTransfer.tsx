@@ -13,6 +13,7 @@ import useWriteBridgeToDeFiChain from "@hooks/useWriteBridgeToDeFiChain";
 import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import ActionButton from "@components/commons/ActionButton";
 import Modal from "@components/commons/Modal";
+import UtilityButton from "@components/commons/UtilityButton";
 import { Erc20Token, TransferData } from "types";
 import {
   DISCLAIMER_MESSAGE,
@@ -31,7 +32,7 @@ export default function EvmToDeFiChainTransfer({
   const router = useRouter();
   const { isMobile } = useResponsive();
   const { networkEnv } = useNetworkEnvironmentContext();
-  const { BridgeV1, Erc20Tokens } = useContractContext();
+  const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
   const sendingFromETH = data.from.tokenName === ETHEREUM_SYMBOL;
 
   // Read details from token contract
@@ -66,6 +67,7 @@ export default function EvmToDeFiChainTransfer({
     refetchBridge,
     requiresApproval,
     writeBridgeToDeFiChain,
+    transactionHash,
   } = useWriteBridgeToDeFiChain({
     receiverAddress: data.to.address,
     transferAmount: data.to.amount,
@@ -150,12 +152,20 @@ export default function EvmToDeFiChainTransfer({
         <Modal isOpen={isBridgeTxnSuccess} onClose={() => router.reload()}>
           <div className="flex flex-col items-center mt-6 mb-14">
             <FiCheck className="text-8xl text-valid ml-1" />
-            <span className="font-bold text-2xl text-dark-900 mt-12">
+            <span className="font-bold text-2xl text-dark-900">
               Transaction confirmed
             </span>
             <span className="text-dark-900 mt-2">
               Funds will be transferred to your DeFiChain wallet shortly.
             </span>
+            <div className="mt-14">
+              <UtilityButton
+                label="View on Etherscan"
+                onClick={() =>
+                  window.open(`${ExplorerURL}/tx/${transactionHash}`, "_blank")
+                }
+              />
+            </div>
           </div>
         </Modal>
       )}
@@ -168,6 +178,19 @@ export default function EvmToDeFiChainTransfer({
               Transaction error
             </span>
             <span className="text-dark-900 mt-2">{errorMessage}</span>
+            {transactionHash && (
+              <div className="mt-12">
+                <UtilityButton
+                  label="View on Etherscan"
+                  onClick={() =>
+                    window.open(
+                      `${ExplorerURL}/tx/${transactionHash}`,
+                      "_blank"
+                    )
+                  }
+                />
+              </div>
+            )}
           </div>
         </Modal>
       )}

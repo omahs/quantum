@@ -84,5 +84,6 @@ export default function useWriteBridgeToDeFiChain({
     refetchBridge,
     requiresApproval,
     writeBridgeToDeFiChain,
+    transactionHash: bridgeContract?.hash,
   };
 }

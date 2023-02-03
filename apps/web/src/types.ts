@@ -81,6 +81,7 @@ interface ContractConfigI {
 }
 
 export interface ContractContextI {
+  ExplorerURL: string;
   BridgeV1: ContractConfigI;
   Erc20Tokens: Record<Erc20Token, ContractConfigI>;
 }

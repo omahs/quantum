@@ -3,6 +3,7 @@ import BridgeV1 from "./ABIs/mainnet/BridgeV1.json";
 import BridgeV1Testnet from "./ABIs/testnet/BridgeV1.json";
 
 export const MAINNET_CONFIG: ContractContextI = {
+  ExplorerURL: "https://etherscan.io",
   BridgeV1: {
     address: "0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C",
     abi: BridgeV1, // TODO: Replace with deployed contract address on mainnet
@@ -17,6 +18,7 @@ export const MAINNET_CONFIG: ContractContextI = {
 
 // Goerli
 export const TESTNET_CONFIG: ContractContextI = {
+  ExplorerURL: "https://goerli.etherscan.io",
   BridgeV1: {
     address: "0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C",
     abi: BridgeV1Testnet,
