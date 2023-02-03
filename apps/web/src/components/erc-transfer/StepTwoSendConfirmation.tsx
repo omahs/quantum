@@ -97,7 +97,7 @@ export default function StepTwoSendConfirmation({
       if (localDfcAddress) {
         setDfcUniqueAddress(localDfcAddress);
       } else {
-        generateAddress({ network: getJellyfishNetwork(networkEnv).name })
+        generateAddress({ network: networkEnv })
           .unwrap()
           .then((data) => {
             setStorageItem<string>(STORAGE_DFC_ADDR_KEY, data.address);
