@@ -32,12 +32,12 @@ describe('PostgreSql container', () => {
       {
         index: 0,
         address: 'Address 0',
-        network: Network.regtest,
+        network: Network.Playground,
       },
       {
         index: 1,
         address: 'Address 1',
-        network: Network.regtest,
+        network: Network.Playground,
       },
     ];
     await Prisma.pathIndex.createMany({ data });
@@ -49,7 +49,7 @@ describe('PostgreSql container', () => {
     const data = {
       index: 2,
       address: 'Address 2',
-      network: Network.regtest,
+      network: Network.Playground,
     };
     await Prisma.pathIndex.create({ data });
     await expect(Prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientKnownRequestError);
@@ -59,7 +59,7 @@ describe('PostgreSql container', () => {
     const data = {
       index: 'string',
       address: 'Address 0',
-      network: Network.regtest,
+      network: Network.Playground,
     };
     // @ts-ignore
     await expect(Prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientValidationError);
@@ -69,7 +69,7 @@ describe('PostgreSql container', () => {
     const data = {
       index: 3,
       address: 'Address 3',
-      network: Network.regtest,
+      network: Network.Playground,
     };
     await Prisma.pathIndex.create({ data });
     const response = await Prisma.pathIndex.findFirst({
