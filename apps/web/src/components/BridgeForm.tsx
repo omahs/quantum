@@ -156,6 +156,7 @@ export default function BridgeForm() {
     setAmount("");
     setAddressInput("");
     setFromAddress(address || "");
+    setAmountErr("");
     resetNetworkSelection();
     resetNetworkEnv();
   };

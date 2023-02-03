@@ -22,9 +22,9 @@ export default function ErrorModal({
       <div className="flex flex-col items-center mt-6 mb-14">
         <FiAlertCircle className="text-8xl text-error ml-1" />
         <span className="font-bold text-2xl text-dark-900 mt-12">{title}</span>
-        <span className="text-dark-900 mt-2 text-center px-[29px]">
+        <div className="w-full text-dark-900 text-center break-all mt-2 px-[29px]">
           {message}
-        </span>
+        </div>
         <span className="pt-12">
           <ActionButton
             label={primaryButtonLabel}
