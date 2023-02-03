@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Network" AS ENUM ('mainnet', 'testnet', 'regtest', 'devnet', 'local');
+CREATE TYPE "Network" AS ENUM ('Local', 'Playground', 'MainNet', 'TestNet', 'DevNet');
 
 -- CreateTable
 CREATE TABLE "PathIndex" (

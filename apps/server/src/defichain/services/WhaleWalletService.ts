@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { EnvironmentNetwork } from '@waveshq/walletkit-core/dist/api/environment';
 
 import { Prisma } from '../../prisma/Client';
-import { SupportedNetwork } from '../model/NetworkDto';
 import { WhaleWalletProvider } from '../providers/WhaleWalletProvider';
 
 @Injectable()
 export class WhaleWalletService {
   constructor(private readonly whaleWalletProvider: WhaleWalletProvider) {}
 
-  async generateAddress(network: SupportedNetwork = SupportedNetwork.mainnet): Promise<{ address: string }> {
+  async generateAddress(network: EnvironmentNetwork = EnvironmentNetwork.MainNet): Promise<{ address: string }> {
     try {
       const lastIndex = await Prisma.pathIndex.findFirst({
         where: {
@@ -28,7 +28,7 @@ export class WhaleWalletService {
         },
       });
       return { address };
-    } catch (error) {
+    } catch (e: any) {
       // TODO: Improve error handling
       throw new HttpException(
         {
@@ -37,7 +37,7 @@ export class WhaleWalletService {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
-          cause: error as Error,
+          cause: e,
         },
       );
     }

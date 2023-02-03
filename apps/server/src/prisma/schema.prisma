@@ -9,11 +9,11 @@ datasource db {
 }
 
 enum Network {
-  mainnet
-  testnet
-  regtest
-  devnet
-  local
+  Local
+  Playground
+  MainNet
+  TestNet
+  DevNet
 }
 
 model PathIndex {

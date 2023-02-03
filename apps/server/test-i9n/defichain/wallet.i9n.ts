@@ -1,5 +1,6 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 import { fromAddress } from '@defichain/jellyfish-address';
+import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import { execSync } from 'child_process';
 import { HardhatNetwork, HardhatNetworkContainer, StartedHardhatNetworkContainer } from 'smartcontracts';
 
@@ -40,7 +41,7 @@ describe('DeFiChain Wallet Integration Testing', () => {
   it('should be able to generate a wallet address', async () => {
     const initialResponse = await testing.inject({
       method: 'GET',
-      url: `${WALLET_ENDPOINT}generate-address?network=regtest`,
+      url: `${WALLET_ENDPOINT}generate-address?network=${EnvironmentNetwork.RemotePlayground}`,
     });
     await expect(initialResponse.statusCode).toStrictEqual(200);
     const response = JSON.parse(initialResponse.body);
@@ -51,7 +52,7 @@ describe('DeFiChain Wallet Integration Testing', () => {
   it('should be able to generate a wallet address for a specific network', async () => {
     const initialResponse = await testing.inject({
       method: 'GET',
-      url: `${WALLET_ENDPOINT}generate-address?network=regtest`,
+      url: `${WALLET_ENDPOINT}generate-address?network=${EnvironmentNetwork.RemotePlayground}`,
     });
 
     await expect(initialResponse.statusCode).toStrictEqual(200);
@@ -65,7 +66,7 @@ describe('DeFiChain Wallet Integration Testing', () => {
     for (let x = 0; x < 5; x += 1) {
       const initialResponse = await testing.inject({
         method: 'GET',
-        url: `${WALLET_ENDPOINT}generate-address?network=regtest`,
+        url: `${WALLET_ENDPOINT}generate-address?network=${EnvironmentNetwork.RemotePlayground}`,
       });
 
       expect(initialResponse.statusCode).toStrictEqual(x < 3 ? 200 : 429);
