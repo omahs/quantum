@@ -1,10 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+
+const staggeredBaseQuery = retry(
+  fetchBaseQuery({
+    baseUrl: process.env.BRIDGE_API_URL || "http://localhost:5741/defichain",
+  }),
+  {
+    maxRetries: 0,
+  }
+);
 
 export const bridgeApi = createApi({
   reducerPath: "website",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.BRIDGE_API_URL || "http://localhost:5741/defichain",
-  }),
+  baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     generateAddress: builder.mutation<{ address: string }, any>({
       query: ({ network }) => ({
