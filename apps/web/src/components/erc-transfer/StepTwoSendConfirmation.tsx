@@ -10,7 +10,6 @@ import UtilityButton from "@components/commons/UtilityButton";
 import { useRouter } from "next/router";
 import { useGenerateAddressMutation } from "@store/website";
 import AddressError from "@components/commons/AddressError";
-import { getJellyfishNetwork } from "@waveshq/walletkit-core";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import TimeLimitCounter from "./TimeLimitCounter";
 import { STORAGE_DFC_ADDR_KEY } from "../../constants";
