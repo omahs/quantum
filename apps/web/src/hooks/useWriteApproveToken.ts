@@ -20,6 +20,7 @@ interface ApproveTokenI {
   tokenName: Erc20Token;
   tokenDecimals: number | "gwei";
   tokenAllowance: string;
+  setErrorMessage: any;
   refetchBridge?: () => Promise<any>;
 }
 
@@ -37,9 +38,10 @@ export default function useWriteApproveToken({
   tokenDecimals,
   tokenAllowance,
   refetchBridge,
+  setErrorMessage,
 }: ApproveTokenI) {
   const [refetchedBridgeFn, setRefetchedBridgeFn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
+  // const [errorMessage, setErrorMessage] = useState<string>();
   const { BridgeV1, Erc20Tokens } = useContractContext();
 
   const erc20TokenContract = {
@@ -86,7 +88,7 @@ export default function useWriteApproveToken({
   return {
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    errorMessage,
+    // errorMessage,
     refetchedBridgeFn,
     writeApprove,
   };

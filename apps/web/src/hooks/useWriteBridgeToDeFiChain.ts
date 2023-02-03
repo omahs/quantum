@@ -2,26 +2,37 @@
  * Hook to write `bridgeToDeFiChain` function from our own BridgeV1 contract
  */
 
+import BigNumber from "bignumber.js";
 import { ethers, utils } from "ethers";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
 import { useContractContext } from "@contexts/ContractContext";
+import { Erc20Token } from "types";
 import { ETHEREUM_SYMBOL } from "../constants";
+
+interface BridgeToDeFiChainI {
+  receiverAddress: string;
+  transferAmount: BigNumber;
+  tokenName: Erc20Token;
+  tokenDecimals: number | "gwei";
+  setErrorMessage: any;
+  onBridgeTxnSettled: () => void;
+  onInsufficientAllowanceError: () => void;
+}
 
 export default function useWriteBridgeToDeFiChain({
   receiverAddress,
   transferAmount,
   tokenName,
   tokenDecimals,
+  setErrorMessage,
   onBridgeTxnSettled,
-}) {
-  const [requiresApproval, setRequiresApproval] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
-
+  onInsufficientAllowanceError,
+}: BridgeToDeFiChainI) {
   const { BridgeV1, Erc20Tokens } = useContractContext();
   const sendingFromETH = tokenName === ETHEREUM_SYMBOL;
 
@@ -46,7 +57,7 @@ export default function useWriteBridgeToDeFiChain({
       onError: (err) => {
         if (err.message.includes("insufficient allowance")) {
           // Need to request approval from user
-          setRequiresApproval(true);
+          onInsufficientAllowanceError();
         } else {
           // Display error message
           setErrorMessage(err.message);
@@ -80,9 +91,7 @@ export default function useWriteBridgeToDeFiChain({
   return {
     isBridgeTxnLoading,
     isBridgeTxnSuccess,
-    errorMessage,
     refetchBridge,
-    requiresApproval,
     writeBridgeToDeFiChain,
     transactionHash: bridgeContract?.hash,
   };

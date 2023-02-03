@@ -2,7 +2,7 @@ import { ethers, utils } from "ethers";
 import { erc20ABI, useContractReads } from "wagmi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { FiAlertCircle, FiCheck } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 import clsx from "clsx";
 import { useContractContext } from "@contexts/ContractContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
@@ -12,6 +12,7 @@ import useWriteApproveToken from "@hooks/useWriteApproveToken";
 import useWriteBridgeToDeFiChain from "@hooks/useWriteBridgeToDeFiChain";
 import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import ActionButton from "@components/commons/ActionButton";
+import ErrorModal from "@components/commons/ErrorModal";
 import Modal from "@components/commons/Modal";
 import UtilityButton from "@components/commons/UtilityButton";
 import { Erc20Token, TransferData } from "types";
@@ -28,6 +29,7 @@ export default function EvmToDeFiChainTransfer({
 }) {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [showLoader, setShowLoader] = useState(false);
+  const [requiresApproval, setRequiresApproval] = useState(false);
 
   const router = useRouter();
   const { isMobile } = useResponsive();
@@ -63,23 +65,22 @@ export default function EvmToDeFiChainTransfer({
   const {
     isBridgeTxnLoading,
     isBridgeTxnSuccess,
-    errorMessage: bridgeErrorMessage,
     refetchBridge,
-    requiresApproval,
     writeBridgeToDeFiChain,
     transactionHash,
   } = useWriteBridgeToDeFiChain({
     receiverAddress: data.to.address,
     transferAmount: data.to.amount,
-    tokenName: data.from.tokenName,
+    tokenName: data.from.tokenName as Erc20Token,
     tokenDecimals,
+    setErrorMessage,
     onBridgeTxnSettled: () => setShowLoader(false),
+    onInsufficientAllowanceError: () => setRequiresApproval(true),
   });
 
   const {
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    errorMessage: approveErrorMessage,
     refetchedBridgeFn,
     writeApprove,
   } = useWriteApproveToken({
@@ -87,14 +88,9 @@ export default function EvmToDeFiChainTransfer({
     tokenName: data.from.tokenName as Erc20Token,
     tokenDecimals,
     tokenAllowance,
+    setErrorMessage,
     refetchBridge,
   });
-
-  useEffect(() => {
-    if (bridgeErrorMessage || approveErrorMessage) {
-      setErrorMessage(bridgeErrorMessage ?? approveErrorMessage);
-    }
-  }, [bridgeErrorMessage, approveErrorMessage]);
 
   useEffect(() => {
     // Trigger `bridgeToDeFiChain` once allowance is approved
@@ -105,6 +101,7 @@ export default function EvmToDeFiChainTransfer({
       refetchedBridgeFn &&
       hasEnoughAllowance
     ) {
+      setRequiresApproval(false);
       writeBridgeToDeFiChain?.();
     }
   }, [isApproveTxnSuccess, tokenAllowance, refetchedBridgeFn]);
@@ -117,7 +114,8 @@ export default function EvmToDeFiChainTransfer({
     }
   }, [isBridgeTxnSuccess]);
 
-  const handleTransfer = () => {
+  const handleInitiateTransfer = () => {
+    setErrorMessage(undefined);
     setShowLoader(true);
     if (requiresApproval) {
       writeApprove?.();
@@ -152,7 +150,7 @@ export default function EvmToDeFiChainTransfer({
         <Modal isOpen={isBridgeTxnSuccess} onClose={() => router.reload()}>
           <div className="flex flex-col items-center mt-6 mb-14">
             <FiCheck className="text-8xl text-valid ml-1" />
-            <span className="font-bold text-2xl text-dark-900">
+            <span className="font-bold text-2xl text-dark-900 mt-8">
               Transaction confirmed
             </span>
             <span className="text-dark-900 mt-2">
@@ -170,29 +168,19 @@ export default function EvmToDeFiChainTransfer({
         </Modal>
       )}
       {errorMessage && (
-        // TODO: Replace error ui/message
-        <Modal isOpen={!!errorMessage} onClose={() => router.reload()}>
-          <div className="flex flex-col items-center mt-6 mb-14">
-            <FiAlertCircle className="text-8xl text-error ml-1" />
-            <span className="font-bold text-2xl text-dark-900 mt-12">
-              Transaction error
-            </span>
-            <span className="text-dark-900 mt-2">{errorMessage}</span>
-            {transactionHash && (
-              <div className="mt-12">
-                <UtilityButton
-                  label="View on Etherscan"
-                  onClick={() =>
-                    window.open(
-                      `${ExplorerURL}/tx/${transactionHash}`,
-                      "_blank"
-                    )
-                  }
-                />
-              </div>
-            )}
-          </div>
-        </Modal>
+        <ErrorModal
+          title="Transaction error"
+          message={errorMessage}
+          hasError={!!errorMessage}
+          primaryButtonLabel={
+            transactionHash ? "View on Etherscan" : "Try again"
+          }
+          onPrimaryButtonClick={() =>
+            transactionHash
+              ? window.open(`${ExplorerURL}/tx/${transactionHash}`, "_blank")
+              : handleInitiateTransfer()
+          }
+        />
       )}
       <AlertInfoMessage
         message={DISCLAIMER_MESSAGE}
@@ -203,7 +191,7 @@ export default function EvmToDeFiChainTransfer({
         <ActionButton
           testId="confirm-transfer-btn"
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
-          onClick={() => handleTransfer()}
+          onClick={() => handleInitiateTransfer()}
           disabled={isBridgeTxnSuccess}
         />
       </div>
