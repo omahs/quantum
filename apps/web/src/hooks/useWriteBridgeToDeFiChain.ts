@@ -34,7 +34,7 @@ export default function useWriteBridgeToDeFiChain({
   onInsufficientAllowanceError,
 }: BridgeToDeFiChainI) {
   const { BridgeV1, Erc20Tokens } = useContractContext();
-  const sendingFromETH = tokenName === ETHEREUM_SYMBOL;
+  const sendingFromETH = (tokenName as string) === ETHEREUM_SYMBOL;
 
   // Prepare write contract for `bridgeToDeFiChain` function
   const { config: bridgeConfig, refetch: refetchBridge } =
@@ -55,7 +55,11 @@ export default function useWriteBridgeToDeFiChain({
           }
         : {}),
       onError: (err) => {
-        if (err.message.includes("insufficient allowance")) {
+        // Note: For some reason, wETH token is not giving specific error for `insufficient allowance`
+        const unapprovedWETHtoken =
+          tokenName === "wETH" && err.message.includes("cannot estimate gas");
+        const unApprovedToken = err.message.includes("insufficient allowance");
+        if (unapprovedWETHtoken || unApprovedToken) {
           // Need to request approval from user
           onInsufficientAllowanceError();
         } else {

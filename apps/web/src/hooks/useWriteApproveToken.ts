@@ -41,7 +41,6 @@ export default function useWriteApproveToken({
   setErrorMessage,
 }: ApproveTokenI) {
   const [refetchedBridgeFn, setRefetchedBridgeFn] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState<string>();
   const { BridgeV1, Erc20Tokens } = useContractContext();
 
   const erc20TokenContract = {
@@ -88,7 +87,6 @@ export default function useWriteApproveToken({
   return {
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    // errorMessage,
     refetchedBridgeFn,
     writeApprove,
   };
