@@ -14,3 +14,6 @@ CREATE TABLE "PathIndex" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PathIndex_index_network_key" ON "PathIndex"("index", "network");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PathIndex_address_network_key" ON "PathIndex"("address", "network");
