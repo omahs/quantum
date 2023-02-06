@@ -48,17 +48,29 @@ describe('PostgreSql container', () => {
   it('should throw error by passing duplicate index', async () => {
     const data = {
       index: 2,
-      address: 'Address 2',
+      address: 'Address 2 duplicate index',
       network: Network.Playground,
     };
     await Prisma.pathIndex.create({ data });
     await expect(Prisma.pathIndex.create({ data })).rejects.toBeInstanceOf(PrismaClientKnownRequestError);
   });
 
+  it('should throw error by passing duplicate address', async () => {
+    const data = {
+      index: 3,
+      address: 'Address 3',
+      network: Network.Playground,
+    };
+    await Prisma.pathIndex.create({ data });
+    await expect(Prisma.pathIndex.create({ data: { ...data, index: 5 } })).rejects.toBeInstanceOf(
+      PrismaClientKnownRequestError,
+    );
+  });
+
   it('should throw error by passing wrong index type', async () => {
     const data = {
       index: 'string',
-      address: 'Address 0',
+      address: 'Address string',
       network: Network.Playground,
     };
     // @ts-ignore
@@ -67,8 +79,8 @@ describe('PostgreSql container', () => {
 
   it('should save valid data in database', async () => {
     const data = {
-      index: 3,
-      address: 'Address 3',
+      index: 4,
+      address: 'Address 4',
       network: Network.Playground,
     };
     await Prisma.pathIndex.create({ data });
