@@ -10,6 +10,9 @@ import { DeFiChainStubContainer } from './DeFiChainStubContainer';
 describe('DeFiChain Address Integration Testing', () => {
   const container = new PostgreSqlContainer();
   let postgreSqlContainer: StartedPostgreSqlContainer;
+  
+  // Tests are slower because it's running 3 containers at the same time
+  jest.setTimeout(3600000);
   let testing: BridgeServerTestingApp;
   let defichain: DeFiChainStubContainer;
   const WALLET_ENDPOINT = `/defichain/wallet/`;
@@ -26,8 +29,7 @@ describe('DeFiChain Address Integration Testing', () => {
       .start();
     // deploy migration
     execSync('pnpm run migration:deploy');
-    // Tests are slower because it's running 3 containers at the same time
-    jest.setTimeout(3600000);
+    
     defichain = await new DeFiChainStubContainer();
     const localWhaleURL = await defichain.start();
     testing = new BridgeServerTestingApp(
