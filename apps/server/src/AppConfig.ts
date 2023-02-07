@@ -13,7 +13,7 @@ export function appConfig() {
     },
     ethereum: {
       testnet: {
-        rpcUrl: process.env.ETHEREUM_RPC_URL || 'localhost:8545',
+        rpcUrl: process.env.API_KEY, // process.env.ETHEREUM_RPC_URL || 'localhost:8545',
         contracts: {
           bridgeProxy: {
             // https://goerli.etherscan.io/address/0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C

@@ -37,15 +37,18 @@ export class AppService {
   async signData(tokenAddress: string, amount: string): Promise<string> {
     try {
       const signer = await this.ethersRpcProvider.getSigner();
-      // TODO: Create transaction
-      // TODO: Get nonce
+
+      const signerAddress = await signer.getAddress();
+      const nonce = this.contract.eoaAddressToNonce(signerAddress);
+      console.log('SIGNER:::::: ', { signer, signerAddress, nonce }); // eslint-disable-line no-console
 
       const domain = {
+        name: 'Bridge',
         chainId: 5,
         verifyingContract: this.contract.address,
         version: '0.1',
       };
-      const eip712Types = {
+      const types = {
         CLAIM: [
           { name: 'to', type: 'address' },
           { name: 'amount', type: 'uint256' },
@@ -54,17 +57,18 @@ export class AppService {
           { name: 'tokenAddress', type: 'address' },
         ],
       };
-      const eip712Data = {
-        to: signer,
+
+      const data = {
+        to: signerAddress,
         amount,
-        nonce: 0,
+        nonce,
         deadline: ethers.constants.MaxUint256,
         tokenAddress,
       };
 
-      // eslint-disable-next-line no-underscore-dangle
-      return await signer._signTypedData(domain, eip712Types, eip712Data);
+      return await signer._signTypedData(domain, types, data); // eslint-disable-line no-underscore-dangle
     } catch (err) {
+      // TODO: Update error-handling
       throw new Error(err as any);
     }
   }
