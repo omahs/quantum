@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { BigNumber, Event } from 'ethers';
 
 import { AppService } from './AppService';
@@ -28,6 +29,7 @@ export class AppController {
     return this.appService.getAllEventsFromBlockNumber(Number(blockNumber));
   }
 
+  @Throttle(3, 60)
   @Post('sign-claim')
   async signClaim(@Body() data: SignClaim): Promise<{ signature: string; nonce: number }> {
     return this.appService.signClaim(data.receiverAddress, data.tokenAddress, data.amount);
