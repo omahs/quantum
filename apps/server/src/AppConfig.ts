@@ -18,6 +18,7 @@ export function appConfig() {
             address: '0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C',
           },
         },
+        ethWalletPrivKey: process.env.ETHEREUM_WALLET_PRIVATE_KEY,
       },
       mainnet: {
         contracts: {

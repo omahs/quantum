@@ -41,7 +41,7 @@ export class AppService {
   ): Promise<{ signature: string; nonce: number }> {
     try {
       // Connect signer ETH wallet (admin/operational wallet)
-      const wallet = new ethers.Wallet(process.env.ETHEREUM_WALLET_PRIVATE_KEY as string);
+      const wallet = new ethers.Wallet(this.configService.getOrThrow('ethereum.testnet.ethWalletPrivKey'));
       const signer = wallet.connect(this.ethersRpcProvider);
 
       const signerAddress = await signer.getAddress();

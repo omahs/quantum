@@ -33,7 +33,13 @@ describe('Bridge Service Integration Tests', () => {
     // initialize config variables
     testing = new BridgeServerTestingApp(
       TestingModule.register(
-        buildTestConfig({ startedHardhatContainer, testnet: { bridgeContractAddress: bridgeContract.address } }),
+        buildTestConfig({
+          startedHardhatContainer,
+          testnet: {
+            bridgeContractAddress: bridgeContract.address,
+            ethWalletPrivKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+          },
+        }),
       ),
     );
     await testing.start();
@@ -120,5 +126,22 @@ describe('Bridge Service Integration Tests', () => {
 
     // Then there should be no events
     await expect(JSON.parse(eventsArray.body)).toHaveLength(0);
+  });
+
+  it('Returns signature and nonce once claim data is successfully signed', async () => {
+    const hardhatAccount = hardhatNetwork.getHardhatTestWallet(0);
+    const data = await testing.inject({
+      method: 'POST',
+      url: '/app/sign-claim',
+      payload: {
+        receiverAddress: hardhatAccount.testWalletAddress,
+        tokenAddress: musdcContract.address,
+        amount: '1000',
+      },
+    });
+
+    const response = JSON.parse(data.body);
+    expect(response).toHaveProperty('signature');
+    expect(response).toHaveProperty('nonce');
   });
 });
