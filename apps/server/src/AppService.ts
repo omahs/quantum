@@ -34,19 +34,21 @@ export class AppService {
     return this.contract.queryFilter(eventSignature, blockNumber, currentBlockNumber - 65);
   }
 
-  async signData(tokenAddress: string, amount: string): Promise<string> {
+  async signClaim(receiverAddress: string, tokenAddress: string, amount: string): Promise<string> {
     try {
-      const signer = await this.ethersRpcProvider.getSigner();
+      // Connect signer ETH wallet (admin/operational wallet)
+      const wallet = new ethers.Wallet(process.env.ETH_ADMIN_WALLET_PRIV_KEY as string);
+      const signer = wallet.connect(this.ethersRpcProvider);
 
       const signerAddress = await signer.getAddress();
-      const nonce = this.contract.eoaAddressToNonce(signerAddress);
-      console.log('SIGNER:::::: ', { signer, signerAddress, nonce }); // eslint-disable-line no-console
+      const nonce = await this.contract.eoaAddressToNonce(signerAddress);
+      const { chainId } = await this.ethersRpcProvider.getNetwork();
 
       const domain = {
-        name: 'Bridge',
-        chainId: 5,
+        name: 'Quantum Bridge',
+        chainId,
         verifyingContract: this.contract.address,
-        version: '0.1',
+        version: '1',
       };
       const types = {
         CLAIM: [
@@ -57,16 +59,16 @@ export class AppService {
           { name: 'tokenAddress', type: 'address' },
         ],
       };
-
       const data = {
-        to: signerAddress,
+        to: receiverAddress,
         amount,
         nonce,
         deadline: ethers.constants.MaxUint256,
         tokenAddress,
       };
 
-      return await signer._signTypedData(domain, types, data); // eslint-disable-line no-underscore-dangle
+      // eslint-disable-next-line no-underscore-dangle
+      return await signer._signTypedData(domain, types, data);
     } catch (err) {
       // TODO: Update error-handling
       throw new Error(err as any);

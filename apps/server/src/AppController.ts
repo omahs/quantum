@@ -1,7 +1,13 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { BigNumber, Event } from 'ethers';
 
 import { AppService } from './AppService';
+
+interface SignClaim {
+  receiverAddress: string;
+  tokenAddress: string;
+  amount: string;
+}
 
 @Controller('app')
 export class AppController {
@@ -22,8 +28,8 @@ export class AppController {
     return this.appService.getAllEventsFromBlockNumber(Number(blockNumber));
   }
 
-  @Get('sign-data')
-  async signData(@Query() query: { tokenAddress: string; amount: string }): Promise<string> {
-    return this.appService.signData(query.tokenAddress, query.amount);
+  @Post('sign-claim')
+  async signClaim(@Body() data: SignClaim): Promise<string> {
+    return this.appService.signClaim(data.receiverAddress, data.tokenAddress, data.amount);
   }
 }
