@@ -1,4 +1,3 @@
-import { AbiCoder } from '@ethersproject/abi';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
@@ -45,7 +44,14 @@ describe('Test Behaviour related to proxy', () => {
       };
 
       const signature = await defaultAdminSigner._signTypedData(domainData, eip712Types, eip712Data);
-      proxyBridge.claimFund(accounts[2], toWei('10'), 0, ethers.constants.MaxUint256, testToken.address, signature);
+      await proxyBridge.claimFund(
+        accounts[2],
+        toWei('10'),
+        0,
+        ethers.constants.MaxUint256,
+        testToken.address,
+        signature,
+      );
 
       // upgrade to the new contract
       await proxyBridge.upgradeTo(newImplementation.address);
@@ -76,7 +82,7 @@ describe('Test Behaviour related to proxy', () => {
   });
 
   describe('Test different situations of calling the proxy contract', () => {
-    let abiCoder: AbiCoder;
+    const abiCoder = new ethers.utils.AbiCoder();
     let proxyBridge: NewImplementation;
     let defaultAdminSigner: SignerWithAddress;
 
@@ -89,7 +95,6 @@ describe('Test Behaviour related to proxy', () => {
       // console.log('Bridge Proxy ', bridgeProxy);
       await bridgeProxy.deployed();
       proxyBridge = NewImplementationFactory.attach(bridgeProxy.address);
-      abiCoder = new ethers.utils.AbiCoder();
       const accounts = await ethers.provider.listAccounts();
       defaultAdminSigner = await ethers.getSigner(accounts[0]);
     });
