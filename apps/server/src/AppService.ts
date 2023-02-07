@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BigNumber, Contract, ethers, Event } from 'ethers';
 import { BridgeV1__factory } from 'smartcontracts';
@@ -74,9 +74,17 @@ export class AppService {
       // eslint-disable-next-line no-underscore-dangle
       const signature = await signer._signTypedData(domain, types, data);
       return { signature, nonce };
-    } catch (err) {
-      // TODO: Update error-handling
-      throw new Error(err as any);
+    } catch (e: any) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'There is a problem in signing this claim',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: e,
+        },
+      );
     }
   }
 }
