@@ -34,7 +34,11 @@ export class AppService {
     return this.contract.queryFilter(eventSignature, blockNumber, currentBlockNumber - 65);
   }
 
-  async signClaim(receiverAddress: string, tokenAddress: string, amount: string): Promise<string> {
+  async signClaim(
+    receiverAddress: string,
+    tokenAddress: string,
+    amount: string,
+  ): Promise<{ signature: string; nonce: number }> {
     try {
       // Connect signer ETH wallet (admin/operational wallet)
       const wallet = new ethers.Wallet(process.env.ETH_ADMIN_WALLET_PRIV_KEY as string);
@@ -68,7 +72,8 @@ export class AppService {
       };
 
       // eslint-disable-next-line no-underscore-dangle
-      return await signer._signTypedData(domain, types, data);
+      const signature = await signer._signTypedData(domain, types, data);
+      return { signature, nonce };
     } catch (err) {
       // TODO: Update error-handling
       throw new Error(err as any);

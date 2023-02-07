@@ -29,7 +29,7 @@ export class AppController {
   }
 
   @Post('sign-claim')
-  async signClaim(@Body() data: SignClaim): Promise<string> {
+  async signClaim(@Body() data: SignClaim): Promise<{ signature: string; nonce: number }> {
     return this.appService.signClaim(data.receiverAddress, data.tokenAddress, data.amount);
   }
 }
