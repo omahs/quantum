@@ -13,7 +13,7 @@ export function appConfig() {
     },
     ethereum: {
       testnet: {
-        rpcUrl: process.env.API_KEY, // process.env.ETHEREUM_RPC_URL || 'localhost:8545',
+        rpcUrl: process.env.ETHEREUM_RPC_URL || 'localhost:8545',
         contracts: {
           bridgeProxy: {
             // https://goerli.etherscan.io/address/0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C
@@ -40,7 +40,8 @@ export type DeepPartial<T> = T extends object
 export type AppConfig = DeepPartial<ReturnType<typeof appConfig>>;
 
 export const ENV_VALIDATION_SCHEMA = Joi.object({
-  ETHEREUM_RPC_URL: Joi.string().ip(),
+  ETHEREUM_RPC_URL: Joi.string().uri(),
+  ETHEREUM_WALLET_PRIVATE_KEY: Joi.string(),
   DEFICHAIN_MAINNET_KEY: Joi.string(),
   DEFICHAIN_REGTEST_KEY: Joi.string(),
 });
