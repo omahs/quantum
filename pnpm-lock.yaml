@@ -121,7 +121,7 @@ importers:
       postcss: ^8.4.21
       react-qr-code: ^2.0.11
       react-secure-storage: ^1.0.22
-      sass: ^1.57.1
+      sass: ^1.58.0
       tailwindcss: ^3.2.4
       wagmi: ^0.11.4
     dependencies:
@@ -129,7 +129,7 @@ importers:
       '@floating-ui/react-dom': 1.2.2_biqbaboplfbrettd7655fr4n2y
       '@headlessui/react': 1.7.10_biqbaboplfbrettd7655fr4n2y
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
-      '@waveshq/standard-web': 0.41.1_36tlnl7zn2mlavay4mq7vpwhry
+      '@waveshq/standard-web': 0.41.1_qngl53y25dktfthrw3t3ipwa4q
       axios: 1.3.2
       bignumber.js: 9.1.1
       clsx: 1.2.1
@@ -138,7 +138,7 @@ importers:
       ethers: 5.7.2
       react-qr-code: 2.0.11_react@18.2.0
       react-secure-storage: 1.0.22
-      sass: 1.57.1
+      sass: 1.58.0
       wagmi: 0.11.4_pecvurabedz5b7hb3crarijarq
     devDependencies:
       '@cypress/code-coverage': 3.10.0_da7ulnoq6vpebhu34hcgnsbfam
@@ -147,7 +147,7 @@ importers:
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.4
       '@testing-library/cypress': 8.0.7_cypress@12.5.1
       '@types/node': 18.11.11
-      '@waveshq/standard-web-linter': 0.41.1_ka6g6nx6razebyqo4yavpow7du
+      '@waveshq/standard-web-linter': 0.41.1_ikdy6gget4ohprufdagu2tgszq
       autoprefixer: 10.4.13_postcss@8.4.21
       babel-plugin-istanbul: 6.1.1
       babel-plugin-jsx-remove-data-test-id: 3.0.0_@babel+core@7.20.5
@@ -5935,7 +5935,7 @@ packages:
       - supports-color
     dev: false
 
-  /@waveshq/standard-web-linter/0.41.1_ka6g6nx6razebyqo4yavpow7du:
+  /@waveshq/standard-web-linter/0.41.1_ikdy6gget4ohprufdagu2tgszq:
     resolution: {integrity: sha512-2Uow36XVN6diYHUk3dTo0a1EbX+A2baUWqODmiIcS1L2+bY2I8ByMsijS8QKfPYthhjRAcOu0mORkHKCqZC5Hg==}
     dependencies:
       eslint: 8.33.0
@@ -5953,7 +5953,7 @@ packages:
       eslint-plugin-simple-import-sort: 9.0.0_eslint@8.33.0
       husky: 8.0.3
       lint-staged: 13.1.0
-      next: 13.1.6_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.6_higa6divctoysxtoi3nqpydjhy
       prettier: 2.8.3
       typescript: 4.9.5
     transitivePeerDependencies:
@@ -6005,7 +6005,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@waveshq/standard-web/0.41.1_36tlnl7zn2mlavay4mq7vpwhry:
+  /@waveshq/standard-web/0.41.1_qngl53y25dktfthrw3t3ipwa4q:
     resolution: {integrity: sha512-wwHLkhxKNJIK8RAV3U/ArkT1JlCEjXVIPEpIlBErPsvL4c7Bc4DTtV3BFNzJRhRBDqi3zsXhjyZpl4/N01Xc0Q==}
     dependencies:
       '@netlify/ipx': 1.3.3
@@ -6013,7 +6013,7 @@ packages:
       '@types/react': 18.0.27
       '@types/react-dom': 18.0.10
       follow-redirects: 1.15.2_debug@4.3.4
-      next: 13.1.6_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.6_higa6divctoysxtoi3nqpydjhy
       next-sitemap: 3.1.49_dlcnecpznf2wc36zwuq5m2ie5q
       nextjs-progressbar: 0.0.16_next@13.1.6+react@18.2.0
       react: 18.2.0
@@ -13599,7 +13599,7 @@ packages:
       '@corex/deepmerge': 4.0.29
       '@next/env': 13.1.6
       minimist: 1.2.7
-      next: 13.1.6_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.6_higa6divctoysxtoi3nqpydjhy
     dev: false
 
   /next/13.1.6_672uxklweod7ene3nqtsh262ca:
@@ -13646,7 +13646,7 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /next/13.1.6_zfxcdih27xecqpvxqrdjl5dz5e:
+  /next/13.1.6_higa6divctoysxtoi3nqpydjhy:
     resolution: {integrity: sha512-hHlbhKPj9pW+Cymvfzc15lvhaOZ54l+8sXDXJWm3OBNBzgrVj6hwGPmqqsXg40xO1Leq+kXpllzRPuncpC0Phw==}
     engines: {node: '>=14.6.0'}
     hasBin: true
@@ -13670,7 +13670,7 @@ packages:
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      sass: 1.57.1
+      sass: 1.58.0
       styled-jsx: 5.1.1_zavbqmrropwrojvx6ojaa4s7im
     optionalDependencies:
       '@next/swc-android-arm-eabi': 13.1.6
@@ -13697,7 +13697,7 @@ packages:
       react: '>= 16.0.0'
     dependencies:
       '@types/nprogress': 0.2.0
-      next: 13.1.6_zfxcdih27xecqpvxqrdjl5dz5e
+      next: 13.1.6_higa6divctoysxtoi3nqpydjhy
       nprogress: 0.2.0
       prop-types: 15.8.1
       react: 18.2.0
@@ -15816,8 +15816,8 @@ packages:
   /safer-buffer/2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  /sass/1.57.1:
-    resolution: {integrity: sha512-O2+LwLS79op7GI0xZ8fqzF7X2m/m8WFfI02dHOdsK5R2ECeS5F62zrwg/relM1rjSLy7Vd/DiMNIvPrQGsA0jw==}
+  /sass/1.58.0:
+    resolution: {integrity: sha512-PiMJcP33DdKtZ/1jSjjqVIKihoDc6yWmYr9K/4r3fVVIEDAluD0q7XZiRKrNJcPK3qkLRF/79DND1H5q1LBjgg==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
