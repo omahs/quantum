@@ -21,4 +21,9 @@ export class AppController {
   async getAllEventsFromBlockNumber(@Query('blockNumber') blockNumber: number): Promise<Event[]> {
     return this.appService.getAllEventsFromBlockNumber(Number(blockNumber));
   }
+
+  @Get('sign-data')
+  async signData(@Query() query: { tokenAddress: string; amount: string }): Promise<string> {
+    return this.appService.signData(query.tokenAddress, query.amount);
+  }
 }
