@@ -62,5 +62,7 @@ export interface ContractContextI {
 export enum CustomErrorCodes {
   AddressNotOwned = 0,
   AddressNotFound = 1,
-  BalanceNotMatched = 2,
+  AddressNotValid = 2,
+  BalanceNotMatched = 3,
+  IsZeroBalance = 4,
 }

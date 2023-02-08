@@ -63,49 +63,49 @@ export default function StepThreeVerification({
       txn?.amount !== undefined &&
       txn?.selectedTokensA.tokenA.symbol !== undefined
     ) {
-      try {
-        trigger({
-          network: networkEnv,
-          address: dfcAddress,
-          amount: new BigNumber(txn.amount).toFixed(8),
-          symbol: txn.selectedTokensA.tokenA.symbol,
-        })
-          .unwrap()
-          .then((data) => {
-            if (
-              [
-                // TODO(Pierre): Handle flow if balance is not matching with the amount filled in the form
-                CustomErrorCodes.BalanceNotMatched,
-                CustomErrorCodes.AddressNotFound,
-                CustomErrorCodes.AddressNotOwned,
-              ].includes(data?.statusCode)
-            ) {
-              setTitle(TitleLabel.Rejected);
-              setContent(`Something went wrong (${data.statusCode}).`);
-              setValidationSuccess(false);
-              setIsValidating(false);
-              setButtonLabel(ButtonLabel.Rejected);
-              return;
-            }
+      trigger({
+        network: networkEnv,
+        address: dfcAddress,
+        amount: new BigNumber(txn.amount).toFixed(8),
+        symbol: txn.selectedTokensA.tokenA.symbol,
+      })
+        .unwrap()
+        .then((data) => {
+          if (
+            [
+              CustomErrorCodes.AddressNotOwned,
+              CustomErrorCodes.AddressNotFound,
+              CustomErrorCodes.AddressNotValid,
+              CustomErrorCodes.IsZeroBalance,
+              CustomErrorCodes.BalanceNotMatched,
+            ].includes(data?.statusCode)
+          ) {
+            setTitle(TitleLabel.Rejected);
+            setContent(`Something went wrong (${data.statusCode}).`);
+            setValidationSuccess(false);
+            setIsValidating(false);
+            setButtonLabel(ButtonLabel.Rejected);
+            return;
+          }
 
-            setTitle(TitleLabel.Validated);
-            setContent(ContentLabel.Validated);
-            setButtonLabel(ButtonLabel.Validated);
-            setValidationSuccess(true);
-            goToNextStep();
-          })
-          .catch(({ data }) => {
-            if (data?.statusCode === HttpStatusCode.BadRequest) {
-              setContent(ContentLabel.Rejected);
-              setButtonLabel(ButtonLabel.Rejected);
-              setTitle(TitleLabel.Rejected);
-              setIsValidating(false);
-              setValidationSuccess(false);
-            }
-          });
-      } catch (err) {
-        console.log({ err });
-      }
+          setTitle(TitleLabel.Validated);
+          setContent(ContentLabel.Validated);
+          setButtonLabel(ButtonLabel.Validated);
+          setValidationSuccess(true);
+          goToNextStep();
+        })
+        .catch(({ data }) => {
+          setButtonLabel(ButtonLabel.Rejected);
+          setTitle(TitleLabel.Rejected);
+          setIsValidating(false);
+          setValidationSuccess(false);
+          setContent(ContentLabel.Rejected);
+          if (data?.statusCode === HttpStatusCode.TooManyRequests) {
+            setContent(
+              "Something went wrong. Too many requests sent in a given amount of time"
+            );
+          }
+        });
     }
   }, []);
 

@@ -1,5 +1,5 @@
 import { fromAddress } from '@defichain/jellyfish-address';
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { getJellyfishNetwork } from '@waveshq/walletkit-core';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core/dist/api/environment';
 import BigNumber from 'bignumber.js';
@@ -20,10 +20,7 @@ export class WhaleWalletService {
     // Verify if the address is valid
     const { isAddressValid } = this.verifyValidAddress(verify.address, network);
     if (!isAddressValid) {
-      throw new BadRequestException(`The ${network} address used is invalid`, {
-        cause: new Error(),
-        description: `Use a valid address for network:${network}`,
-      });
+      return { isValid: false, statusCode: CustomErrorCodes.AddressNotValid };
     }
 
     try {

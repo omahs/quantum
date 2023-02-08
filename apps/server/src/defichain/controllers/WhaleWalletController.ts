@@ -16,7 +16,7 @@ export class WhaleWalletController {
     return this.whaleWalletService.generateAddress(query.network);
   }
 
-  // @Throttle(5, 60)
+  @Throttle(5, 60)
   @Post('verify')
   async verify(
     @Body() body: VerifyDto,
