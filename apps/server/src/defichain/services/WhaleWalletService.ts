@@ -3,8 +3,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { getJellyfishNetwork } from '@waveshq/walletkit-core';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core/dist/api/environment';
 import BigNumber from 'bignumber.js';
-import { CustomErrorCodes } from 'src/CustomErrorCodes';
 
+import { CustomErrorCodes } from '../../CustomErrorCodes';
 import { Prisma } from '../../prisma/Client';
 import { VerifyDto } from '../model/VerifyDto';
 import { WhaleWalletProvider } from '../providers/WhaleWalletProvider';

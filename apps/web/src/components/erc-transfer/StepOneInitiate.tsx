@@ -46,7 +46,7 @@ export default function StepOneInitiate({
         <WalletAddressInput
           label=""
           blockchain={selectedNetworkA.name as Network}
-          addressInput="bcrt1q4t53k2axlggtk866nzuxky355aa3gy6ecl5saa"
+          addressInput={addressInput}
           onAddressInputChange={(addrInput) => setAddressInput(addrInput)}
           onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
           disabled={!isConnected}
