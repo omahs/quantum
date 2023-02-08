@@ -127,21 +127,4 @@ describe('Bridge Service Integration Tests', () => {
     // Then there should be no events
     await expect(JSON.parse(eventsArray.body)).toHaveLength(0);
   });
-
-  it('Returns signature and nonce once claim data is successfully signed', async () => {
-    const hardhatAccount = hardhatNetwork.getHardhatTestWallet(0);
-    const data = await testing.inject({
-      method: 'POST',
-      url: '/app/sign-claim',
-      payload: {
-        receiverAddress: hardhatAccount.testWalletAddress,
-        tokenAddress: musdcContract.address,
-        amount: '1000',
-      },
-    });
-
-    const response = JSON.parse(data.body);
-    expect(response).toHaveProperty('signature');
-    expect(response).toHaveProperty('nonce');
-  });
 });

@@ -5,6 +5,12 @@ import { BridgeV1__factory } from 'smartcontracts';
 
 import { ETHERS_RPC_PROVIDER } from './modules/EthersModule';
 
+interface SignClaim {
+  receiverAddress: string;
+  tokenAddress: string;
+  amount: string;
+}
+
 @Injectable()
 export class AppService {
   private contract: Contract;
@@ -34,11 +40,7 @@ export class AppService {
     return this.contract.queryFilter(eventSignature, blockNumber, currentBlockNumber - 65);
   }
 
-  async signClaim(
-    receiverAddress: string,
-    tokenAddress: string,
-    amount: string,
-  ): Promise<{ signature: string; nonce: number }> {
+  async signClaim({ receiverAddress, tokenAddress, amount }: SignClaim): Promise<{ signature: string; nonce: number }> {
     try {
       // Connect signer ETH wallet (admin/operational wallet)
       const wallet = new ethers.Wallet(this.configService.getOrThrow('ethereum.testnet.ethWalletPrivKey'));
