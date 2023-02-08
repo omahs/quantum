@@ -25,9 +25,33 @@ export const bridgeApi = createApi({
       }),
       extraOptions: { maxRetries: 3 },
     }),
+    verify: builder.query<
+      any,
+      {
+        network: string;
+        address: string;
+        amount: string;
+        symbol: string;
+      }
+    >({
+      query: ({ network, address, amount, symbol }) => ({
+        url: "/wallet/verify",
+        params: { network },
+        method: "POST",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: {
+          address,
+          amount,
+          symbol,
+        },
+      }),
+    }),
   }),
 });
 
-const { useGenerateAddressMutation } = bridgeApi;
+const { useGenerateAddressMutation, useLazyVerifyQuery } = bridgeApi;
 
-export { useGenerateAddressMutation };
+export { useGenerateAddressMutation, useLazyVerifyQuery };

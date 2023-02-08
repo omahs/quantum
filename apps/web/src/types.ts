@@ -58,3 +58,9 @@ export interface ContractContextI {
   BridgeProxyContractAddress: `0x${string}`;
   Erc20Tokens: Record<Erc20Token, `0x${string}`>;
 }
+
+export enum CustomErrorCodes {
+  AddressNotOwned = 0,
+  AddressNotFound = 1,
+  BalanceNotMatched = 2,
+}

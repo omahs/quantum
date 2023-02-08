@@ -163,13 +163,19 @@ function ERC20ToDeFiChainTransfer({ data }: { data: TransferData }) {
           },
         }
       : {}),
-    onError: () => setHasError(true),
+    onError: () => {
+      console.log("preparation of contract");
+      setHasError(true);
+    },
   });
 
   const { data: bridgeContract, write } = useContractWrite(config);
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: bridgeContract?.hash,
-    onError: () => setHasError(true),
+    onError: () => {
+      console.log("waiting for transaction error");
+      setHasError(true);
+    },
   });
 
   useEffect(() => {
