@@ -1,13 +1,13 @@
 [![CI](https://github.com/WavesHQ/bridge/actions/workflows/ci.yml/badge.svg)](https://github.com/WavesHQ/bridge/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/WavesHQ/bridge/branch/main/graph/badge.svg?token=OXLL8IBZQV)](https://codecov.io/gh/WavesHQ/bridge)
 
-# [DeFiChain Bridge](https://bridge.defichain.com)
+# [Quantum Bridge](https://quantumbridge.app)
 
-> https://bridge.defichain.com
+> https://quantumbridge.app
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/4eaec04e-1416-4c65-843e-d7413fb81d2c/deploy-status)](https://app.netlify.com/sites/defichain-erc20-bridge/deploys)
 
-## DeFiChain ERC-20 Bridge
+## Quantum Bridge
 
 All smart contracts will be deployed on Goerli testnet for testing purposes.
 

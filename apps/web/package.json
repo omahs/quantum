@@ -2,7 +2,7 @@
   "name": "web",
   "version": "0.0.0",
   "private": true,
-  "description": "DeFiChain ERC-20 Bridge",
+  "description": "Quantum Bridge",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
