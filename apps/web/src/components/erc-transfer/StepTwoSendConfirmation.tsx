@@ -97,19 +97,19 @@ export default function StepTwoSendConfirmation({
       if (localDfcAddress) {
         setDfcUniqueAddress(localDfcAddress);
       } else {
-        generateAddress({ network: networkEnv })
-          .unwrap()
-          .then((data) => {
-            setStorageItem<string>(STORAGE_DFC_ADDR_KEY, data.address);
-            setDfcUniqueAddress(data.address);
-            setThrottleError("");
-          })
-          .catch(({ data }) => {
-            if (data?.statusCode === HttpStatusCode.TooManyRequests) {
-              setThrottleError(data.message);
-            }
-            setDfcUniqueAddress("");
-          });
+        try {
+          const { address } = await generateAddress({
+            network: networkEnv,
+          }).unwrap();
+          setStorageItem<string>(STORAGE_DFC_ADDR_KEY, address);
+          setDfcUniqueAddress(address);
+          setThrottleError("");
+        } catch ({ data }) {
+          if (data?.statusCode === HttpStatusCode.TooManyRequests) {
+            setThrottleError(data.message);
+          }
+          setDfcUniqueAddress("");
+        }
       }
     }, 200),
     []

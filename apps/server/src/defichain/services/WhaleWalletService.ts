@@ -26,19 +26,18 @@ export class WhaleWalletService {
     try {
       const pathIndex = await Prisma.pathIndex.findFirst({
         where: {
-          network,
           address: verify.address,
         },
         orderBy: [{ index: 'desc' }],
       });
 
-      // Address not found in the selected network
+      // Address not found
       if (pathIndex === null) {
         return { isValid: false, statusCode: CustomErrorCodes.AddressNotFound };
       }
 
       // Verify that the address is owned by the wallet
-      const wallet = this.whaleWalletProvider.createWallet(network, pathIndex.index);
+      const wallet = this.whaleWalletProvider.createWallet(Number(pathIndex.index));
       const address = await wallet.getAddress();
 
       if (address !== verify.address) {
@@ -73,23 +72,19 @@ export class WhaleWalletService {
     }
   }
 
-  async generateAddress(network: EnvironmentNetwork = EnvironmentNetwork.MainNet): Promise<{ address: string }> {
+  async generateAddress(): Promise<{ address: string }> {
     try {
       const lastIndex = await Prisma.pathIndex.findFirst({
-        where: {
-          network,
-        },
         orderBy: [{ index: 'desc' }],
       });
       const index = lastIndex?.index;
-      const nextIndex = index ? index + 1 : 2;
-      const wallet = this.whaleWalletProvider.createWallet(network, nextIndex);
+      const nextIndex = index ? Number(index) + 1 : 2;
+      const wallet = this.whaleWalletProvider.createWallet(nextIndex);
       const address = await wallet.getAddress();
       await Prisma.pathIndex.create({
         data: {
           index: nextIndex,
           address,
-          network,
         },
       });
       return { address };
