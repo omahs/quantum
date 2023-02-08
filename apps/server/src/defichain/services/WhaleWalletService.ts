@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EnvironmentNetwork } from '@waveshq/walletkit-core/dist/api/environment';
 
 import { Prisma } from '../../prisma/Client';
 import { WhaleWalletProvider } from '../providers/WhaleWalletProvider';
@@ -8,23 +7,19 @@ import { WhaleWalletProvider } from '../providers/WhaleWalletProvider';
 export class WhaleWalletService {
   constructor(private readonly whaleWalletProvider: WhaleWalletProvider) {}
 
-  async generateAddress(network: EnvironmentNetwork = EnvironmentNetwork.MainNet): Promise<{ address: string }> {
+  async generateAddress(): Promise<{ address: string }> {
     try {
       const lastIndex = await Prisma.pathIndex.findFirst({
-        where: {
-          network,
-        },
         orderBy: [{ index: 'desc' }],
       });
       const index = lastIndex?.index;
       const nextIndex = index ? index + 1 : 2;
-      const wallet = this.whaleWalletProvider.createWallet(network, nextIndex);
+      const wallet = this.whaleWalletProvider.createWallet(nextIndex);
       const address = await wallet.getAddress();
       await Prisma.pathIndex.create({
         data: {
           index: nextIndex,
           address,
-          network,
         },
       });
       return { address };
