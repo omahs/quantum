@@ -23,16 +23,15 @@ export function buildTestConfig({
 }: DeepPartial<BuildTestConfigParams> = {}) {
   return {
     defichain: {
-      [EnvironmentNetwork.LocalPlayground]: defichain?.localDefichainKey ?? '',
-      localWhaleURL: defichain?.localWhaleURL ?? '',
+      key: defichain?.key ?? '',
+      whaleURL: defichain?.whaleURL ?? '',
+      network: defichain?.network ?? EnvironmentNetwork.LocalPlayground,
     },
     ethereum: {
-      testnet: {
-        rpcUrl: startedHardhatContainer?.rpcUrl ?? '',
-        contracts: {
-          bridgeProxy: {
-            address: testnet?.bridgeContractAddress ?? '',
-          },
+      rpcUrl: startedHardhatContainer?.rpcUrl ?? '',
+      contracts: {
+        bridgeProxy: {
+          address: testnet?.bridgeContractAddress ?? '',
         },
         ethWalletPrivKey: testnet?.ethWalletPrivKey ?? '',
       },
@@ -42,8 +41,9 @@ export function buildTestConfig({
 
 interface BuildTestConfigParams {
   defichain: {
-    localWhaleURL: string;
-    localDefichainKey: string;
+    whaleURL: string;
+    key: string;
+    network: string;
   };
   startedHardhatContainer: StartedHardhatNetworkContainer;
   testnet: {
