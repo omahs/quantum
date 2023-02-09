@@ -45,14 +45,15 @@ export class AppService {
 
       const { chainId } = await this.ethersRpcProvider.getNetwork();
       const nonce = await this.contract.eoaAddressToNonce(receiverAddress);
+      const domainName = await this.contract.name();
+      const domainVersion = await this.contract.version();
       const deadline = getEndOfDayTimeStamp();
 
-      // TODO: Get from BridgeV1_factory
       const domain = {
-        name: this.configService.getOrThrow('ethereum.contracts.bridgeProxy.domainName'),
+        name: domainName,
         chainId,
         verifyingContract: this.contract.address,
-        version: this.configService.getOrThrow('ethereum.contracts.bridgeProxy.domainVersion'),
+        version: domainVersion,
       };
       const types = {
         CLAIM: [
