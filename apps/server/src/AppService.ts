@@ -4,19 +4,14 @@ import { BigNumber, Contract, ethers, Event } from 'ethers';
 import { BridgeV1__factory } from 'smartcontracts';
 
 import { ETHERS_RPC_PROVIDER } from './modules/EthersModule';
-
-interface SignClaim {
-  receiverAddress: string;
-  tokenAddress: string;
-  amount: string;
-}
+import { getEndOfDayTimeStamp } from './utils/MathUtils';
 
 @Injectable()
 export class AppService {
   private contract: Contract;
 
   constructor(
-    @Inject(ETHERS_RPC_PROVIDER) readonly ethersRpcProvider: ethers.providers.JsonRpcProvider,
+    @Inject(ETHERS_RPC_PROVIDER) readonly ethersRpcProvider: ethers.providers.StaticJsonRpcProvider,
     private configService: ConfigService,
   ) {
     this.contract = new ethers.Contract(
@@ -43,18 +38,21 @@ export class AppService {
   async signClaim({ receiverAddress, tokenAddress, amount }: SignClaim): Promise<{ signature: string; nonce: number }> {
     try {
       // Connect signer ETH wallet (admin/operational wallet)
-      const wallet = new ethers.Wallet(this.configService.getOrThrow('ethereum.testnet.ethWalletPrivKey'));
-      const signer = wallet.connect(this.ethersRpcProvider);
+      const wallet = new ethers.Wallet(
+        this.configService.getOrThrow('ethereum.ethWalletPrivKey'),
+        this.ethersRpcProvider,
+      );
 
-      const signerAddress = await signer.getAddress();
-      const nonce = await this.contract.eoaAddressToNonce(signerAddress);
       const { chainId } = await this.ethersRpcProvider.getNetwork();
+      const nonce = await this.contract.eoaAddressToNonce(receiverAddress);
+      const deadline = getEndOfDayTimeStamp();
 
+      // TODO: Get from BridgeV1_factory
       const domain = {
-        name: 'Quantum Bridge',
+        name: 'CAKE_BRIDGE',
         chainId,
         verifyingContract: this.contract.address,
-        version: '1',
+        version: '0.1',
       };
       const types = {
         CLAIM: [
@@ -67,14 +65,14 @@ export class AppService {
       };
       const data = {
         to: receiverAddress,
-        amount,
+        amount: ethers.utils.parseEther(amount),
         nonce,
-        deadline: ethers.constants.MaxUint256,
+        deadline,
         tokenAddress,
       };
 
       // eslint-disable-next-line no-underscore-dangle
-      const signature = await signer._signTypedData(domain, types, data);
+      const signature = await wallet._signTypedData(domain, types, data);
       return { signature, nonce };
     } catch (e: any) {
       throw new HttpException(
@@ -89,4 +87,10 @@ export class AppService {
       );
     }
   }
+}
+
+interface SignClaim {
+  receiverAddress: string;
+  tokenAddress: string;
+  amount: string;
 }
