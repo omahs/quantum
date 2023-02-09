@@ -92,14 +92,13 @@ export default function EvmToDeFiChainTransfer({
   useEffect(() => {
     // Trigger `bridgeToDeFiChain` once allowance is approved
     const hasEnoughAllowance = data.to.amount.lte(tokenAllowance);
-    if (
-      requiresApproval &&
-      isApproveTxnSuccess &&
-      refetchedBridgeFn &&
-      hasEnoughAllowance
-    ) {
+    const successfulApproval =
+      requiresApproval && isApproveTxnSuccess && refetchedBridgeFn;
+    if (successfulApproval && hasEnoughAllowance) {
       setRequiresApproval(false);
       writeBridgeToDeFiChain?.();
+    } else if (successfulApproval && !hasEnoughAllowance) {
+      writeApprove?.();
     }
   }, [isApproveTxnSuccess, tokenAllowance, refetchedBridgeFn]);
 
