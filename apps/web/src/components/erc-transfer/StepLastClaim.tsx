@@ -6,12 +6,21 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
+import { useRouter } from "next/router";
+import { FiCheck } from "react-icons/fi";
 import { useContractContext } from "@contexts/ContractContext";
+import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import ActionButton from "@components/commons/ActionButton";
 import Modal from "@components/commons/Modal";
 import ErrorModal from "@components/commons/ErrorModal";
 import { getEndOfDayTimeStamp } from "@utils/mathUtils";
 import { TransferData } from "types";
+import UtilityButton from "@components/commons/UtilityButton";
+import { setStorageItem } from "@utils/localStorage";
+import { STORAGE_TXN_KEY } from "../../constants";
+
+const CLAIM_INPUT_ERROR =
+  "Check your connection and try again.  If the error persists get in touch with us.";
 
 export default function StepLastClaim({
   data,
@@ -20,9 +29,11 @@ export default function StepLastClaim({
   data: TransferData;
   signedClaim: { signature: string; nonce: number };
 }) {
+  const router = useRouter();
   const [showLoader, setShowLoader] = useState(false);
   const [error, setError] = useState<string>();
 
+  const { networkEnv } = useNetworkEnvironmentContext();
   const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
 
@@ -39,8 +50,10 @@ export default function StepLastClaim({
       tokenAddress,
       signedClaim.signature,
     ],
-    onError: (err) => setError(err.message),
+    onError: () => setError(CLAIM_INPUT_ERROR),
   });
+
+  // Write contract for `claimFund` function
   const {
     data: claimFundData,
     error: writeClaimTxnError,
@@ -48,15 +61,30 @@ export default function StepLastClaim({
   } = useContractWrite(bridgeConfig);
 
   // Wait and get result from write contract for `claimFund` function
-  const { error: claimTxnError } = useWaitForTransaction({
+  const { error: claimTxnError, isSuccess } = useWaitForTransaction({
     hash: claimFundData?.hash,
     onSettled: () => setShowLoader(false),
   });
 
   const handleOnClaim = async () => {
+    setError(undefined);
     setShowLoader(true);
+    if (!write) {
+      setTimeout(() => {
+        setError(CLAIM_INPUT_ERROR);
+        setShowLoader(false);
+      }, 500);
+      return;
+    }
     write?.();
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      const TXN_KEY = `${networkEnv}.${STORAGE_TXN_KEY}`;
+      setStorageItem(TXN_KEY, null);
+    }
+  }, [isSuccess]);
 
   useEffect(() => {
     setError(writeClaimTxnError?.message ?? claimTxnError?.message);
@@ -77,9 +105,34 @@ export default function StepLastClaim({
           </div>
         </Modal>
       )}
+      {isSuccess && (
+        // TODO: Replace success ui/message
+        <Modal isOpen={isSuccess} onClose={() => router.reload()}>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <FiCheck className="text-8xl text-valid ml-1" />
+            <span className="font-bold text-2xl text-dark-900 mt-8">
+              Token claimed
+            </span>
+            <span className="text-dark-900 mt-2">
+              {`You have successfully claimed your ${data.to.tokenName} tokens.`}
+            </span>
+            <div className="mt-14">
+              <UtilityButton
+                label="View on Etherscan"
+                onClick={() =>
+                  window.open(
+                    `${ExplorerURL}/tx/${claimFundData?.hash}`,
+                    "_blank"
+                  )
+                }
+              />
+            </div>
+          </div>
+        </Modal>
+      )}
       {error && (
         <ErrorModal
-          title="Transaction error"
+          title="Claim Error"
           message={error}
           primaryButtonLabel={
             claimFundData?.hash ? "View on Etherscan" : "Try again"
