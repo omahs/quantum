@@ -33,7 +33,6 @@ export function buildTestConfig({
         bridgeProxy: {
           address: testnet?.bridgeContractAddress ?? '',
         },
-        ethWalletPrivKey: testnet?.ethWalletPrivKey ?? '',
       },
     },
   };
@@ -48,6 +47,5 @@ interface BuildTestConfigParams {
   startedHardhatContainer: StartedHardhatNetworkContainer;
   testnet: {
     bridgeContractAddress: string;
-    ethWalletPrivKey: string;
   };
 }
