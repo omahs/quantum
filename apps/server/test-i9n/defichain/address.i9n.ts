@@ -83,3 +83,58 @@ describe('DeFiChain Address Integration Testing', () => {
     }
   });
 });
+
+describe.only('DefiChain Wallet Verify', () => {
+  const container = new PostgreSqlContainer();
+  let postgreSqlContainer: StartedPostgreSqlContainer;
+  let startedHardhatContainer: StartedHardhatNetworkContainer;
+  let hardhatNetwork: HardhatNetwork;
+  let testing: BridgeServerTestingApp;
+  const WALLET_ENDPOINT = `/defichain/wallet/`;
+
+  beforeAll(async () => {
+    postgreSqlContainer = await container
+      .withDatabase('bridge')
+      .withUsername('playground')
+      .withPassword('playground')
+      .withExposedPorts({
+        container: 5432,
+        host: 5432,
+      })
+      .start();
+    // deploy migration
+    execSync('pnpm run migration:deploy');
+    startedHardhatContainer = await new HardhatNetworkContainer().start();
+    hardhatNetwork = await startedHardhatContainer.ready();
+    testing = new BridgeServerTestingApp(TestingExampleModule.register(buildTestConfig({ startedHardhatContainer })));
+    await testing.start();
+  });
+
+  afterAll(async () => {
+    await hardhatNetwork.stop();
+    await postgreSqlContainer.stop();
+  });
+
+  it('should throw an error if balance is invalid', async () => {
+    const initialResponse = await testing.inject({
+      method: 'POST',
+      url: `${WALLET_ENDPOINT}verify?network=regtest`,
+      payload: {
+        address: '123',
+        amount: '23344.23',
+      },
+    });
+    await expect(initialResponse.statusCode).toStrictEqual(200);
+    await expect(initialResponse).toThrowError('asdf');
+    const response = JSON.parse(initialResponse.body);
+    const decodedAddress = fromAddress(response.address, 'regtest');
+    await expect(decodedAddress).not.toBeUndefined();
+  });
+
+  /*
+   should throw an error if address is invalid
+   should throw an error if balance is invalid
+   should throw an error if network is invalid
+   should 
+  */
+});
