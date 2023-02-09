@@ -61,7 +61,11 @@ export default function DeFiChainToERC20Transfer({
         <StepThreeVerification goToNextStep={handleNextStep} />
       )}
       {activeStep >= 4 && (
-        <StepLastClaim goToNextStep={handleNextStep} data={data} />
+        <StepLastClaim
+          data={data}
+          // TODO: Pass signature and nonce from Verification step here
+          signedClaim={{ signature: "", nonce: 0 }}
+        />
       )}
     </div>
   );
