@@ -1,79 +1,107 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import ActionButton from "@components/commons/ActionButton";
-import { TransferData } from "types";
+import { utils } from "ethers";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 import { useContractContext } from "@contexts/ContractContext";
-import axios from "axios";
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
-import { ethers, utils } from "ethers";
-import Logging from "@api/logging";
+import ActionButton from "@components/commons/ActionButton";
+import Modal from "@components/commons/Modal";
+import ErrorModal from "@components/commons/ErrorModal";
+import { getEndOfDayTimeStamp } from "@utils/mathUtils";
+import { TransferData } from "types";
 
 export default function StepLastClaim({
   data,
-  goToNextStep,
+  signedClaim,
 }: {
   data: TransferData;
-  goToNextStep: () => void;
+  signedClaim: { signature: string; nonce: number };
 }) {
-  const [claim, setClaim] = useState<{ nonce: any; signature: string }>();
+  const [showLoader, setShowLoader] = useState(false);
+  const [error, setError] = useState<string>();
 
-  const { BridgeV1, Erc20Tokens } = useContractContext();
+  const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
 
   // Prepare write contract for `claimFund` function
   const { config: bridgeConfig } = usePrepareContractWrite({
-    address: "0x93fE70235854e7c97A5db5ddfC6eAAb078e99d3C", // BridgeV1.address,
+    address: BridgeV1.address,
     abi: BridgeV1.abi,
     functionName: "claimFund",
     args: [
-      "0xA0D0927C9F89CD696bCF30F4BB0E3A1Fa463265d",
+      data.to.address,
       utils.parseEther(data.to.amount.toString()),
-      claim?.nonce,
-      ethers.constants.MaxUint256,
+      signedClaim.nonce,
+      getEndOfDayTimeStamp(),
       tokenAddress,
-      claim?.signature,
+      signedClaim.signature,
     ],
+    onError: (err) => setError(err.message),
   });
   const {
-    data: contractData,
+    data: claimFundData,
+    error: writeClaimTxnError,
     write,
-    isLoading,
-    isSuccess,
   } = useContractWrite(bridgeConfig);
-  console.log({ write });
 
-  useEffect(() => {
-    if (claim) {
-      write?.();
-    }
-  }, [claim]);
+  // Wait and get result from write contract for `claimFund` function
+  const { error: claimTxnError } = useWaitForTransaction({
+    hash: claimFundData?.hash,
+    onSettled: () => setShowLoader(false),
+  });
 
   const handleOnClaim = async () => {
-    try {
-      const resp = await axios.post("http://localhost:5741/app/sign-claim", {
-        receiverAddress: data.to.address,
-        tokenAddress,
-        amount: data.to.amount.toString(),
-      });
-      const claim = resp.data;
-      setClaim(claim);
-      goToNextStep();
-    } catch (e) {
-      Logging.error(e);
-    }
+    setShowLoader(true);
+    write?.();
   };
 
+  useEffect(() => {
+    setError(writeClaimTxnError?.message ?? claimTxnError?.message);
+  }, [writeClaimTxnError, claimTxnError]);
+
   return (
-    <div className={clsx("pt-4 px-6", "md:px-[73px] md:pt-4 md:pb-6")}>
-      <span className="font-semibold block text-center text-dark-900 tracking-[0.01em] md:tracking-wider text-2xl">
-        Ready for claiming
-      </span>
-      <span className="block text-center text-sm text-dark-900 mt-3 pb-6">
-        Your transaction has been verified and is now ready to be transferred to
-        destination chain (ERC-20). You will be redirected to your wallet to
-        claim your tokens.
-      </span>
-      <ActionButton label="Claim tokens" onClick={() => handleOnClaim()} />
-    </div>
+    <>
+      {showLoader && (
+        <Modal isOpen={showLoader}>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <div className="w-24 h-24 border border-brand-200 border-b-transparent rounded-full animate-spin" />
+            <span className="font-bold text-2xl text-dark-900 mt-12">
+              Waiting for confirmation
+            </span>
+            <span className="text-dark-900 mt-2">
+              Confirm this transaction in your Wallet.
+            </span>
+          </div>
+        </Modal>
+      )}
+      {error && (
+        <ErrorModal
+          title="Transaction error"
+          message={error}
+          primaryButtonLabel={
+            claimFundData?.hash ? "View on Etherscan" : "Try again"
+          }
+          onPrimaryButtonClick={() =>
+            claimFundData?.hash
+              ? window.open(`${ExplorerURL}/tx/${claimFundData.hash}`, "_blank")
+              : handleOnClaim()
+          }
+        />
+      )}
+      <div className={clsx("pt-4 px-6", "md:px-[73px] md:pt-4 md:pb-6")}>
+        <span className="font-semibold block text-center text-dark-900 tracking-[0.01em] md:tracking-wider text-2xl">
+          Ready for claiming
+        </span>
+        <span className="block text-center text-sm text-dark-900 mt-3 pb-6">
+          Your transaction has been verified and is now ready to be transferred
+          to destination chain (ERC-20). You will be redirected to your wallet
+          to claim your tokens.
+        </span>
+        <ActionButton label="Claim tokens" onClick={() => handleOnClaim()} />
+      </div>
+    </>
   );
 }
