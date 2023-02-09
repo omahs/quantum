@@ -13,6 +13,8 @@ export function appConfig() {
         bridgeProxy: {
           //
           address: process.env.BRIDGE_PROXY_ADDRESS,
+          domainName: process.env.BRIDGE_PROXY_DOMAIN_NAME,
+          domainVersion: process.env.BRIDGE_PROXY_DOMAIN_VERSION,
         },
       },
       ethWalletPrivKey: process.env.ETHEREUM_WALLET_PRIVATE_KEY,

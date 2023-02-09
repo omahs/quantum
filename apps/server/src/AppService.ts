@@ -49,10 +49,10 @@ export class AppService {
 
       // TODO: Get from BridgeV1_factory
       const domain = {
-        name: 'CAKE_BRIDGE',
+        name: this.configService.getOrThrow('ethereum.contracts.bridgeProxy.domainName'),
         chainId,
         verifyingContract: this.contract.address,
-        version: '0.1',
+        version: this.configService.getOrThrow('ethereum.contracts.bridgeProxy.domainVersion'),
       };
       const types = {
         CLAIM: [
