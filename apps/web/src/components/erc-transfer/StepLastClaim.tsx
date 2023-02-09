@@ -13,9 +13,9 @@ import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContex
 import ActionButton from "@components/commons/ActionButton";
 import Modal from "@components/commons/Modal";
 import ErrorModal from "@components/commons/ErrorModal";
-import { getEndOfDayTimeStamp } from "@utils/mathUtils";
 import { TransferData } from "types";
 import UtilityButton from "@components/commons/UtilityButton";
+import { getEndOfDayTimeStamp } from "@utils/durationHelper";
 import { setStorageItem } from "@utils/localStorage";
 import { STORAGE_TXN_KEY } from "../../constants";
 
