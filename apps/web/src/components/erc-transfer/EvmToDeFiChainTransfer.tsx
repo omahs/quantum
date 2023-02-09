@@ -84,10 +84,7 @@ export default function EvmToDeFiChainTransfer({
     refetchedBridgeFn,
     writeApprove,
   } = useWriteApproveToken({
-    transferAmount: data.to.amount,
     tokenName: data.from.tokenName as Erc20Token,
-    tokenDecimals,
-    tokenAllowance,
     setErrorMessage,
     refetchBridge,
   });
