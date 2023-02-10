@@ -59,7 +59,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
 
   // TODO use beta flag response to trigger maintenance page
   // set false to see maintenance page
-  const maintenance = true;
+  const maintenance = false;
 
   useEffect(() => {
     setMounted(true);
