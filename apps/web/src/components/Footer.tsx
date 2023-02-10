@@ -48,7 +48,7 @@ export default function Footer() {
   return (
     <footer className="bg-inherit relative z-[1] w-full border-dark-300 pb-8 pt-4 md:pb-12 md:pt-3">
       {/* desktop view */}
-      <section className="px-6 text-dark-900 lg:px-[120px] hidden lg:block">
+      <section className="text-dark-900 px-[120px] hidden lg:block">
         <div className="border-t-[0.5px] dark:border-dark-300">
           <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px] mt-3">
             <Image
