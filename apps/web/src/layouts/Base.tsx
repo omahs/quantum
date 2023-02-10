@@ -26,6 +26,7 @@ import {
 } from "@waveshq/walletkit-ui";
 import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
+import Maintenance from "pages/Maintenance";
 
 const metamask = new MetaMaskConnector({
   chains: [mainnet, goerli, localhost, hardhat],
@@ -55,6 +56,10 @@ const client = createClient(
 function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
   const initialTheme = getInitialTheme();
   const [mounted, setMounted] = useState(false);
+
+  // TODO use beta flag response to trigger maintenance page
+  // set false to see maintenance page
+  const maintenance = true;
 
   useEffect(() => {
     setMounted(true);
@@ -115,14 +120,18 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                   <NetworkEnvironmentProvider>
                     <ContractProvider>
                       <ThemeProvider theme={initialTheme}>
-                        <div className="relative">
-                          <Header />
-                          <main className="relative z-[1] flex-grow">
-                            {children}
-                          </main>
-                          <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
-                          <Footer />
-                        </div>
+                        {maintenance ? (
+                          <Maintenance />
+                        ) : (
+                          <div className="relative">
+                            <Header />
+                            <main className="relative z-[1] flex-grow">
+                              {children}
+                            </main>
+                            <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
+                            <Footer />
+                          </div>
+                        )}
                       </ThemeProvider>
                     </ContractProvider>
                   </NetworkEnvironmentProvider>

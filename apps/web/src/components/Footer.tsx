@@ -1,13 +1,14 @@
 import React from "react";
-import { FaYoutube, FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
-import Container from "./commons/Container";
+import { FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
+import { BsMedium } from "react-icons/bs";
+import Image from "next/image";
 
 const SocialItems = [
   {
-    icon: FaYoutube,
-    testId: "youtube",
-    label: "Youtube",
-    href: "https://www.youtube.com/DeFiChain",
+    icon: FaTwitter,
+    testId: "twitter",
+    label: "Twitter",
+    href: "https://twitter.com/defichain",
   },
   {
     icon: FaReddit,
@@ -21,43 +22,146 @@ const SocialItems = [
     label: "GitHub",
     href: "https://github.com/DeFiCh",
   },
+];
+const SocialItemsFooter = [
   {
     icon: FaTwitter,
     testId: "twitter",
     label: "Twitter",
     href: "https://twitter.com/defichain",
   },
+  {
+    icon: BsMedium,
+    testId: "medium",
+    label: "Medium",
+    href: "https://medium.com/@birthdayresearch",
+  },
+  {
+    icon: FaGithub,
+    testId: "gitHub",
+    label: "GitHub",
+    href: "https://github.com/DeFiCh",
+  },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative z-[1] w-full border-t border-dark-300 bg-dark-00 pb-8 pt-4 md:border-t-0 md:pb-12 md:pt-3">
-      <Container className="px-5 md:px-12 lg:px-[120px]">
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-col md:flex-row">
-            <div className="text-xs font-semibold text-dark-700">
-              Developed by&nbsp;
-            </div>
-            <div className="text-xs font-semibold text-dark-700">
-              Birthday Research
-            </div>
-          </div>
-          <div className="flex flex-row space-x-2 md:space-x-4">
-            {SocialItems.map(({ href, testId, icon: Icon }) => (
-              <a
-                href={href}
-                key={testId}
-                target="_blank"
-                rel="noreferrer"
-                className="p-1"
-                data-testid={testId}
-              >
-                <Icon size={24} className="text-dark-700" />
-              </a>
-            ))}
+    <footer className="bg-inherit relative z-[1] w-full border-dark-300 pb-8 pt-4 md:pb-12 md:pt-3">
+      {/* desktop view */}
+      <section className="px-6 text-dark-900 lg:px-[120px] hidden lg:block">
+        <div className="border-t-[0.5px] dark:border-dark-300">
+          <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px] mt-3">
+            <Image
+              fill
+              data-testid="bridge-logo"
+              src="/header-logo.svg"
+              alt="Bridge Logo"
+            />
           </div>
         </div>
-      </Container>
+        <div className="pl-1 flex flex-row justify-between text-sm">
+          <div className="flex flex-col">
+            <div className="font-semibold">Version 1.0.1&nbsp;</div>
+            <div className="font-semibold">
+              Quantum is a proud development of Birthday Research — the
+              blockchain R&D arm of Cake DeFi.
+            </div>
+            <div className="md:items-center flex flex-row">
+              <div className="flex flex-row justify-between pt-2.5 pb-2 pr-[12.5px]">
+                &copy; Birthday Research
+              </div>
+              <div className="flex flex-row space-x-3">
+                {SocialItemsFooter.map(({ href, testId, icon: Icon }) => (
+                  <a
+                    href={href}
+                    key={testId}
+                    target="_blank"
+                    rel="noreferrer"
+                    className=""
+                    data-testid={testId}
+                  >
+                    <Icon size={18} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex-col self-end">
+            <div className="text-sm pb-2">&copy; DeFiChain</div>
+            <div className="flex flex-row justify-between">
+              {SocialItems.map(({ href, testId, icon: Icon }) => (
+                <a
+                  href={href}
+                  key={testId}
+                  target="_blank"
+                  rel="noreferrer"
+                  className=""
+                  data-testid={testId}
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* tablet and mobile view */}
+      <section className="px-10 text-dark-900 text-xs lg:hidden ">
+        <div className="border-t-[0.5px] dark:border-dark-300">
+          <div className="relative h-[32px] w-[140px] cursor-pointer my-6 lg:h-[60px] lg:w-[264px]">
+            <Image
+              fill
+              data-testid="bridge-logo"
+              src="/header-tablet-mobile-logo.svg"
+              alt="Bridge Logo"
+            />
+          </div>
+        </div>
+        <div className="font-semibold">Version 1.0.1&nbsp;</div>
+        <div className="font-semibold">
+          Quantum is a proud development of Birthday Research — the blockchain
+          R&D arm of Cake DeFi.
+        </div>
+        <div className="items-center flex flex-row pt-[26px] justify-between">
+          <div className="flex xs:flex-col md:flex-row md:items-center">
+            <div className="flex flex-row justify-between pb-2 pr-[12.5px] md:pb-0 ">
+              &copy; Birthday Research
+            </div>
+            <div className="flex flex-row space-x-3">
+              {SocialItemsFooter.map(({ href, testId, icon: Icon }) => (
+                <a
+                  href={href}
+                  key={testId}
+                  target="_blank"
+                  rel="noreferrer"
+                  className=""
+                  data-testid={testId}
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="flex xs:flex-col-reverse md:flex-row">
+            <div className="flex flex-row justify-between pr-[11px] xs:space-x-3.5 ">
+              {SocialItems.map(({ href, testId, icon: Icon }) => (
+                <a
+                  href={href}
+                  key={testId}
+                  target="_blank"
+                  rel="noreferrer"
+                  className=""
+                  data-testid={testId}
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
+            </div>
+            <div className="pb-2">&copy; DeFiChain</div>
+          </div>
+        </div>
+      </section>
     </footer>
   );
 }

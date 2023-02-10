@@ -4,7 +4,7 @@ import ConnectButton from "./ConnectButton";
 
 export default function Header(): JSX.Element {
   return (
-    <div className="relative z-[1] flex items-center justify-between bg-dark-00 px-5 pt-8 pb-6 md:px-12 md:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
+    <div className="relative z-[1] flex items-center justify-between bg-inherit px-5 pt-8 pb-6 md:px-12 md:py-6 lg:px-[120px] lg:pt-10 lg:pb-12">
       <Link href="/">
         <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px]">
           <Image
