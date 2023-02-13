@@ -41,9 +41,9 @@ describe('DeFiChain Address Integration Testing', () => {
       method: 'GET',
       url: `${WALLET_ENDPOINT}generate-address`,
     });
-
     await expect(initialResponse.statusCode).toStrictEqual(200);
-    const decodedAddress = fromAddress(initialResponse.body, 'regtest');
+    const response = JSON.parse(initialResponse.body);
+    const decodedAddress = fromAddress(response.address, 'regtest');
     await expect(decodedAddress).not.toBeUndefined();
   });
 
@@ -55,7 +55,8 @@ describe('DeFiChain Address Integration Testing', () => {
 
     await expect(initialResponse.statusCode).toStrictEqual(200);
     // will return undefined if the address is not a valid address or not a network address
-    const decodedAddress = fromAddress(initialResponse.body, 'mainnet');
+    const response = JSON.parse(initialResponse.body);
+    const decodedAddress = fromAddress(response.address, 'mainnet');
     await expect(decodedAddress).toBeUndefined();
   });
 
