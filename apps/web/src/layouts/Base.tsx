@@ -22,12 +22,10 @@ import {
   NetworkProvider as WhaleNetworkProvider,
   WhaleProvider,
 } from "@waveshq/walletkit-ui";
-import StoreProvider from "@contexts/StoreProvider";
 import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
 import { bridgeApi } from "@store/website";
-import { FeatureFlagProvider } from "@contexts/FeatureFlagContext";
 import ScreenContainer from "pages/ScreenContainer";
 
 const metamask = new MetaMaskConnector({
@@ -118,13 +116,9 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                   <WhaleProvider>
                     <NetworkEnvironmentProvider>
                       <ContractProvider>
-                        <StoreProvider>
-                          <FeatureFlagProvider>
-                            <ThemeProvider theme={initialTheme}>
-                              <ScreenContainer>{children}</ScreenContainer>
-                            </ThemeProvider>
-                          </FeatureFlagProvider>
-                        </StoreProvider>
+                        <ThemeProvider theme={initialTheme}>
+                          <ScreenContainer>{children}</ScreenContainer>
+                        </ThemeProvider>
                       </ContractProvider>
                     </NetworkEnvironmentProvider>
                   </WhaleProvider>

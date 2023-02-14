@@ -1,6 +1,5 @@
 import Footer from "@components/Footer";
 import Header from "@components/Header";
-// import { useFeatureFlagContext } from "@contexts/FeatureFlagContext";
 import Maintenance from "./Maintenance";
 
 export default function ScreenContainer({
@@ -8,8 +7,7 @@ export default function ScreenContainer({
 }: {
   children: JSX.Element;
 }): JSX.Element {
-  // const { isFeatureAvailable } = useFeatureFlagContext();
-  // const isMaintenanceEnabled = isFeatureAvailable("loan"); // TODO change to maintenance flag once walletkit is updated
+  // TODO update logic when endpoint is ready
   const isMaintenanceEnabled = false;
 
   return (
