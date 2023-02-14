@@ -46,7 +46,7 @@ const SocialItemsFooter = [
 
 export default function Footer() {
   return (
-    <footer className="bg-inherit relative z-[1] w-full border-dark-300 pb-8 pt-4 md:pb-12 md:pt-3">
+    <footer className="bg-inherit relative z-[1] w-full border-dark-300 pb-[34px] pt-4 md:pt-3">
       {/* desktop view */}
       <section className="text-dark-900 px-[120px] hidden lg:block">
         <div className="border-t-[0.5px] dark:border-dark-300">
@@ -70,7 +70,7 @@ export default function Footer() {
               <div className="flex flex-row justify-between pt-2.5 pb-2 pr-[12.5px]">
                 &copy; Birthday Research
               </div>
-              <div className="flex flex-row space-x-3">
+              <div className="flex flex-row space-x-3.5">
                 {SocialItemsFooter.map(({ href, testId, icon: Icon }) => (
                   <a
                     href={href}
@@ -86,8 +86,8 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="flex-col self-end">
-            <div className="text-sm pb-2">&copy; DeFiChain</div>
+          <div className="flex-col self-end relative bottom-[10px]">
+            <div className="pb-2">&copy; DeFiChain</div>
             <div className="flex flex-row justify-between">
               {SocialItems.map(({ href, testId, icon: Icon }) => (
                 <a
@@ -107,7 +107,7 @@ export default function Footer() {
       </section>
 
       {/* tablet and mobile view */}
-      <section className="px-10 text-dark-900 text-xs lg:hidden ">
+      <section className="px-10 text-dark-900 text-xs lg:hidden">
         <div className="border-t-[0.5px] dark:border-dark-300">
           <div className="relative h-[32px] w-[140px] cursor-pointer my-6 lg:h-[60px] lg:w-[264px]">
             <Image
@@ -123,9 +123,9 @@ export default function Footer() {
           Quantum is a proud development of Birthday Research — the blockchain
           R&D arm of Cake DeFi.
         </div>
-        <div className="items-center flex flex-row pt-[26px] justify-between">
-          <div className="flex xs:flex-col md:flex-row md:items-center">
-            <div className="flex flex-row justify-between pb-2 pr-[12.5px] md:pb-0 ">
+        <div className="flex flex-row pt-[26px] justify-between">
+          <div className="flex xs:flex-col md:flex-row">
+            <div className="flex flex-row justify-between pb-2 pr-[12.5px] md:pb-0">
               &copy; Birthday Research
             </div>
             <div className="flex flex-row space-x-3">
@@ -144,7 +144,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="flex xs:flex-col-reverse md:flex-row">
-            <div className="flex flex-row justify-between pr-[11px] xs:space-x-3.5 ">
+            <div className="flex flex-row justify-between pr-[11px] xs:space-x-3.5 xs:pt-2 md:pt-0">
               {SocialItems.map(({ href, testId, icon: Icon }) => (
                 <a
                   href={href}
@@ -158,7 +158,7 @@ export default function Footer() {
                 </a>
               ))}
             </div>
-            <div className="pb-2">&copy; DeFiChain</div>
+            <div className="">&copy; DeFiChain</div>
           </div>
         </div>
       </section>
