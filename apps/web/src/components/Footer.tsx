@@ -8,7 +8,7 @@ const SocialItems = [
     icon: FaTwitter,
     testId: "twitter",
     label: "Twitter",
-    href: "https://twitter.com/defichain",
+    href: "https://twitter.com/BirthdayDev",
   },
   {
     icon: FaReddit,
@@ -20,7 +20,7 @@ const SocialItems = [
     icon: FaGithub,
     testId: "gitHub",
     label: "GitHub",
-    href: "https://github.com/DeFiCh",
+    href: "https://github.com/BirthdayResearch",
   },
 ];
 const SocialItemsFooter = [
@@ -28,7 +28,7 @@ const SocialItemsFooter = [
     icon: FaTwitter,
     testId: "twitter",
     label: "Twitter",
-    href: "https://twitter.com/defichain",
+    href: "https://twitter.com/BirthdayDev/",
   },
   {
     icon: BsMedium,
@@ -40,7 +40,7 @@ const SocialItemsFooter = [
     icon: FaGithub,
     testId: "gitHub",
     label: "GitHub",
-    href: "https://github.com/DeFiCh",
+    href: "https://github.com/BirthdayResearch",
   },
 ];
 
@@ -61,7 +61,8 @@ export default function Footer() {
         </div>
         <div className="pl-1 flex flex-row justify-between text-sm">
           <div className="flex flex-col">
-            <div className="font-semibold">Version 1.0.1&nbsp;</div>
+            {/* TODO removed for now */}
+            {/* <div className="font-semibold">Version 1.0.1&nbsp;</div> */}
             <div className="font-semibold">
               Quantum is a proud development of Birthday Research — the
               blockchain R&D arm of Cake DeFi.
@@ -72,14 +73,7 @@ export default function Footer() {
               </div>
               <div className="flex flex-row space-x-3.5">
                 {SocialItemsFooter.map(({ href, testId, icon: Icon }) => (
-                  <a
-                    href={href}
-                    key={testId}
-                    target="_blank"
-                    rel="noreferrer"
-                    className=""
-                    data-testid={testId}
-                  >
+                  <a href={href} key={testId} target="_blank" rel="noreferrer">
                     <Icon size={18} />
                   </a>
                 ))}
@@ -158,7 +152,7 @@ export default function Footer() {
                 </a>
               ))}
             </div>
-            <div className="">&copy; DeFiChain</div>
+            <div>&copy; DeFiChain</div>
           </div>
         </div>
       </section>

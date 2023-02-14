@@ -2,6 +2,27 @@ import Footer from "@components/Footer";
 import Header from "@components/Header";
 import { FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
 
+export const SocialItems = [
+  {
+    icon: FaTwitter,
+    testId: "twitter",
+    label: "Twitter (Birthday Research)",
+    href: "https://twitter.com/BirthdayDev",
+  },
+  {
+    icon: FaGithub,
+    testId: "gitHub",
+    label: "GitHub (Birthday Research)",
+    href: "https://github.com/BirthdayResearch",
+  },
+  {
+    icon: FaReddit,
+    testId: "reddit",
+    label: "Reddit (r/defiblockchain)",
+    href: "https://www.reddit.com/r/defiblockchain",
+  },
+];
+
 export default function Maintenance(): JSX.Element {
   return (
     <div className="relative">
@@ -20,44 +41,32 @@ export default function Maintenance(): JSX.Element {
                 <h1 className="text-[32px] leading-[44px] text-dark-1000 lg:text-[52px] lg:leading-[52px]">
                   Bridge is currently closed
                 </h1>
-                <div className="mt-2 pb-12">
-                  <div className="align-middle text-base text-dark-700 lg:text-xl w-11/12 ">
+                <div className="pt-2 pb-12">
+                  <div className="align-middle text-base text-dark-700 lg:text-xl w-11/12">
                     There are regular checks to maintain performance standards
                     on the Bridge. Please try again after some time. For any
                     immediate concerns or status updates, consult the following
                     links:
                   </div>
                 </div>
-                <div>
-                  <div className="flex flex-col space-y-6 md:mt-5">
-                    <button
-                      type="button"
-                      className="flex flex-row items-center"
+                <div className="flex flex-col space-y-6 md:mt-5 text-dark-900">
+                  {SocialItems.map(({ label, href, testId, icon: Icon }) => (
+                    <a
+                      href={href}
+                      key={testId}
+                      target="_blank"
+                      rel="noreferrer"
+                      className=""
+                      data-testid={testId}
                     >
-                      <FaGithub size={18} className="text-dark-700" />
-                      <span className="ml-2 text-base font-semibold text-dark-700">
-                        Twitter (Birthday Research)
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex flex-row items-center"
-                    >
-                      <FaTwitter size={18} className="text-dark-700" />
-                      <span className="ml-2 text-base font-semibold text-dark-700">
-                        Github (Birthday Research)
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex flex-row items-center"
-                    >
-                      <FaReddit size={18} className="text-dark-700" />
-                      <span className="ml-2 text-base font-semibold text-dark-700">
-                        Reddit (r/defiblockchain)
-                      </span>
-                    </button>
-                  </div>
+                      <div className="flex flex-row items-center">
+                        <Icon size={18} />
+                        <span className="ml-2 text-base font-semibold text-dark-700">
+                          {label}
+                        </span>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
