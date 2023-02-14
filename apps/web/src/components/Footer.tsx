@@ -53,7 +53,7 @@ export default function Footer() {
           <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px] mt-3">
             <Image
               fill
-              data-testid="bridge-logo"
+              data-testid="footer-bridge-logo"
               src="/header-logo.svg"
               alt="Bridge Logo"
             />
@@ -106,7 +106,7 @@ export default function Footer() {
           <div className="relative h-[32px] w-[140px] cursor-pointer my-6 lg:h-[60px] lg:w-[264px]">
             <Image
               fill
-              data-testid="bridge-logo"
+              data-testid="footer-bridge-logo"
               src="/header-tablet-mobile-logo.svg"
               alt="Bridge Logo"
             />

@@ -9,7 +9,7 @@ export default function Header(): JSX.Element {
         <div className="relative h-[32px] w-[140px] cursor-pointer lg:h-[60px] lg:w-[264px]">
           <Image
             fill
-            data-testid="bridge-logo"
+            data-testid="header-bridge-logo"
             src="/header-logo.svg"
             alt="Bridge Logo"
           />

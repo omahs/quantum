@@ -10,7 +10,7 @@ describe("Navigation", () => {
     cy.visit("http://localhost:3000/");
 
     cy.findByTestId("homepage").should("exist");
-    cy.findByTestId("bridge-logo").should("exist");
+    cy.findByTestId("header-bridge-logo").should("exist");
     cy.findByTestId("connect-button").should("exist");
 
     footerLinks.forEach((footerLink) => {
