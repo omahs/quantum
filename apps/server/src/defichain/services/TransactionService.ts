@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { PrismaService } from 'src/PrismaService';
 import { formatDate } from 'src/utils/DateUtils';
 
-import { SaveTransactionDto } from '../model/SaveTransactionDto';
+import { SaveTransactionObject } from '../model/SaveTransactionDto';
 
 @Injectable()
 export class TransactionService {
@@ -21,7 +21,7 @@ export class TransactionService {
     this.network = configService.getOrThrow<EnvironmentNetwork>(`defichain.network`);
   }
 
-  async save(data: SaveTransactionDto): Promise<{ success: boolean }> {
+  async save(data: SaveTransactionObject): Promise<{ success: boolean }> {
     await this.prisma.deFiChainTransactions.create({ data: { ...data, status: 'PENDING' } });
     return { success: true };
   }

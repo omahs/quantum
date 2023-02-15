@@ -1,6 +1,16 @@
 import { TokenSymbol } from '@prisma/client';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 
+export class SaveTransactionObject {
+  constructor(
+    public readonly symbol: TokenSymbol,
+    public readonly amount: string,
+    public readonly to: string,
+    public readonly from: string,
+    public readonly transactionHash: string,
+  ) {}
+}
+
 export class SaveTransactionDto {
   @IsEnum(TokenSymbol)
   symbol: TokenSymbol;
@@ -24,5 +34,9 @@ export class SaveTransactionDto {
     this.to = to;
     this.from = from;
     this.transactionHash = transactionHash;
+  }
+
+  toObj(): SaveTransactionObject {
+    return new SaveTransactionObject(this.symbol, this.amount, this.to, this.from, this.transactionHash);
   }
 }

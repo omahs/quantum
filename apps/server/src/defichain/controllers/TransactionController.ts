@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TokenSymbol } from '@prisma/client';
 import { TokenSymbolValidationPipe } from 'src/pipes/TokenSymbolValidation.pipe';
 
@@ -10,8 +10,9 @@ export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post('/save')
+  @UsePipes(new ValidationPipe({ transform: true }))
   async post(@Body() data: SaveTransactionDto): Promise<{ success: boolean }> {
-    return this.transactionService.save(data);
+    return this.transactionService.save(data.toObj());
   }
 
   @Get('/daily-limit')
