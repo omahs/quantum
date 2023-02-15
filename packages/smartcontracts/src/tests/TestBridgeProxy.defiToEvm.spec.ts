@@ -3,11 +3,11 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { TestBridge, TestBridge__factory, TestToken } from '../generated';
+import { TestBridgeInitializer, TestBridgeInitializer__factory, TestToken } from '../generated';
 import { toWei } from './testUtils/mathUtils';
 
 describe('EVM to Defi Bridge V2', () => {
-  let proxyBridge: TestBridge;
+  let proxyBridge: TestBridgeInitializer;
   let defaultAdminSigner: SignerWithAddress;
   let operationalAdminSigner: SignerWithAddress;
   let testToken: TestToken;
@@ -21,7 +21,7 @@ describe('EVM to Defi Bridge V2', () => {
     await bridgeUpgradeable.deployed();
     const BridgeProxy = await ethers.getContractFactory('BridgeProxy');
     // deployment arguments for the Proxy contract
-    const encodedData = TestBridge__factory.createInterface().encodeFunctionData('initialize', [
+    const encodedData = TestBridgeInitializer__factory.createInterface().encodeFunctionData('initialize', [
       // admin address
       accounts[0],
       // operational address
