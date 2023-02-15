@@ -2,7 +2,11 @@ import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { BridgeV1__factory, TestBridge__factory, TestBridgeReinitializer__factory } from '../generated';
+import {
+  TestBridgeInitializer__factory,
+  TestBridgeReinitializer__factory,
+  TestBridgeReinitializerTwo__factory,
+} from '../generated';
 import { deployContracts } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
 
@@ -11,7 +15,7 @@ describe('Test Behaviour related to proxy', () => {
     const { testToken, proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
     const accounts = await ethers.provider.listAccounts();
 
-    const NewImplementationFactory = await ethers.getContractFactory('NewImplementation');
+    const NewImplementationFactory = await ethers.getContractFactory('TestBridgeInitializerTwo');
     const newImplementation = await NewImplementationFactory.deploy();
     await newImplementation.deployed();
 
@@ -76,10 +80,10 @@ describe('Test Behaviour related to proxy', () => {
     const { proxyBridge, defaultAdminSigner, operationalAdminSigner, communityAddress } = await loadFixture(
       deployContracts,
     );
-    const TestBridgeFactory = await ethers.getContractFactory('TestBridge');
+    const TestBridgeFactory = await ethers.getContractFactory('TestBridgeInitializer');
     const TestContract = await TestBridgeFactory.deploy();
     await TestContract.deployed();
-    const encodedData = TestBridge__factory.createInterface().encodeFunctionData('initialize', [
+    const encodedData = TestBridgeInitializer__factory.createInterface().encodeFunctionData('initialize', [
       // admin address
       defaultAdminSigner.address,
       // operational address: GN safe
@@ -120,15 +124,18 @@ describe('Test Behaviour related to proxy', () => {
       // added version number
       1,
     ]);
+
     const bridgeProxy = await BridgeProxy.deploy(TestContract.address, encodedData);
     await bridgeProxy.deployed();
     const proxyBridge = TestBridgeFactory.attach(bridgeProxy.address);
+    // Version number should be equal to 1
+    expect(await proxyBridge.version()).to.be.equal(1);
 
-    const BridgeV1Factory = await ethers.getContractFactory('BridgeV1');
+    const BridgeV1Factory = await ethers.getContractFactory('TestBridgeReinitializerTwo');
     const bridgeV1Contract = await BridgeV1Factory.deploy();
     await bridgeV1Contract.deployed();
 
-    encodedData = BridgeV1__factory.createInterface().encodeFunctionData('initialize', [
+    encodedData = TestBridgeReinitializerTwo__factory.createInterface().encodeFunctionData('initialize', [
       // admin address
       defaultAdminSigner.address,
       // operational address: GN safe
@@ -140,10 +147,13 @@ describe('Test Behaviour related to proxy', () => {
       30,
       communityAddress,
       2,
-      // No added version number
+      // Changing version number to 2
+      2,
     ]);
 
     // upgrade to the new contract
     await proxyBridge.upgradeToAndCall(bridgeV1Contract.address, encodedData);
+    // Version number should be equal to 2
+    expect(await proxyBridge.version()).to.be.equal(2);
   });
 });

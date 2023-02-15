@@ -7,6 +7,7 @@ import '@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.
 import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import '@openzeppelin/contracts/utils/Strings.sol';
 import 'hardhat/console.sol';
 
 /** @notice @dev  
@@ -69,7 +70,7 @@ error EXPIRED_CLAIM();
 */
 error AMOUNT_CAN_NOT_BE_ZERO();
 
-contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
+contract TestBridgeReinitializerTwo is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     using EnumerableSet for EnumerableSet.AddressSet;
     struct TokenAllowance {
         uint256 latestResetTimestamp;
@@ -94,7 +95,7 @@ contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradea
     bytes32 public constant OPERATIONAL_ROLE = keccak256('OPERATIONAL_ROLE');
 
     string public constant name = 'QUANTUM_BRIDGE';
-    string public constant version = '1.0';
+    uint8 public version;
 
     // Initial Tx fee 0.3%. Based on dps (e.g 1% == 100dps)
     uint256 public transactionFee;
@@ -225,10 +226,11 @@ contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradea
         address _communityWallet,
         uint256 _fee,
         address _flushReceiveAddress,
-        uint256 _acceptableRemainingDays
-    ) external initializer {
+        uint256 _acceptableRemainingDays,
+        uint8 _version
+    ) external reinitializer(_version) {
         __UUPSUpgradeable_init();
-        __EIP712_init(name, version);
+        __EIP712_init(name, Strings.toString(_version));
         _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
         _grantRole(OPERATIONAL_ROLE, _initialOperational);
         communityWallet = _communityWallet;
@@ -236,6 +238,7 @@ contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradea
         transactionFee = _fee;
         flushReceiveAddress = _flushReceiveAddress;
         acceptableRemainingDays = _acceptableRemainingDays;
+        version = _version;
     }
 
     /**
@@ -282,15 +285,15 @@ contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradea
         uint256 tokenAllowanceStartTime = tokenAllowances[_tokenAddress].latestResetTimestamp;
         if (block.timestamp < tokenAllowanceStartTime) revert STILL_IN_CHANGE_ALLOWANCE_PERIOD();
         if (_amount == 0) revert AMOUNT_CAN_NOT_BE_ZERO();
-        // Transaction is within the last tracked hour's daily allowance
-        if (tokenAllowances[_tokenAddress].latestResetTimestamp + (1 hours) > block.timestamp) {
+        // Transaction is within the last tracked day's daily allowance
+        if (tokenAllowances[_tokenAddress].latestResetTimestamp + (1 days) > block.timestamp) {
             tokenAllowances[_tokenAddress].currentDailyUsage += _amount;
             if (tokenAllowances[_tokenAddress].currentDailyUsage > tokenAllowances[_tokenAddress].dailyAllowance)
                 revert EXCEEDS_DAILY_ALLOWANCE();
         } else {
             tokenAllowances[_tokenAddress].latestResetTimestamp +=
-                ((block.timestamp - tokenAllowances[_tokenAddress].latestResetTimestamp) / (1 hours)) *
-                1 hours;
+                ((block.timestamp - tokenAllowances[_tokenAddress].latestResetTimestamp) / (1 days)) *
+                1 days;
             tokenAllowances[_tokenAddress].currentDailyUsage = _amount;
             if (tokenAllowances[_tokenAddress].currentDailyUsage > tokenAllowances[_tokenAddress].dailyAllowance)
                 revert EXCEEDS_DAILY_ALLOWANCE();
@@ -353,7 +356,7 @@ contract TestBridge is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradea
     ) external {
         if (!checkRoles()) revert NON_AUTHORIZED_ADDRESS();
         if (!supportedTokens.contains(_tokenAddress)) revert ONLY_SUPPORTED_TOKENS();
-        if (_newResetTimeStamp < block.timestamp + 1 hours) revert INVALID_RESET_EPOCH_TIME();
+        if (_newResetTimeStamp < block.timestamp + 1 days) revert INVALID_RESET_EPOCH_TIME();
         tokenAllowances[_tokenAddress].dailyAllowance = _dailyAllowance;
         uint256 prevTimeStamp = tokenAllowances[_tokenAddress].latestResetTimestamp;
         tokenAllowances[_tokenAddress].latestResetTimestamp = _newResetTimeStamp;
