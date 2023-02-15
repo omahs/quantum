@@ -2,11 +2,12 @@ import { JellyfishJSON } from '@defichain/jellyfish-json';
 import helmet from '@fastify/helmet';
 import { NestApplicationOptions, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Logger } from 'nestjs-pino';
 
 import { BaseModule } from './modules/BaseModule';
+import { PrismaErrorExceptionFilter } from './PrismaErrorException.filter';
 
 /**
  * App which starts the default Bridge Server Application with production-ready configs
@@ -48,6 +49,9 @@ export class BridgeServerApp<App extends NestFastifyApplication = NestFastifyApp
       methods: ['GET', 'PUT', 'POST', 'DELETE'],
       maxAge: 60 * 24 * 7,
     });
+
+    const { httpAdapter } = app.get(HttpAdapterHost);
+    app.useGlobalFilters(new PrismaErrorExceptionFilter(httpAdapter));
     await app.register(helmet);
   }
 

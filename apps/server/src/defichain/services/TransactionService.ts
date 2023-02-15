@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Prisma, TokenSymbol } from '@prisma/client';
+import { TokenSymbol } from '@prisma/client';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { PrismaService } from 'src/PrismaService';
@@ -22,18 +22,8 @@ export class TransactionService {
   }
 
   async save(data: SaveTransactionDto): Promise<{ success: boolean }> {
-    try {
-      await this.prisma.deFiChainTransactions.create({ data });
-      return { success: true };
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // Prisma error codes: https://www.prisma.io/docs/reference/api-reference/error-reference#error-codes
-        if (e.code === 'P2002') {
-          throw new BadRequestException('Unique constraint failed');
-        }
-      }
-      throw e;
-    }
+    await this.prisma.deFiChainTransactions.create({ data });
+    return { success: true };
   }
 
   async dailyLimit(symbol: TokenSymbol): Promise<DailyLimit> {
