@@ -1,3 +1,4 @@
+import Container from "@components/commons/Container";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import { FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
@@ -28,10 +29,7 @@ export default function Maintenance(): JSX.Element {
     <div className="relative">
       <Header />
       <div className="relative z-[1] flex-grow">
-        <section
-          className="relative mt-8 flex min-h-screen flex-col md:mt-7 lg:mt-12"
-          data-testid="homepage"
-        >
+        <Container className="mx-0 min-h-screen" data-testid="homepage">
           <div className="flex flex-col md:flex-row w-full px-0 md:px-12 lg:px-[120px]">
             <div className="flex flex-col justify-between px-6 pb-6 md:px-0 md:pb-0 md:w-6/12 md:mr-8 lg:mr-[72px]">
               <div>
@@ -71,7 +69,7 @@ export default function Maintenance(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </Container>
       </div>
       <section className="absolute top-0 left-0 z-auto h-full w-full bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/maintenance_tablet.png')] bg-[url('/background/maintenance_mobile.png')] lg:bg-[url('/background/maintenance_desktop.png')] lg:bg-center" />
       <Footer />
