@@ -1,9 +1,11 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { ProgressStepI } from "types";
+import { ProgressStepI, AddressDetails, TransferData } from "types";
 import useResponsive from "@hooks/useResponsive";
 import ProgressStepIndicator from "@components/commons/ProgressStepIndicator";
 import ProgressStepIndicatorMobile from "@components/commons/ProgressStepIndicatorMobile";
+import { setStorageItem } from "@utils/localStorage";
+import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import StepOneInitiate from "./StepOneInitiate";
 import StepTwoSendConfirmation from "./StepTwoSendConfirmation";
 import StepThreeVerification from "./StepThreeVerification";
@@ -16,9 +18,21 @@ const DfcToErcTransferSteps: ProgressStepI[] = [
   { step: 4, label: "Claim" },
 ];
 
-export default function DeFiChainToERC20Transfer() {
+export default function DeFiChainToERC20Transfer({
+  data,
+  addressDetail,
+}: {
+  data: TransferData;
+  addressDetail?: AddressDetails;
+}) {
   const [activeStep, setActiveStep] = useState(1);
   const { isMobile } = useResponsive();
+
+  const { DFC_ADDR_KEY } = useBridgeFormStorageKeys();
+  const [refundAddress, setRefundAddress] = useState<string>(
+    addressDetail?.refundAddress ?? ""
+  );
+
   // TODO: check if transaction validated from api
   const transactionValidated = true;
 
@@ -49,14 +63,35 @@ export default function DeFiChainToERC20Transfer() {
           />
         )}
       </div>
-      {activeStep === 1 && <StepOneInitiate goToNextStep={handleNextStep} />}
+      {activeStep === 1 && (
+        <StepOneInitiate
+          refundAddress={refundAddress}
+          setRefundAddress={setRefundAddress}
+          goToNextStep={() => {
+            if (addressDetail?.refundAddress !== refundAddress) {
+              setStorageItem(DFC_ADDR_KEY, null);
+            }
+            handleNextStep();
+          }}
+        />
+      )}
       {activeStep === 2 && (
-        <StepTwoSendConfirmation goToNextStep={handleNextStep} />
+        <StepTwoSendConfirmation
+          refundAddress={refundAddress}
+          addressDetail={addressDetail}
+          goToNextStep={handleNextStep}
+        />
       )}
       {activeStep === 3 && (
         <StepThreeVerification goToNextStep={handleNextStep} />
       )}
-      {activeStep >= 4 && <StepLastClaim goToNextStep={handleNextStep} />}
+      {activeStep >= 4 && (
+        <StepLastClaim
+          data={data}
+          // TODO: Pass signature and nonce from Verification step here
+          signedClaim={{ signature: "", nonce: 0 }}
+        />
+      )}
     </div>
   );
 }

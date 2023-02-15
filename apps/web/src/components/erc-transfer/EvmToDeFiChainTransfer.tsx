@@ -167,7 +167,6 @@ export default function EvmToDeFiChainTransfer({
         <ErrorModal
           title="Transaction error"
           message={errorMessage}
-          hasError={!!errorMessage}
           primaryButtonLabel={
             transactionHash ? "View on Etherscan" : "Try again"
           }
