@@ -4,9 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { TokenSymbol } from '@prisma/client';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
-import { PrismaService } from 'src/PrismaService';
-import { formatDate } from 'src/utils/DateUtils';
 
+import { PrismaService } from '../../PrismaService';
+import { formatDate } from '../../utils/DateUtils';
 import { SaveTransactionObject } from '../model/SaveTransactionDto';
 
 @Injectable()

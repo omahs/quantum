@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TokenSymbol } from '@prisma/client';
-import { TokenSymbolValidationPipe } from 'src/pipes/TokenSymbolValidation.pipe';
 
+import { TokenSymbolValidationPipe } from '../../pipes/TokenSymbolValidation.pipe';
 import { SaveTransactionDto } from '../model/SaveTransactionDto';
 import { DailyLimit, TransactionService } from '../services/TransactionService';
 
