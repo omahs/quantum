@@ -65,43 +65,23 @@ export default function Footer() {
             />
           </div>
         </div>
-        {/* Desktop view */}
-        <div className="pl-1 flex-row justify-between lg:block hidden">
+        <div className="pl-1 flex-row justify-between">
           <div className="font-semibold">
             Quantum is a proud development of Birthday Research — the blockchain
             R&D arm of Cake DeFi.
           </div>
-          <div className="flex flex-row items-center justify-between pt-[26px]">
-            <div className="flex flex-row">
-              <div className="pr-[11px]">&copy; Birthday Research</div>
-              <Socials items={BirthdayResearchSocialItems} />
-            </div>
-            <div className="flex flex-row-reverse">
-              <div className="pl-[11px]">&copy; DeFiChain</div>
-              <Socials items={DeFiChainSocialItems} />
-            </div>
-          </div>
-        </div>
-        {/* Tablet and Mobile view */}
-        <div className="pl-1 lg:hidden">
-          <div className="font-semibold">
-            Quantum is a proud development of Birthday Research — the blockchain
-            R&D arm of Cake DeFi.
-          </div>
-          <div className="flex flex-row pt-[26px] justify-between">
-            <div className="flex xs:flex-col md:flex-row">
-              <div className="flex flex-row justify-between pb-2 md:pr-[11px]">
+          <div className="flex flex-row justify-between xs:pt-[19px] md:pt-[26px] lg:pt-0">
+            <div className="flex xs:flex-col md:items-end md:flex-row md:flex lg:flex-row item-start">
+              <div className="pr-[11px] md:pb-0 xs:pb-[12.5px]">
                 &copy; Birthday Research
               </div>
-              <div className="flex flex-row md:space-x-3">
-                <Socials items={BirthdayResearchSocialItems} />
-              </div>
+              <Socials items={BirthdayResearchSocialItems} />
             </div>
-            <div className="flex xs:flex-col-reverse md:flex-row">
-              <div className="flex flex-row justify-between pr-[11px] xs:space-x-3.5 xs:pt-2 md:pt-0">
-                <Socials items={DeFiChainSocialItems} />
+            <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0">
+              <div className="pb-0 md:pl-2 md:pb-0 xs:pb-[12.5px] lg:relative lg:bottom-[20px]">
+                &copy; DeFiChain
               </div>
-              <div>&copy; DeFiChain</div>
+              <Socials items={DeFiChainSocialItems} />
             </div>
           </div>
         </div>
