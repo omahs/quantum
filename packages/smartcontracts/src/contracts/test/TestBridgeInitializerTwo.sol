@@ -4,7 +4,7 @@ import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 // Inheritance chain is the same as the old version so that the state variables storage slots follow the same order
-contract NewImplementation is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
+contract TestBridgeInitializerTwo is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
     event EVENT_BY_PAYABLE_FUNCTION();
     event ETH_RECEIVED(address indexed sender, uint256 indexed amount);
     using EnumerableSet for EnumerableSet.AddressSet;

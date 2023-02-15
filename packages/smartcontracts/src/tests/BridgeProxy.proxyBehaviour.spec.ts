@@ -12,6 +12,7 @@ import { toWei } from './testUtils/mathUtils';
 
 describe('Test Behaviour related to proxy', () => {
   it('The smart contract retains the values of state variables after upgrading', async () => {
+    // This one from Cuong's proxyBehaviour PR
     const { testToken, proxyBridge, defaultAdminSigner } = await loadFixture(deployContracts);
     const accounts = await ethers.provider.listAccounts();
 

@@ -16,7 +16,7 @@ describe('EVM to Defi Bridge V2', () => {
     const accounts = await ethers.provider.listAccounts();
     defaultAdminSigner = await ethers.getSigner(accounts[0]);
     operationalAdminSigner = await ethers.getSigner(accounts[1]);
-    const BridgeUpgradeable = await ethers.getContractFactory('TestBridge');
+    const BridgeUpgradeable = await ethers.getContractFactory('TestBridgeInitializer');
     const bridgeUpgradeable = await BridgeUpgradeable.deploy();
     await bridgeUpgradeable.deployed();
     const BridgeProxy = await ethers.getContractFactory('BridgeProxy');
