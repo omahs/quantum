@@ -8,7 +8,7 @@ export default function ScreenContainer({
   children: JSX.Element;
 }): JSX.Element {
   // TODO update logic when endpoint is ready
-  const isMaintenanceEnabled = false;
+  const isMaintenanceEnabled = true;
 
   return (
     <div>

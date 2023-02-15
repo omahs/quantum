@@ -31,16 +31,16 @@ export default function Maintenance(): JSX.Element {
       <div className="relative z-[1] flex-grow">
         <Container className="mx-0 min-h-screen" data-testid="homepage">
           <div className="flex flex-col md:flex-row w-full px-0 md:px-12 lg:px-[120px]">
-            <div className="flex flex-col justify-between px-6 pb-6 md:px-0 md:pb-0 md:w-6/12 md:mr-8 lg:mr-[72px]">
+            <div className="flex flex-col justify-between px-6 pb-6 md:px-0 md:pb-0 md:mr-8 lg:mr-[72px]">
               <div>
-                <div className="text-[16px] lg:text-[16px] leading-4 lg:leading-[16px] text-error tracking-[0.04em] pb-2">
+                <div className="md:text-[16px] leading-4 text-error tracking-[0.04em] pb-2">
                   SCHEDULED MAINTENANCE
                 </div>
-                <h1 className="text-[32px] leading-[44px] text-dark-1000 lg:text-[52px] lg:leading-[52px]">
+                <h1 className="text-dark-1000 xs:text-[36px] xs:leading-10 xs:w-11/12 md:w-7/12 md:text-[52px] md:leading-[52px] lg:text-[52px] lg:leading-[52px]">
                   Bridge is currently closed
                 </h1>
                 <div className="pt-2 pb-12">
-                  <div className="align-middle text-base text-dark-700 lg:text-xl w-11/12">
+                  <div className="align-middle text-base text-dark-700 lg:text-xl md:w-7/12">
                     There are regular checks to maintain performance standards
                     on the Bridge. Please try again after some time. For any
                     immediate concerns or status updates, consult the following
@@ -59,7 +59,7 @@ export default function Maintenance(): JSX.Element {
                     >
                       <div className="flex flex-row items-center">
                         <Icon size={18} />
-                        <span className="ml-2 text-base font-semibold text-dark-700">
+                        <span className="ml-2 text-base font-semibold ">
                           {label}
                         </span>
                       </div>
