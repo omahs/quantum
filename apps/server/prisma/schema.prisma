@@ -27,10 +27,11 @@ enum TokenSymbol {
 }
 
 model DeFiChainAddressIndex {
-  id        BigInt   @id @default(autoincrement())
-  index     Int      @unique
-  address   String   @unique
-  createdAt DateTime @default(now())
+  id            BigInt   @id @default(autoincrement())
+  index         Int      @unique
+  address       String   @unique
+  refundAddress String
+  createdAt     DateTime @default(now())
 }
 
 model BridgeEventTransactions {
