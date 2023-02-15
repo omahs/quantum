@@ -22,7 +22,7 @@ export class TransactionService {
   }
 
   async save(data: SaveTransactionDto): Promise<{ success: boolean }> {
-    await this.prisma.deFiChainTransactions.create({ data });
+    await this.prisma.deFiChainTransactions.create({ data: { ...data, status: 'PENDING' } });
     return { success: true };
   }
 

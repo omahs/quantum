@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "DeFiChainTransactionStatus" AS ENUM ('PENDING', 'SENT');
+
+-- CreateEnum
 CREATE TYPE "TokenSymbol" AS ENUM ('DFI', 'BTC', 'ETH', 'USDT', 'USDC');
 
 -- CreateTable
@@ -9,6 +12,7 @@ CREATE TABLE "DeFiChainTransactions" (
     "to" TEXT NOT NULL,
     "from" TEXT NOT NULL,
     "transactionHash" TEXT NOT NULL,
+    "status" "DeFiChainTransactionStatus" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
 

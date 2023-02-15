@@ -13,6 +13,11 @@ enum EthereumTransactionStatus {
   CONFIRMED
 }
 
+enum DeFiChainTransactionStatus {
+  PENDING
+  SENT
+}
+
 enum TokenSymbol {
   DFI
   BTC
@@ -37,12 +42,13 @@ model BridgeEventTransactions {
 }
 
 model DeFiChainTransactions {
-  id              BigInt            @id @default(autoincrement())
+  id              BigInt                      @id @default(autoincrement())
   symbol          TokenSymbol          
   amount          Decimal
   to              String          
   from            String          
-  transactionHash String            @unique /// Ethereum transaction hash
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime?         @updatedAt
+  transactionHash String                      @unique /// Ethereum transaction hash
+  status          DeFiChainTransactionStatus    
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime?                   @updatedAt
 }
