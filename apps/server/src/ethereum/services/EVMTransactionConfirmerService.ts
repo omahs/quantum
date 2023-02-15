@@ -5,7 +5,7 @@ import { BridgeV1__factory } from 'smartcontracts';
 
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
-import { getEndOfDayTimeStamp } from '../../utils/MathUtils';
+import { getEndOfDayTimeStamp } from '../../utils/DateUtils';
 
 @Injectable()
 export class EVMTransactionConfirmerService {
