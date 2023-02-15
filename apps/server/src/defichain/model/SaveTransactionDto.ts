@@ -2,14 +2,11 @@ import { TokenSymbol } from '@prisma/client';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 
 export class SaveTransactionDto {
-  @IsString()
-  transactionId: string;
+  @IsEnum(TokenSymbol)
+  symbol: TokenSymbol;
 
   @IsNumberString()
   amount: string;
-
-  @IsEnum(TokenSymbol)
-  symbol: TokenSymbol;
 
   @IsString()
   to: string;
@@ -17,11 +14,15 @@ export class SaveTransactionDto {
   @IsString()
   from: string;
 
-  constructor(transactionId: string, amount: string, symbol: TokenSymbol, to: string, from: string) {
-    this.transactionId = transactionId;
-    this.amount = amount;
+  // TODO: Validate Ethereum transaction hash
+  @IsString()
+  transactionHash: string;
+
+  constructor(symbol: TokenSymbol, amount: string, to: string, from: string, transactionHash: string) {
     this.symbol = symbol;
+    this.amount = amount;
     this.to = to;
     this.from = from;
+    this.transactionHash = transactionHash;
   }
 }
