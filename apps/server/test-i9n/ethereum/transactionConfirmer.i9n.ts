@@ -1,4 +1,5 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
+import { EthereumTransactionStatus } from '@prisma/client';
 import { ethers } from 'ethers';
 import {
   BridgeV1,
@@ -118,6 +119,6 @@ describe('Bridge Service Integration Tests', () => {
     transactionDbRecord = await prismaService.bridgeEventTransactions.findFirst({
       where: { transactionHash: transactionCall.hash },
     });
-    expect(transactionDbRecord?.status).toStrictEqual('CONFIRMED');
+    expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
   });
 });
