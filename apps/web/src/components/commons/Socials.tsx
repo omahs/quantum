@@ -15,7 +15,7 @@ export default function Socials(props: SocialsProps): JSX.Element {
           target="_blank"
           rel="noreferrer"
           className=""
-          data-testid={`${testId}_tablet_mobile`}
+          data-testid={`${testId}`}
         >
           <Icon size={18} />
         </a>

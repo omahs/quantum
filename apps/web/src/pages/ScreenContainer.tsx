@@ -1,5 +1,6 @@
 import Footer from "@components/Footer";
 import Header from "@components/Header";
+import clsx from "clsx";
 import Maintenance from "./Maintenance";
 
 export default function ScreenContainer({
@@ -9,19 +10,23 @@ export default function ScreenContainer({
 }): JSX.Element {
   // TODO update logic when endpoint is ready
   const isMaintenanceEnabled = false;
+  const bgPicture = isMaintenanceEnabled
+    ? "bg-[url('/background/error_mobile.png')] md:bg-[url('/background/error_tablet.png')] lg:bg-[url('/background/error_desktop.png')]"
+    : "bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]";
 
   return (
-    <div>
-      {isMaintenanceEnabled ? (
-        <Maintenance />
-      ) : (
-        <div className="relative">
-          <Header />
-          <main className="relative z-[1] flex-grow md:pb-28">{children}</main>
-          <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
-          <Footer />
-        </div>
-      )}
+    <div className="relative">
+      <Header />
+      <div className="relative z-[1] flex-grow md:pb-28">
+        {isMaintenanceEnabled ? <Maintenance /> : <main>{children}</main>}
+      </div>
+      <div
+        className={clsx(
+          "absolute top-0 left-0 z-auto h-full w-full bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen lg:bg-center",
+          bgPicture
+        )}
+      />
+      <Footer />
     </div>
   );
 }

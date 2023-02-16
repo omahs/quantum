@@ -49,14 +49,14 @@ export default function Footer() {
   return (
     <footer
       data-testid="footer"
-      className="bg-inherit relative z-[1] w-full border-dark-300 pt-4 md:pt-3"
+      className="relative z-[1] w-full border-dark-300 pt-8 bg-gradient-to-r from-[#00000066] to-[#00000000]"
     >
       <section
         data-testid="footer_web"
         className="text-dark-900 xs:px-[24px] xs:pb-[51px] md:px-[48px] lg:px-[120px] lg:pb-[34px] text-sm"
       >
-        <div className="border-t-[0.5px] dark:border-dark-300 xs:pb-[17.5px] pt-[15px]">
-          <div className="relative h-[28px] w-[250px] cursor-pointer mt-3">
+        <div className="border-t-[0.5px] border-dark-300 xs:pb-[17.5px] pt-[15px]">
+          <div className="relative h-[28px] w-[250px] mt-3">
             <Image
               fill
               data-testid="footer-bridge-logo"
@@ -71,7 +71,7 @@ export default function Footer() {
             R&D arm of Cake DeFi.
           </div>
           <div className="flex flex-row justify-between xs:pt-[19px] md:pt-[26px] lg:pt-0">
-            <div className="flex xs:flex-col md:items-end md:flex-row md:flex lg:flex-row item-start">
+            <div className="flex xs:flex-col md:items-end md:flex-row md:flex item-start">
               <div className="pr-[11px] md:pb-0 xs:pb-[12.5px]">
                 &copy; Birthday Research
               </div>
