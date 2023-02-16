@@ -9,14 +9,15 @@ import { useEffect, useState } from "react";
  */
 export default function useWatchEthTxn() {
   const { networkEnv } = useNetworkEnvironmentContext();
-  const { txnHash } = useTransactionHashContext();
+  const { txnHash, setTxnHash } = useTransactionHashContext();
 
+  const [confirmEthTxn] = useConfirmEthTxnMutation();
+
+  const [isApiLoading, setIsApiLoading] = useState(true);
   const [ethTxnStatus, setEthTxnStatus] = useState<{
     isConfirmed: boolean;
     numberOfConfirmations: string;
   }>({ isConfirmed: false, numberOfConfirmations: "0" });
-
-  const [confirmEthTxn] = useConfirmEthTxnMutation();
 
   /* Poll to check if the txn is already confirmed */
   useEffect(() => {
@@ -31,20 +32,27 @@ export default function useWatchEthTxn() {
         }).unwrap();
 
         if (data) {
+          if (data?.isConfirmed) {
+            setTxnHash("confirmed", txnHash.unconfirmed);
+            setTxnHash("unconfirmed", null);
+          }
+
           setEthTxnStatus({
             isConfirmed: data?.isConfirmed,
             numberOfConfirmations: data?.numberOfConfirmations,
           });
+          setIsApiLoading(false);
         }
       } catch ({ data }) {
         if (data?.statusCode === HttpStatusCode.TooManyRequests) {
           //   handle throttle error;
         }
+        setIsApiLoading(false);
       }
       setTimeout(pollConfirmEthTxn, 20000);
     };
     pollConfirmEthTxn();
   }, [networkEnv, txnHash]);
 
-  return { ethTxnStatus };
+  return { ethTxnStatus, isApiLoading };
 }

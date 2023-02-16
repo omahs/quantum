@@ -1,31 +1,34 @@
 import BigNumber from "bignumber.js";
 import { FiArrowUpRight } from "react-icons/fi";
-import { IoCloseOutline, IoHelpCircle } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
+import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import ConfirmationProgress from "./TransactionConfirmationProgressBar";
 import useResponsive from "../hooks/useResponsive";
 import { useContractContext } from "../layouts/contexts/ContractContext";
 
 export default function TransactionStatus({
-  ethTxnStatus,
+  isConfirmed,
+  numberOfConfirmations,
   txnHash,
 }: {
-  ethTxnStatus: {
-    isConfirmed: boolean;
-    numberOfConfirmations: string;
-  };
-  txnHash?: string;
+  isConfirmed: boolean;
+  numberOfConfirmations: string;
+  txnHash: string | undefined;
 }) {
   const { ExplorerURL } = useContractContext();
   const { isLg, isMd } = useResponsive();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const ConfirmationBlocksTotal = 65;
+  const confirmationBlocksCurrent = BigNumber.min(
+    CONFIRMATIONS_BLOCK_TOTAL,
+    numberOfConfirmations
+  ).toFixed();
 
   useEffect(() => {
-    if (ethTxnStatus.isConfirmed) {
+    if (isConfirmed) {
       setTitle("Transaction confirmed");
       setDescription("Expect to receive your tokens in your wallet shortly.");
     } else {
@@ -34,19 +37,19 @@ export default function TransactionStatus({
         "Do not refresh, leave the browser, or close the tab until transaction is complete. Doing so may interrupt the transaction and cause loss of funds."
       );
     }
-  }, [ethTxnStatus.isConfirmed]);
+  }, [isConfirmed]);
 
   return (
     <div
       className={clsx(
         "flex-1 px-8 py-6 text-dark-1000 rounded-xl border bg-dark-100 ",
-        ethTxnStatus.isConfirmed
+        isConfirmed
           ? "border-dark-card-stroke"
           : "dark-bg-gradient-1 border-transparent",
         isMd ? "mb-6" : "m-6"
       )}
     >
-      {ethTxnStatus.isConfirmed && (
+      {isConfirmed && (
         <div className="flex justify-end">
           <IoCloseOutline
             size={20}
@@ -57,15 +60,9 @@ export default function TransactionStatus({
       {!isLg && (
         <div className="pb-4">
           <ConfirmationProgress
-            confirmationBlocksTotal={ConfirmationBlocksTotal}
-            confirmationBlocksCurrent={
-              new BigNumber(ethTxnStatus.numberOfConfirmations).isGreaterThan(
-                65
-              )
-                ? ConfirmationBlocksTotal.toString()
-                : ethTxnStatus.numberOfConfirmations
-            }
-            isConfirmed={ethTxnStatus.isConfirmed}
+            confirmationBlocksTotal={CONFIRMATIONS_BLOCK_TOTAL}
+            confirmationBlocksCurrent={confirmationBlocksCurrent}
+            isConfirmed={isConfirmed}
           />
         </div>
       )}
@@ -94,15 +91,9 @@ export default function TransactionStatus({
         {isLg && (
           <div className="pl-8">
             <ConfirmationProgress
-              confirmationBlocksTotal={ConfirmationBlocksTotal}
-              confirmationBlocksCurrent={
-                new BigNumber(ethTxnStatus.numberOfConfirmations).isGreaterThan(
-                  65
-                )
-                  ? ConfirmationBlocksTotal.toString()
-                  : ethTxnStatus.numberOfConfirmations
-              }
-              isConfirmed={ethTxnStatus.isConfirmed}
+              confirmationBlocksTotal={CONFIRMATIONS_BLOCK_TOTAL}
+              confirmationBlocksCurrent={confirmationBlocksCurrent}
+              isConfirmed={isConfirmed}
             />
           </div>
         )}

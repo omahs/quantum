@@ -10,7 +10,7 @@ interface TransactionHashI {
     unconfirmed?: string;
   };
   getTxnHash: (key: TransactionHashType) => string | undefined;
-  setTxnHash: (key: TransactionHashType, txnHash: string) => void;
+  setTxnHash: (key: TransactionHashType, txnHash: string | null) => void;
 }
 
 export interface PoolpairId {

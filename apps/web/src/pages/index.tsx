@@ -6,6 +6,7 @@ import useResponsive from "@hooks/useResponsive";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
 import { useTransactionHashContext } from "@contexts/TransactionHashContext";
+import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 
 function Home() {
   const { isMd } = useResponsive();
@@ -23,10 +24,17 @@ function Home() {
           {isMd && <ProofOfAssetsCard />}
         </div>
         <div className="flex-1">
-          {txnHash.unconfirmed && (
+          {(txnHash.unconfirmed || txnHash.confirmed) && (
             <TransactionStatus
-              ethTxnStatus={ethTxnStatus}
-              txnHash={txnHash.unconfirmed}
+              txnHash={txnHash.confirmed ?? txnHash.unconfirmed}
+              isConfirmed={
+                txnHash.confirmed !== undefined || ethTxnStatus.isConfirmed
+              }
+              numberOfConfirmations={
+                txnHash.confirmed !== undefined
+                  ? CONFIRMATIONS_BLOCK_TOTAL.toString()
+                  : ethTxnStatus?.numberOfConfirmations
+              }
             />
           )}
           <BridgeForm hasPendingTxn={txnHash.unconfirmed !== undefined} />
