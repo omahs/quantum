@@ -11,7 +11,7 @@ export default function ScreenContainer({
 }): JSX.Element {
   // TODO update logic when endpoint is ready
   // if isMaintenanceEnabled is true, this condition will supersede /404 page display
-  const isMaintenanceEnabled = true;
+  const isMaintenanceEnabled = false;
 
   const router = useRouter();
 
