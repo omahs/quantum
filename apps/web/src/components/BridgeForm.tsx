@@ -402,12 +402,13 @@ export default function BridgeForm({
             <ActionButton
               testId="transfer-btn"
               label={getActionBtnLabel()}
+              isLoading={hasPendingTxn}
               disabled={(isConnected && !isFormValid) || hasPendingTxn}
               onClick={!isConnected ? show : () => onTransferTokens()}
             />
           )}
         </ConnectKitButton.Custom>
-        {hasUnconfirmedTxn && (
+        {hasUnconfirmedTxn && !hasPendingTxn && (
           <div className="mt-3">
             <ActionButton
               label="Reset form"

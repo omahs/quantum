@@ -87,14 +87,14 @@ export const bridgeApi = createApi({
 
 const {
   useGenerateAddressMutation,
-  useLazyVerifyQuery,
   useGetAddressDetailMutation,
   useConfirmEthTxnMutation,
+  useLazyVerifyQuery,
 } = bridgeApi;
 
 export {
   useGenerateAddressMutation,
-  useLazyVerifyQuery,
   useGetAddressDetailMutation,
   useConfirmEthTxnMutation,
+  useLazyVerifyQuery,
 };
