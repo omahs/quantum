@@ -1,6 +1,7 @@
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import Maintenance from "./Maintenance";
 
 export default function ScreenContainer({
@@ -10,9 +11,14 @@ export default function ScreenContainer({
 }): JSX.Element {
   // TODO update logic when endpoint is ready
   const isMaintenanceEnabled = false;
-  const bgPicture = isMaintenanceEnabled
-    ? "bg-[url('/background/error_mobile.png')] md:bg-[url('/background/error_tablet.png')] lg:bg-[url('/background/error_desktop.png')]"
-    : "bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]";
+
+  const router = useRouter();
+
+  // background picture has 2 conditions/designs, connected wallet vs preconnected wallet
+  const bgPicture =
+    isMaintenanceEnabled || router.pathname === "/404"
+      ? "bg-[url('/background/error_mobile.png')] md:bg-[url('/background/error_tablet.png')] lg:bg-[url('/background/error_desktop.png')]"
+      : "bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]";
 
   return (
     <div className="relative">
