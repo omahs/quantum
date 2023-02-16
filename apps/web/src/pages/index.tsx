@@ -11,7 +11,7 @@ import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 function Home() {
   const { isMd } = useResponsive();
   const { ethTxnStatus } = useWatchEthTxn();
-  const { txnHash } = useTransactionHashContext();
+  const { txnHash, setTxnHash } = useTransactionHashContext();
 
   return (
     <section
@@ -26,6 +26,7 @@ function Home() {
         <div className="flex-1">
           {(txnHash.unconfirmed || txnHash.confirmed) && (
             <TransactionStatus
+              onClose={() => setTxnHash("confirmed", null)}
               txnHash={txnHash.confirmed ?? txnHash.unconfirmed}
               isConfirmed={
                 txnHash.confirmed !== undefined || ethTxnStatus.isConfirmed

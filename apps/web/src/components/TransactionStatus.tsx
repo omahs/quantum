@@ -13,10 +13,12 @@ export default function TransactionStatus({
   isConfirmed,
   numberOfConfirmations,
   txnHash,
+  onClose,
 }: {
   isConfirmed: boolean;
   numberOfConfirmations: string;
   txnHash: string | undefined;
+  onClose: () => void;
 }) {
   const { ExplorerURL } = useContractContext();
   const { isLg, isMd } = useResponsive();
@@ -52,6 +54,7 @@ export default function TransactionStatus({
       {isConfirmed && (
         <div className="flex justify-end">
           <IoCloseOutline
+            onClick={onClose}
             size={20}
             className="hover:opacity-70 cursor-pointer"
           />

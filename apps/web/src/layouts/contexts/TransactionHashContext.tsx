@@ -1,6 +1,13 @@
 import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import { getStorageItem, setStorageItem } from "@utils/localStorage";
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  PropsWithChildren,
+} from "react";
 import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 
 type TransactionHashType = "confirmed" | "unconfirmed";
@@ -27,7 +34,7 @@ export function useTransactionHashContext(): TransactionHashI {
 
 export function TransactionHashProvider({
   children,
-}: React.PropsWithChildren<any>): JSX.Element | null {
+}: PropsWithChildren<any>): JSX.Element | null {
   const [unconfirmedTxnHashKey, setUnconfirmedTxnHashKey] = useState<string>();
   const [confirmedTxnHashKey, setConfirmedTxnHashKey] = useState<string>();
   const { networkEnv } = useNetworkEnvironmentContext();
