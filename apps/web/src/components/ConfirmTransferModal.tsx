@@ -154,7 +154,7 @@ export default function ConfirmTransferModal({
   const consortiumAddress = "df10szLaksgysjl088man5vfmsm6wsstquabds9123";
 
   return (
-    <Modal title="Transfer" isOpen={show} onClose={onClose}>
+    <Modal title="Review transaction" isOpen={show} onClose={onClose}>
       <RowData
         data={data.from}
         label="FROM"
@@ -212,7 +212,7 @@ export default function ConfirmTransferModal({
       </div>
 
       {isSendingToDFC ? (
-        <EvmToDeFiChainTransfer data={data} />
+        <EvmToDeFiChainTransfer data={data} onClose={onClose} />
       ) : (
         <DeFiChainToERC20Transfer data={data} addressDetail={addressDetail} />
       )}
