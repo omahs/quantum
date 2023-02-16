@@ -83,12 +83,12 @@ export default function TransactionStatus({
               <FiArrowUpRight size={20} className="mr-2" />
               View on Etherscan
             </a>
-            {ethTxnStatus.isConfirmed && (
+            {/* {ethTxnStatus.isConfirmed && (
               <a className="flex flex-row items-center hover:opacity-70 ml-5">
                 <IoHelpCircle size={20} className="mr-2" />
                 Help
               </a>
-            )}
+            )} */}
           </div>
         </div>
         {isLg && (
