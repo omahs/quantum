@@ -357,7 +357,7 @@ export default function BridgeForm({
         <WalletAddressInput
           label="Address"
           blockchain={selectedNetworkB.name as Network}
-          addressInput="tf1qtm9gcv3ceu3djklsfa53nan8v2tfy8kpd06rm5"
+          addressInput={addressInput}
           onAddressInputChange={(addrInput) => setAddressInput(addrInput)}
           onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
           disabled={!isConnected}
