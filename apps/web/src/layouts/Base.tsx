@@ -28,6 +28,7 @@ import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
 import { bridgeApi } from "@store/website";
+import { TransactionHashProvider } from "@contexts/TransactionHashContext";
 
 const metamask = new MetaMaskConnector({
   chains: [mainnet, goerli, localhost, hardhat],
@@ -118,14 +119,16 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                     <NetworkEnvironmentProvider>
                       <ContractProvider>
                         <ThemeProvider theme={initialTheme}>
-                          <div className="relative">
-                            <Header />
-                            <main className="relative z-[1] flex-grow">
-                              {children}
-                            </main>
-                            <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
-                            <Footer />
-                          </div>
+                          <TransactionHashProvider>
+                            <div className="relative">
+                              <Header />
+                              <main className="relative z-[1] flex-grow">
+                                {children}
+                              </main>
+                              <div className="absolute top-0 left-0 z-auto h-full w-full bg-[url('/background/mobile.png')] bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')] lg:bg-center" />
+                              <Footer />
+                            </div>
+                          </TransactionHashProvider>
                         </ThemeProvider>
                       </ContractProvider>
                     </NetworkEnvironmentProvider>

@@ -1,38 +1,33 @@
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
+import { useTransactionHashContext } from "@contexts/TransactionHashContext";
 import { useConfirmEthTxnMutation } from "@store/website";
-import { getStorageItem } from "@utils/localStorage";
 import { HttpStatusCode } from "axios";
 import { useEffect, useState } from "react";
-import useBridgeFormStorageKeys from "./useBridgeFormStorageKeys";
 
 /**
  * This polls in the /handle-transaction to verify if txn is confirmed (>= 65 confirmations)
  */
 export default function useWatchEthTxn() {
   const { networkEnv } = useNetworkEnvironmentContext();
+  const { txnHash } = useTransactionHashContext();
 
   const [ethTxnStatus, setEthTxnStatus] = useState<{
     isConfirmed: boolean;
     numberOfConfirmations: string;
   }>({ isConfirmed: false, numberOfConfirmations: "0" });
-  const [txnHash, setTxnHash] = useState<string | undefined>(undefined);
 
-  const { TXN_HASH_KEY } = useBridgeFormStorageKeys();
   const [confirmEthTxn] = useConfirmEthTxnMutation();
 
   /* Poll to check if the txn is already confirmed */
   useEffect(() => {
     const pollConfirmEthTxn = async function poll() {
-      const txnHashStorage = getStorageItem<string>(TXN_HASH_KEY) ?? undefined;
-      setTxnHash(txnHashStorage);
-
       try {
-        if (txnHashStorage === undefined) {
+        if (txnHash.unconfirmed === undefined) {
           return;
         }
 
         const data = await confirmEthTxn({
-          txnHash: txnHashStorage,
+          txnHash: txnHash.unconfirmed,
         }).unwrap();
 
         if (data) {
@@ -46,10 +41,10 @@ export default function useWatchEthTxn() {
           //   handle throttle error;
         }
       }
-      setTimeout(pollConfirmEthTxn, 5000);
+      setTimeout(pollConfirmEthTxn, 20000);
     };
     pollConfirmEthTxn();
-  }, [networkEnv]);
+  }, [networkEnv, txnHash]);
 
-  return { ethTxnStatus, txnHash };
+  return { ethTxnStatus };
 }

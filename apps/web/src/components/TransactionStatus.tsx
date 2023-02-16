@@ -1,11 +1,12 @@
 import BigNumber from "bignumber.js";
 import { FiArrowUpRight } from "react-icons/fi";
 import { IoCloseOutline, IoHelpCircle } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import clsx from "clsx";
+
 import ConfirmationProgress from "./TransactionConfirmationProgressBar";
 import useResponsive from "../hooks/useResponsive";
 import { useContractContext } from "../layouts/contexts/ContractContext";
-import { useEffect, useState } from "react";
-import clsx from "clsx";
 
 export default function TransactionStatus({
   ethTxnStatus,

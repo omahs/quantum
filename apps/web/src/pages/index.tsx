@@ -5,10 +5,12 @@ import MobileBottomMenu from "@components/MobileBottomMenu";
 import useResponsive from "@hooks/useResponsive";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
+import { useTransactionHashContext } from "@contexts/TransactionHashContext";
 
 function Home() {
   const { isMd } = useResponsive();
-  const { ethTxnStatus, txnHash } = useWatchEthTxn();
+  const { ethTxnStatus } = useWatchEthTxn();
+  const { txnHash } = useTransactionHashContext();
 
   return (
     <section
@@ -21,10 +23,13 @@ function Home() {
           {isMd && <ProofOfAssetsCard />}
         </div>
         <div className="flex-1">
-          {txnHash && (
-            <TransactionStatus ethTxnStatus={ethTxnStatus} txnHash={txnHash} />
+          {txnHash.unconfirmed && (
+            <TransactionStatus
+              ethTxnStatus={ethTxnStatus}
+              txnHash={txnHash.unconfirmed}
+            />
           )}
-          <BridgeForm hasPendingTxn={txnHash !== undefined} />
+          <BridgeForm hasPendingTxn={txnHash.unconfirmed !== undefined} />
         </div>
       </div>
       <div className="md:hidden mt-6 mb-12 mx-6">

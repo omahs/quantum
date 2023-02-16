@@ -41,7 +41,8 @@ export const DFC_TO_API_RESET_TIME_LIMIT = 1000 * 60; // 1 min api reset time
 export const DFC_TO_ERC_RESET_FORM_TIME_LIMIT = 1000 * 60 * 60 * 24; // 1 Day address expiry time
 
 export const STORAGE_TXN_KEY = "unconfirmed-txn";
-export const STORAGE_TXN_HASH_KEY = "txn-hash";
+export const STORAGE_UNCONFIRMED_TXN_HASH_KEY = "unconfirmed-txn-hash";
+export const STORAGE_CONFIRMED_TXN_HASH_KEY = "confirmed-txn-hash";
 
 export enum BridgeStatus {
   IsTokenApprovalInProgress = 0,
