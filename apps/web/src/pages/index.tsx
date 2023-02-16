@@ -3,9 +3,12 @@ import WelcomeHeader from "@components/WelcomeHeader";
 import ProofOfAssetsCard from "@components/ProofOfAssetsCard";
 import MobileBottomMenu from "@components/MobileBottomMenu";
 import useResponsive from "@hooks/useResponsive";
+import useWatchEthTxn from "@hooks/useWatchEthTxn";
+import TransactionStatus from "@components/TransactionStatus";
 
 function Home() {
   const { isMd } = useResponsive();
+  const { ethTxnStatus, txnHash } = useWatchEthTxn();
 
   return (
     <section
@@ -18,7 +21,8 @@ function Home() {
           {isMd && <ProofOfAssetsCard />}
         </div>
         <div className="flex-1">
-          <BridgeForm />
+          {txnHash && <TransactionStatus ethTxnStatus={ethTxnStatus} />}
+          <BridgeForm hasPendingTxn={txnHash !== undefined} />
         </div>
       </div>
       <div className="md:hidden mt-6 mb-12 mx-6">

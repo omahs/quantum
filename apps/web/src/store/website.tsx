@@ -6,7 +6,7 @@ import { HttpStatusCode } from "axios";
 const staggeredBaseQueryWithBailOut = retry(
   async (args: string | FetchArgs, api, extraOptions) => {
     const result = await fetchBaseQuery({
-      baseUrl: process.env.BRIDGE_API_URL || "http://localhost:5741/defichain",
+      baseUrl: process.env.BRIDGE_API_URL || "http://localhost:5741",
     })(args, api, extraOptions);
     // bail out of re-tries if TooManyRequests,
     // because we know successive re-retries would be redundant
@@ -26,7 +26,7 @@ export const bridgeApi = createApi({
   endpoints: (builder) => ({
     generateAddress: builder.mutation<AddressDetails, any>({
       query: ({ network, refundAddress }) => ({
-        url: "/wallet/address/generate",
+        url: "defichain/wallet/address/generate",
         params: { network, refundAddress },
         method: "GET",
         headers: {
@@ -38,19 +38,40 @@ export const bridgeApi = createApi({
     }),
     getAddressDetail: builder.mutation<AddressDetails, any>({
       query: ({ network, address }) => ({
-        url: `/wallet/address/${address}`,
+        url: `defichain/wallet/address/${address}`,
         params: { network },
         method: "GET",
+      }),
+      extraOptions: { maxRetries: 1 },
+    }),
+    confirmEthTxn: builder.mutation<
+      { numberOfConfirmations: string; isConfirmed: boolean },
+      any
+    >({
+      query: ({ txnHash }) => ({
+        url: "ethereum/handleTransaction",
+        body: {
+          transactionHash: txnHash,
+        },
+        method: "POST",
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json; charset=UTF-8",
         },
       }),
-      extraOptions: { maxRetries: 1 },
+      extraOptions: { maxRetries: 0 },
     }),
   }),
 });
 
-const { useGenerateAddressMutation, useGetAddressDetailMutation } = bridgeApi;
+const {
+  useGenerateAddressMutation,
+  useGetAddressDetailMutation,
+  useConfirmEthTxnMutation,
+} = bridgeApi;
 
-export { useGenerateAddressMutation, useGetAddressDetailMutation };
+export {
+  useGenerateAddressMutation,
+  useGetAddressDetailMutation,
+  useConfirmEthTxnMutation,
+};
