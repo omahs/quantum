@@ -23,6 +23,11 @@ export class EVMTransactionConfirmerService {
     );
   }
 
+  async getBalance(address: string): Promise<string> {
+    const balance = await this.ethersRpcProvider.getBalance(address);
+    return ethers.utils.formatEther(balance);
+  }
+
   async handleTransaction(transactionHash: string): Promise<HandledEVMTransaction> {
     const txReceipt = await this.ethersRpcProvider.getTransactionReceipt(transactionHash);
     const isReverted = txReceipt.status === 0;

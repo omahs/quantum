@@ -59,6 +59,30 @@ describe('Bridge Service Integration Tests', () => {
     await testing.stop();
   });
 
+  it('Validates that the ethereum address inputted is of the correct format', async () => {
+    const txReceipt = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/balance`,
+      query: {
+        address: 'wrong_address_test',
+      },
+    });
+    expect(JSON.parse(txReceipt.body).error).toBe('Bad Request');
+    expect(JSON.parse(txReceipt.body).message).toBe('Invalid Ethereum address: wrong_address_test');
+    expect(JSON.parse(txReceipt.body).statusCode).toBe(400);
+  });
+
+  it('Returns the balance of a fully funded ethereum test wallet', async () => {
+    const balance = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/balance`,
+      query: {
+        address: hardhatNetwork.getHardhatTestWallet(1).testWalletAddress,
+      },
+    });
+    expect(JSON.parse(balance.body)).toStrictEqual(10000);
+  });
+
   it('Validates that the transaction inputted is of the correct format', async () => {
     const txReceipt = await testing.inject({
       method: 'POST',
