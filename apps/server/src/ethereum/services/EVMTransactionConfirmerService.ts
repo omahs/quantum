@@ -40,10 +40,16 @@ export class EVMTransactionConfirmerService {
 
   async handleTransaction(transactionHash: string): Promise<HandledEVMTransaction> {
     const txReceipt = await this.ethersRpcProvider.getTransactionReceipt(transactionHash);
+    // if transaction is still pending
+    if (txReceipt === null) {
+      return { numberOfConfirmations: 0, isConfirmed: false };
+    }
+    // if transaction is reverted
     const isReverted = txReceipt.status === 0;
     if (isReverted === true) {
       throw new BadRequestException(`Transaction Reverted`);
     }
+
     const currentBlockNumber = await this.ethersRpcProvider.getBlockNumber();
     const numberOfConfirmations = currentBlockNumber - txReceipt.blockNumber;
     const txHashFound = await this.prisma.bridgeEventTransactions.findFirst({

@@ -92,12 +92,23 @@ describe('Bridge Service Integration Tests', () => {
   });
 
   it('Checks if a transaction is confirmed, and stores it in the database', async () => {
-    // Step 1: Call bridgeToDeFiChain(_defiAddress, _tokenAddress, _amount) function and mine the block
+    // Step 1: Call bridgeToDeFiChain(_defiAddress, _tokenAddress, _amount) function (bridge 100 USDC) and mine the block
     const transactionCall = await bridgeContract.bridgeToDeFiChain(
       ethers.constants.AddressZero,
       musdcContract.address,
       100000000,
     );
+
+    // to test pending transaction (unmined block)
+    let txReceipt = await testing.inject({
+      method: 'POST',
+      url: `/ethereum/handleTransaction`,
+      payload: {
+        transactionHash: transactionCall.hash,
+      },
+    });
+    expect(JSON.parse(txReceipt.body)).toStrictEqual({ numberOfConfirmations: 0, isConfirmed: false });
+
     await hardhatNetwork.generate(1);
 
     // Step 2: db should not have record of transaction
@@ -106,7 +117,7 @@ describe('Bridge Service Integration Tests', () => {
     });
     expect(transactionDbRecord).toStrictEqual(null);
 
-    let txReceipt = await testing.inject({
+    txReceipt = await testing.inject({
       method: 'POST',
       url: `/ethereum/handleTransaction`,
       payload: {
@@ -140,7 +151,7 @@ describe('Bridge Service Integration Tests', () => {
     expect(transactionDbRecord?.status).toStrictEqual('CONFIRMED');
   });
 
-  it('Returns the usdc balance of the bridge after bridging 100 usdc and paying 30 Gwei of gas', async () => {
+  it('Returns the usdc balance of the bridge after bridging 100 usdc and transaction fee', async () => {
     const balance = await testing.inject({
       method: 'GET',
       url: `/ethereum/balance/USDC`,
