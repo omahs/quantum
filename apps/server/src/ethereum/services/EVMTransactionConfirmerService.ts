@@ -2,7 +2,7 @@ import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } fr
 import { ConfigService } from '@nestjs/config';
 import { EthereumTransactionStatus } from '@prisma/client';
 import { BigNumber, Contract, ethers } from 'ethers';
-import { BridgeV1__factory } from 'smartcontracts';
+import { BridgeV1__factory, ERC20__factory } from 'smartcontracts';
 
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
@@ -144,6 +144,7 @@ export class EVMTransactionConfirmerService {
           transactionHash,
         },
       });
+
       // check if tx details are available in db
       if (!txDetails) {
         throw new Error('Transaction detail not available');
@@ -154,17 +155,19 @@ export class EVMTransactionConfirmerService {
       if (txDetails?.status === EthereumTransactionStatus.CONFIRMED) {
         const onChainTxnDetail = await this.ethersRpcProvider.getTransaction(transactionHash);
         const { params } = decodeTxnData(onChainTxnDetail);
-        // eslint-disable-next-line no-underscore-dangle
-        const address = ethers.utils.toUtf8String(params._defiAddress);
+        const { _defiAddress: defiAddress, _tokenAddress: tokenAddress, _amount: amount } = params;
+        const address = ethers.utils.toUtf8String(defiAddress);
+        const evmTokenContract = new ethers.Contract(tokenAddress, ERC20__factory.abi, this.ethersRpcProvider);
+        const wTokenName = await evmTokenContract.name();
+        const wTokenSymbol = await evmTokenContract.symbol();
         // TODO check 0.1% charge for EVM => DFI
         // await this.sendService.send(address, {
         //   symbol: '',
         //   id: '',
-        //   // eslint-disable-next-line no-underscore-dangle
-        //   amount: params._amount
+        //   amount: amount
         // })
         // transfer logic
-        return { ...params, address };
+        return { address, wTokenName, wTokenSymbol, amount, tokenAddress };
       }
       return {};
     } catch (e: any) {
