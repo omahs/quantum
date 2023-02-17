@@ -108,17 +108,27 @@ export default function EvmToDeFiChainTransfer({
   // Consolidate all the possible status of the txn before its tx hash is created
   useEffect(() => {
     let status = BridgeStatus.NoTxCreated;
-    if (eventError !== undefined) {
+    console.log("WHYY:: ", {
+      eventError,
+      isApproveTxnLoading,
+      requiresApproval,
+      hasPendingTx,
+    });
+    if ((hasPendingTx && requiresApproval) || isApproveTxnLoading) {
+      status = BridgeStatus.IsTokenApprovalInProgress;
+    } else if (hasPendingTx) {
+      status = BridgeStatus.IsBridgeToDfcInProgress;
+    } else if (
+      eventError !== undefined &&
+      eventError?.customErrorDisplay !== "InsufficientAllowanceError"
+    ) {
       setErrorMessage(eventError.message);
-      status = BridgeStatus.TxHashBridgetoDfcError;
     } else if (isApproveTxnSuccess && requiresApproval) {
       status = BridgeStatus.IsTokenApproved;
     } else if (!isApproveTxnSuccess && requiresApproval) {
       /* TODO(pierregee): Update the Token rejected design */
-      setErrorMessage("Token rejected");
+      // setErrorMessage("Token rejected");   // Lyka: This will be shown right away cause isApproveTxnSuccess is false by default right
       status = BridgeStatus.IsTokenRejected;
-    } else if (isApproveTxnLoading || requiresApproval) {
-      status = BridgeStatus.IsTokenApprovalInProgress;
     }
 
     setBridgeStatus(status);
@@ -184,6 +194,20 @@ export default function EvmToDeFiChainTransfer({
             </span>
             <span className="text-dark-900 mt-2">
               {`Requesting permission to access your ${data.from.tokenName} funds.`}
+            </span>
+          </div>
+        </Modal>
+      )}
+
+      {bridgeStatus === BridgeStatus.IsBridgeToDfcInProgress && (
+        <Modal isOpen>
+          <div className="flex flex-col items-center mt-6 mb-14">
+            <div className="w-24 h-24 border border-brand-200 border-b-transparent rounded-full animate-spin" />
+            <span className="font-bold text-2xl text-dark-900 mt-12">
+              Waiting for confirmation
+            </span>
+            <span className="text-dark-900 mt-2">
+              Confirm this transaction in your Wallet.
             </span>
           </div>
         </Modal>
