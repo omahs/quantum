@@ -26,7 +26,7 @@ import {
 import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { bridgeApi } from "@store/website";
+import { bridgeApi } from "@store/defichain";
 import ScreenContainer from "../components/ScreenContainer";
 
 const metamask = new MetaMaskConnector({
