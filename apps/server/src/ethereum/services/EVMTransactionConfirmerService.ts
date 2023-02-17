@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Contract, ethers } from 'ethers';
 import { BridgeV1__factory } from 'smartcontracts';
 
+import { SupportedTokenSymbols } from '../../AppConfig';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
 import { getEndOfDayTimeStamp } from '../../utils/MathUtils';
@@ -23,13 +24,13 @@ export class EVMTransactionConfirmerService {
     );
   }
 
-  async getBalance(tokenSymbol: string): Promise<string> {
+  async getBalance(tokenSymbol: SupportedTokenSymbols): Promise<string> {
     const contractABI = ['function balanceOf(address) view returns (uint256)'];
-    if (!['WETH', 'USDC', 'USDT'].includes(tokenSymbol)) {
+    if (!SupportedTokenSymbols[tokenSymbol]) {
       throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
     }
     const tokenContract = new ethers.Contract(
-      this.configService.getOrThrow(`ethereum.contracts.${tokenSymbol}.address`),
+      this.configService.getOrThrow(`ethereum.contracts.${SupportedTokenSymbols[tokenSymbol]}.address`),
       contractABI,
       this.ethersRpcProvider,
     );
