@@ -25,6 +25,7 @@ model BridgeEventTransactions {
   id              BigInt                    @id @default(autoincrement())
   transactionHash String
   status          EthereumTransactionStatus
+  isFundAllocated Boolean                   @default(false)
   createdAt       DateTime                  @default(now())
   updatedAt       DateTime?                 @updatedAt
 }
