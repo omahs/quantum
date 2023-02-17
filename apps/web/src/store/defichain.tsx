@@ -26,7 +26,7 @@ export const bridgeApi = createApi({
   endpoints: (builder) => ({
     generateAddress: builder.mutation<AddressDetails, any>({
       query: ({ baseUrl, refundAddress }) => ({
-        url: `${baseUrl}/wallet/address/generate`,
+        url: `${baseUrl}/defichain/wallet/address/generate`,
         params: { refundAddress },
         method: "GET",
         headers: {
@@ -46,7 +46,7 @@ export const bridgeApi = createApi({
       }
     >({
       query: ({ baseUrl, address, amount, symbol }) => ({
-        url: `${baseUrl}/wallet/verify`,
+        url: `${baseUrl}/defichain/wallet/verify`,
         method: "POST",
         body: {
           address,
@@ -58,7 +58,7 @@ export const bridgeApi = createApi({
     }),
     getAddressDetail: builder.mutation<AddressDetails, any>({
       query: ({ baseUrl, address }) => ({
-        url: `${baseUrl}/wallet/address/${address}`,
+        url: `${baseUrl}/defichain/wallet/address/${address}`,
         method: "GET",
         headers: {
           "Access-Control-Allow-Origin": "*",
