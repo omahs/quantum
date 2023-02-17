@@ -96,7 +96,7 @@ describe('Bridge Service Integration Tests', () => {
     const transactionCall = await bridgeContract.bridgeToDeFiChain(
       ethers.constants.AddressZero,
       musdcContract.address,
-      ethers.utils.parseEther('5'),
+      100000000,
     );
     await hardhatNetwork.generate(1);
 
@@ -140,11 +140,11 @@ describe('Bridge Service Integration Tests', () => {
     expect(transactionDbRecord?.status).toStrictEqual('CONFIRMED');
   });
 
-  it('Returns the usdc balance of the bridge after bridging 5 eth', async () => {
+  it('Returns the usdc balance of the bridge after bridging 100 usdc and paying 30 Gwei of gas', async () => {
     const balance = await testing.inject({
       method: 'GET',
       url: `/ethereum/balance/USDC`,
     });
-    expect(JSON.parse(balance.body)).toStrictEqual(4985000000000);
+    expect(JSON.parse(balance.body)).toStrictEqual(99.7);
   });
 });
