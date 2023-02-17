@@ -23,9 +23,18 @@ export class EVMTransactionConfirmerService {
     );
   }
 
-  async getBalance(address: string): Promise<string> {
-    const balance = await this.ethersRpcProvider.getBalance(address);
-    return ethers.utils.formatEther(balance);
+  async getBalance(tokenSymbol: string): Promise<string> {
+    const contractABI = ['function balanceOf(address) view returns (uint256)'];
+    if (!['WETH', 'USDC', 'USDT'].includes(tokenSymbol)) {
+      throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
+    }
+    const tokenContract = new ethers.Contract(
+      this.configService.getOrThrow(`ethereum.contracts.${tokenSymbol}.address`),
+      contractABI,
+      this.ethersRpcProvider,
+    );
+    const balance = await tokenContract.balanceOf(this.contract.address);
+    return ethers.utils.formatUnits(balance, 6);
   }
 
   async handleTransaction(transactionHash: string): Promise<HandledEVMTransaction> {

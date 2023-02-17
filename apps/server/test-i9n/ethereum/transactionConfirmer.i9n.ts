@@ -42,6 +42,7 @@ describe('Bridge Service Integration Tests', () => {
           startedHardhatContainer,
           testnet: { bridgeContractAddress: bridgeContract.address },
           startedPostgresContainer,
+          usdcAddress: musdcContract.address,
         }),
       ),
     );
@@ -59,28 +60,14 @@ describe('Bridge Service Integration Tests', () => {
     await testing.stop();
   });
 
-  it('Validates that the ethereum address inputted is of the correct format', async () => {
+  it('Validates that the symbol inputted is supported by the bridge', async () => {
     const txReceipt = await testing.inject({
       method: 'GET',
-      url: `/ethereum/balance`,
-      query: {
-        address: 'wrong_address_test',
-      },
+      url: `/ethereum/balance/invalid_symbol`,
     });
     expect(JSON.parse(txReceipt.body).error).toBe('Bad Request');
-    expect(JSON.parse(txReceipt.body).message).toBe('Invalid Ethereum address: wrong_address_test');
+    expect(JSON.parse(txReceipt.body).message).toBe('Token: "invalid_symbol" is not supported');
     expect(JSON.parse(txReceipt.body).statusCode).toBe(400);
-  });
-
-  it('Returns the balance of a fully funded ethereum test wallet', async () => {
-    const balance = await testing.inject({
-      method: 'GET',
-      url: `/ethereum/balance`,
-      query: {
-        address: hardhatNetwork.getHardhatTestWallet(1).testWalletAddress,
-      },
-    });
-    expect(JSON.parse(balance.body)).toStrictEqual(10000);
   });
 
   it('Validates that the transaction inputted is of the correct format', async () => {
@@ -94,6 +81,14 @@ describe('Bridge Service Integration Tests', () => {
     expect(JSON.parse(txReceipt.body).error).toBe('Bad Request');
     expect(JSON.parse(txReceipt.body).message).toBe('Invalid Ethereum transaction hash: wrong_transaction_test');
     expect(JSON.parse(txReceipt.body).statusCode).toBe(400);
+  });
+
+  it('Returns the starting usdc balance of the bridge (should be 0)', async () => {
+    const balance = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/balance/USDC`,
+    });
+    expect(JSON.parse(balance.body)).toStrictEqual(0);
   });
 
   it('Checks if a transaction is confirmed, and stores it in the database', async () => {
@@ -143,5 +138,13 @@ describe('Bridge Service Integration Tests', () => {
       where: { transactionHash: transactionCall.hash },
     });
     expect(transactionDbRecord?.status).toStrictEqual('CONFIRMED');
+  });
+
+  it('Returns the usdc balance of the bridge after bridging 5 eth', async () => {
+    const balance = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/balance/USDC`,
+    });
+    expect(JSON.parse(balance.body)).toStrictEqual(4985000000000);
   });
 });

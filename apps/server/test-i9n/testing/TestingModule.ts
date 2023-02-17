@@ -24,6 +24,7 @@ export function buildTestConfig({
   testnet,
   defichain,
   startedPostgresContainer,
+  usdcAddress,
 }: BuildTestConfigParams) {
   if (startedPostgresContainer === undefined) {
     throw Error('Must pass in StartedPostgresContainer');
@@ -42,6 +43,9 @@ export function buildTestConfig({
       contracts: {
         bridgeProxy: {
           address: testnet?.bridgeContractAddress ?? '',
+        },
+        USDC: {
+          address: usdcAddress,
         },
       },
     },
@@ -63,4 +67,5 @@ type OptionalBuildTestConfigParams = {
   testnet: {
     bridgeContractAddress: string;
   };
+  usdcAddress: string;
 };

@@ -17,6 +17,15 @@ export function appConfig() {
           //
           address: process.env.BRIDGE_PROXY_ADDRESS,
         },
+        USDT: {
+          address: process.env.USDT_ADDRESS,
+        },
+        USDC: {
+          address: process.env.USDC_ADDRESS,
+        },
+        WETH: {
+          address: process.env.WETH_ADDRESS,
+        },
       },
       ethWalletPrivKey: process.env.ETHEREUM_WALLET_PRIVATE_KEY,
     },
