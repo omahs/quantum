@@ -2,8 +2,6 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { FetchArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import { AddressDetails } from "types";
 import { HttpStatusCode } from "axios";
-import useWrappedMutation from "@hooks/useWrappedMutation";
-import useWrappedLazyQuery from "@hooks/useWrappedLazyQuery";
 
 const staggeredBaseQueryWithBailOut = retry(
   async (args: string | FetchArgs, api, extraOptions) => {
@@ -20,6 +18,7 @@ const staggeredBaseQueryWithBailOut = retry(
   }
 );
 
+// eslint-disable-next-line import/prefer-default-export
 export const bridgeApi = createApi({
   reducerPath: "defichain",
   baseQuery: staggeredBaseQueryWithBailOut,
@@ -69,16 +68,3 @@ export const bridgeApi = createApi({
     }),
   }),
 });
-
-const useGenerateAddressMutation = () =>
-  useWrappedMutation(bridgeApi.useGenerateAddressMutation);
-const useLazyVerifyQuery = () =>
-  useWrappedLazyQuery(bridgeApi.useLazyVerifyQuery);
-const useGetAddressDetailMutation = () =>
-  useWrappedMutation(bridgeApi.useGetAddressDetailMutation);
-
-export {
-  useGenerateAddressMutation,
-  useLazyVerifyQuery,
-  useGetAddressDetailMutation,
-};
