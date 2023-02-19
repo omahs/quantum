@@ -70,12 +70,25 @@ export const bridgeApi = createApi({
       query: ({ baseUrl, address }) => ({
         url: `${baseUrl}/defichain/wallet/address/${address}`,
         method: "GET",
+      }),
+      extraOptions: { maxRetries: 1 },
+    }),
+    confirmEthTxn: builder.mutation<
+      { numberOfConfirmations: string; isConfirmed: boolean },
+      any
+    >({
+      query: ({ baseUrl, txnHash }) => ({
+        url: `${baseUrl}/ethereum/handleTransaction`,
+        body: {
+          transactionHash: txnHash,
+        },
+        method: "POST",
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json; charset=UTF-8",
         },
       }),
-      extraOptions: { maxRetries: 1 },
+      extraOptions: { maxRetries: 0 },
     }),
   }),
 });

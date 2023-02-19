@@ -131,6 +131,7 @@ importers:
       ethers: ^5.7.2
       postcss: ^8.4.21
       react-circular-progressbar: ^2.1.0
+      react-content-loader: ^6.2.0
       react-qr-code: ^2.0.11
       react-secure-storage: ^1.0.22
       sass: ^1.58.3
@@ -150,6 +151,7 @@ importers:
       dayjs: 1.11.7
       ethers: 5.7.2
       react-circular-progressbar: 2.1.0_react@18.2.0
+      react-content-loader: 6.2.0_react@18.2.0
       react-qr-code: 2.0.11_react@18.2.0
       react-secure-storage: 1.0.22
       sass: 1.58.3
@@ -2724,7 +2726,7 @@ packages:
     resolution: {integrity: sha512-Dd3ilDJpBnqa0GiPN7QrudVs0cczMMHtehSo2CSTjm3zdHx0RcpmhFNVEltuEFeqfLIyWKFI224FsMSQ/nsJQA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      jest-get-type: 29.4.2
+      jest-get-type: 29.4.3
     dev: true
 
   /@jest/expect-utils/29.4.3:
@@ -10059,7 +10061,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/expect-utils': 29.4.2
-      jest-get-type: 29.4.2
+      jest-get-type: 29.4.3
       jest-matcher-utils: 29.4.2
       jest-message-util: 29.4.2
       jest-util: 29.4.2
@@ -12067,7 +12069,7 @@ packages:
       jest-snapshot: 29.4.2
       jest-util: 29.4.2
       p-limit: 3.1.0
-      pretty-format: 29.4.2
+      pretty-format: 29.4.3
       slash: 3.0.0
       stack-utils: 2.0.6
     transitivePeerDependencies:
@@ -12241,7 +12243,17 @@ packages:
       chalk: 4.1.2
       diff-sequences: 29.3.1
       jest-get-type: 29.2.0
-      pretty-format: 29.4.2
+      pretty-format: 29.4.1
+
+  /jest-diff/29.4.1:
+    resolution: {integrity: sha512-uazdl2g331iY56CEyfbNA0Ut7Mn2ulAG5vUaEHXycf1L6IPyuImIxSz4F0VYBKi7LYIuxOwTZzK3wh5jHzASMw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    dependencies:
+      chalk: 4.1.2
+      diff-sequences: 29.3.1
+      jest-get-type: 29.2.0
+      pretty-format: 29.4.1
+    dev: true
 
   /jest-diff/29.4.2:
     resolution: {integrity: sha512-EK8DSajVtnjx9sa1BkjZq3mqChm2Cd8rIzdXkQMA8e0wuXq53ypz6s5o5V8HRZkoEt2ywJ3eeNWFKWeYr8HK4g==}
@@ -12249,8 +12261,8 @@ packages:
     dependencies:
       chalk: 4.1.2
       diff-sequences: 29.4.2
-      jest-get-type: 29.4.2
-      pretty-format: 29.4.2
+      jest-get-type: 29.4.3
+      pretty-format: 29.4.3
 
   /jest-diff/29.4.3:
     resolution: {integrity: sha512-YB+ocenx7FZ3T5O9lMVMeLYV4265socJKtkwgk/6YUz/VsEzYDkiMuMhWzZmxm3wDRQvayJu/PjkjjSkjoHsCA==}
@@ -12328,8 +12340,8 @@ packages:
         optional: true
     dependencies:
       jest: 29.4.2_lszm27wzplody5hzcr5ax274dy
-      jest-diff: 29.4.2
-      jest-get-type: 29.4.2
+      jest-diff: 29.4.1
+      jest-get-type: 29.2.0
     dev: true
 
   /jest-extended/3.2.3_jest@29.4.3:
@@ -12403,8 +12415,8 @@ packages:
     resolution: {integrity: sha512-Wa62HuRJmWXtX9F00nUpWlrbaH5axeYCdyRsOs/+Rb1Vb6+qWTlB5rKwCCRKtorM7owNwKsyJ8NRDUcZ8ghYUA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      jest-get-type: 29.4.2
-      pretty-format: 29.4.2
+      jest-get-type: 29.4.3
+      pretty-format: 29.4.3
     dev: true
 
   /jest-leak-detector/29.4.3:
@@ -12421,7 +12433,7 @@ packages:
       chalk: 4.1.2
       jest-diff: 29.3.1
       jest-get-type: 29.2.0
-      pretty-format: 29.4.2
+      pretty-format: 29.3.1
 
   /jest-matcher-utils/29.4.2:
     resolution: {integrity: sha512-EZaAQy2je6Uqkrm6frnxBIdaWtSYFoR8SVb2sNLAtldswlR/29JAgx+hy67llT3+hXBaLB0zAm5UfeqerioZyg==}
@@ -12429,8 +12441,8 @@ packages:
     dependencies:
       chalk: 4.1.2
       jest-diff: 29.4.2
-      jest-get-type: 29.4.2
-      pretty-format: 29.4.2
+      jest-get-type: 29.4.3
+      pretty-format: 29.4.3
     dev: true
 
   /jest-matcher-utils/29.4.3:
@@ -12452,7 +12464,7 @@ packages:
       chalk: 4.1.2
       graceful-fs: 4.2.10
       micromatch: 4.0.5
-      pretty-format: 29.4.2
+      pretty-format: 29.3.1
       slash: 3.0.0
       stack-utils: 2.0.6
 
@@ -15603,13 +15615,22 @@ packages:
       ansi-styles: 5.2.0
       react-is: 18.2.0
 
+  /pretty-format/29.4.1:
+    resolution: {integrity: sha512-dt/Z761JUVsrIKaY215o1xQJBGlSmTx/h4cSqXqjHLnU1+Kt+mavVE7UgqJJO5ukx5HjSswHfmXz4LjS2oIJfg==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    dependencies:
+      '@jest/schemas': 29.4.2
+      ansi-styles: 5.2.0
+      react-is: 18.2.0
+
   /pretty-format/29.4.2:
     resolution: {integrity: sha512-qKlHR8yFVCbcEWba0H0TOC8dnLlO4vPlyEjRPw31FZ2Rupy9nLa8ZLbYny8gWEl8CkEhJqAE6IzdNELTBVcBEg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@jest/schemas': 29.4.3
+      '@jest/schemas': 29.4.2
       ansi-styles: 5.2.0
       react-is: 18.2.0
+    dev: true
 
   /pretty-format/29.4.3:
     resolution: {integrity: sha512-cvpcHTc42lcsvOOAzd3XuNWTcvk1Jmnzqeu+WsOuiPmxUJTnkbAcFNsRKvEpBEUFVUgy/GTZLulZDcDEi+CIlA==}
@@ -15885,6 +15906,15 @@ packages:
     resolution: {integrity: sha512-xp4THTrod4aLpGy68FX/k1Q3nzrfHUjUe5v6FsdwXBl3YVMwgeXYQKDrku7n/D6qsJA9CuunarAboC2xCiKs1g==}
     peerDependencies:
       react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /react-content-loader/6.2.0_react@18.2.0:
+    resolution: {integrity: sha512-r1dI6S+uHNLW68qraLE2njJYOuy6976PpCExuCZUcABWbfnF3FMcmuESRI8L4Bj45wnZ7n8g71hkPLzbma7/Cw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.0.0'
     dependencies:
       react: 18.2.0
     dev: false
