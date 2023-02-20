@@ -153,8 +153,8 @@ export class EVMTransactionConfirmerService {
         throw new Error('Transaction detail not available');
       }
 
-      // check if fund is already allocated for the given txn
-      if (txDetails.isFundAllocated) {
+      // check if fund is already allocated for the given address
+      if (txDetails.sendTransactionHash) {
         throw new Error('Fund already allocated');
       }
 
@@ -172,7 +172,7 @@ export class EVMTransactionConfirmerService {
       const wTokenDecimals = await evmTokenContract.decimals();
       const transferAmount = new BigNumber(amount).dividedBy(new BigNumber(10).pow(wTokenDecimals));
       const dTokenDetails = getDTokenDetailsByWToken(wTokenSymbol, this.network);
-      const txHash = await this.sendService.send(address, {
+      const sendTransactionHash = await this.sendService.send(address, {
         ...dTokenDetails,
         amount: transferAmount,
       });
@@ -182,15 +182,15 @@ export class EVMTransactionConfirmerService {
           id: txDetails.id,
         },
         data: {
-          isFundAllocated: true,
+          sendTransactionHash,
         },
       });
-      return { transactionHash: txHash };
+      return { transactionHash: sendTransactionHash };
     } catch (e: any) {
       throw new HttpException(
         {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'There is a problem in allocating fund',
+          status: e.code || HttpStatus.INTERNAL_SERVER_ERROR,
+          error: `There is a problem in allocating fund: ${e.message}`,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
