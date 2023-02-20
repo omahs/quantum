@@ -223,7 +223,10 @@ export default function EvmToDeFiChainTransfer({
           testId="confirm-transfer-btn"
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
           onClick={() => handleInitiateTransfer()}
-          disabled={hasPendingTx}
+          disabled={
+            hasPendingTx ||
+            (writeApprove === undefined && writeBridgeToDeFiChain === undefined)
+          }
         />
       </div>
     </>
