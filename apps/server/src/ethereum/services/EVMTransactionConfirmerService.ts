@@ -6,8 +6,8 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, Contract, ethers } from 'ethers';
 import { BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { WhaleApiClientProvider } from 'src/defichain/providers/WhaleApiClientProvider';
 
+import { WhaleApiClientProvider } from '../../defichain/providers/WhaleApiClientProvider';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
