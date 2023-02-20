@@ -1,3 +1,4 @@
+import { fromAddress } from '@defichain/jellyfish-address';
 import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EthereumTransactionStatus } from '@prisma/client';
@@ -5,6 +6,7 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, Contract, ethers } from 'ethers';
 import { BridgeV1__factory, ERC20__factory } from 'smartcontracts';
+import { WhaleApiClientProvider } from 'src/defichain/providers/WhaleApiClientProvider';
 
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
@@ -20,6 +22,7 @@ export class EVMTransactionConfirmerService {
 
   constructor(
     @Inject(ETHERS_RPC_PROVIDER) readonly ethersRpcProvider: ethers.providers.StaticJsonRpcProvider,
+    private readonly clientProvider: WhaleApiClientProvider,
     private readonly sendService: SendService,
     private configService: ConfigService,
     private prisma: PrismaService,
@@ -167,6 +170,13 @@ export class EVMTransactionConfirmerService {
       const { params } = decodeTxnData(onChainTxnDetail);
       const { _defiAddress: defiAddress, _tokenAddress: tokenAddress, _amount: amount } = params;
       const address = ethers.utils.toUtf8String(defiAddress);
+
+      // check is send address belongs to current network or
+      const decodedAddress = fromAddress(address, this.clientProvider.remapNetwork(this.network));
+      if (decodedAddress === undefined) {
+        throw new Error(`Invalid send address for DeFiChain ${this.network}`);
+      }
+
       const evmTokenContract = new ethers.Contract(tokenAddress, ERC20__factory.abi, this.ethersRpcProvider);
       const wTokenSymbol = await evmTokenContract.symbol();
       const wTokenDecimals = await evmTokenContract.decimals();
