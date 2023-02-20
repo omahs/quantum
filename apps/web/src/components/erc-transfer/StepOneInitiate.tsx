@@ -59,7 +59,7 @@ export default function StepOneInitiate({
           <ActionButton
             label="Continue"
             variant="primary"
-            // disabled={hasAddressInputErr}
+            disabled={hasAddressInputErr}
             // TODO to save return address to the localstorage - have to move the entire saving of unconfirmed txn
             onClick={goToNextStep}
           />
