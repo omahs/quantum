@@ -30,7 +30,7 @@ export class EVMTransactionConfirmerService {
       throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
     }
 
-    if (tokenSymbol === 'ETH') {
+    if (tokenSymbol === SupportedTokenSymbols.ETH) {
       const balance = await this.ethersRpcProvider.getBalance(this.contract.address);
       return ethers.utils.formatEther(balance);
     }
