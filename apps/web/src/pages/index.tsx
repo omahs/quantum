@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import BridgeForm from "@components/BridgeForm";
 import WelcomeHeader from "@components/WelcomeHeader";
 // import MobileBottomMenu from "@components/MobileBottomMenu";
@@ -20,6 +21,19 @@ function Home() {
     }
 
     return numOfConfirmations;
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", resetConfirmedTxnHash);
+    return () => {
+      window.removeEventListener("beforeunload", resetConfirmedTxnHash);
+    };
+  }, [txnHash.confirmed]);
+
+  const resetConfirmedTxnHash = () => {
+    if (txnHash.confirmed) {
+      setTxnHash("confirmed", null);
+    }
   };
 
   return (
