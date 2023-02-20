@@ -49,4 +49,5 @@ export enum SupportedTokenSymbols {
   USDC = 'USDC',
   USDT = 'USDT',
   WBTC = 'WBTC',
+  ETH = 'ETH',
 }

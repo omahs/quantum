@@ -90,6 +90,13 @@ describe('Bridge Service Integration Tests', () => {
     });
     expect(JSON.parse(balance.body)).toStrictEqual(0);
   });
+  it('Returns the starting eth balance of the bridge (should be 0)', async () => {
+    const balance = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/balance/ETH`,
+    });
+    expect(JSON.parse(balance.body)).toStrictEqual(0);
+  });
 
   it('Checks if a transaction is confirmed, and stores it in the database', async () => {
     // Step 1: Call bridgeToDeFiChain(_defiAddress, _tokenAddress, _amount) function (bridge 100 USDC) and mine the block

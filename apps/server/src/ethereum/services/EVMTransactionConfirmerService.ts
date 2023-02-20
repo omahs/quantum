@@ -29,6 +29,12 @@ export class EVMTransactionConfirmerService {
     if (!SupportedTokenSymbols[tokenSymbol]) {
       throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
     }
+
+    if (tokenSymbol === 'ETH') {
+      const balance = await this.ethersRpcProvider.getBalance(this.contract.address);
+      return ethers.utils.formatEther(balance);
+    }
+
     const tokenContract = new ethers.Contract(
       this.configService.getOrThrow(`ethereum.contracts.${SupportedTokenSymbols[tokenSymbol]}.address`),
       contractABI,
