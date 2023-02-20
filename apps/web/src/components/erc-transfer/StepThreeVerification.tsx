@@ -50,7 +50,7 @@ export default function StepThreeVerification({
       Please check our {/* TODO insert link once available */}
       <button type="button" onClick={() => {}}>
         <u>Error guide</u>
-      </button>{" "}
+      </button>
       and try again.
     </div>
   );
