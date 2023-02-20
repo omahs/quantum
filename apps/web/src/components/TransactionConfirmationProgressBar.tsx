@@ -1,16 +1,42 @@
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import { useEffect, useState } from "react";
-import useResponsive from "../hooks/useResponsive";
 import clsx from "clsx";
+import ContentLoader from "react-content-loader";
+import useResponsive from "../hooks/useResponsive";
+
+function SkeletonLoader({ isDesktop }: { isDesktop: boolean }) {
+  const viewBoxWidth = isDesktop ? "90" : "65";
+  const x = isDesktop ? "5" : "0";
+  const width = isDesktop ? "80" : "60";
+  const height = isDesktop ? "20" : "16";
+
+  return (
+    <div className={clsx("flex items-center border-dark-300 text-dark-500")}>
+      <ContentLoader
+        speed={2}
+        height={24}
+        viewBox={`0 0 ${viewBoxWidth} 24`}
+        backgroundColor="#4a4a4a"
+        foregroundColor="#4a4a4a"
+        backgroundOpacity={0.4}
+        foregroundOpacity={1}
+      >
+        <rect x={x} y="2" rx="5" ry="5" width={width} height={height} />
+      </ContentLoader>
+    </div>
+  );
+}
 
 export default function ConfirmationProgress({
   confirmationBlocksTotal,
   confirmationBlocksCurrent,
   isConfirmed,
+  isApiSuccess,
 }: {
   confirmationBlocksTotal: number;
   confirmationBlocksCurrent: string;
   isConfirmed: boolean;
+  isApiSuccess: boolean;
 }) {
   const { isLg } = useResponsive();
   const [valuePercentage, setValuePercentage] = useState<number>(0);
@@ -55,7 +81,12 @@ export default function ConfirmationProgress({
             }}
           >
             <div className="text-center">
-              <div className="text-lg font-bold text-dark-1000">{`${confirmationBlocksCurrent} of 65`}</div>
+              {isApiSuccess || isConfirmed ? (
+                <div className="text-lg font-bold text-dark-1000">{`${confirmationBlocksCurrent} of 65`}</div>
+              ) : (
+                <SkeletonLoader isDesktop />
+              )}
+
               <span className="text-xs text-dark-700">Confirmations</span>
             </div>
           </CircularProgressbarWithChildren>
@@ -63,14 +94,18 @@ export default function ConfirmationProgress({
       ) : (
         <div>
           <div className="flex text-sm text-dark-700">
-            <span
-              className={clsx(
-                "font-semibold",
-                isConfirmed ? "text-valid" : "text-brand-100"
-              )}
-            >
-              {`${confirmationBlocksCurrent} of ${confirmationBlocksTotal}\u00A0`}
-            </span>
+            {isApiSuccess || isConfirmed ? (
+              <span
+                className={clsx(
+                  "font-semibold",
+                  isConfirmed ? "text-valid" : "text-brand-100"
+                )}
+              >
+                {`${confirmationBlocksCurrent} of ${confirmationBlocksTotal}\u00A0`}
+              </span>
+            ) : (
+              <SkeletonLoader isDesktop={false} />
+            )}
             confirmations
           </div>
           <div className="h-1.5 w-full bg-dark-200 rounded-md">

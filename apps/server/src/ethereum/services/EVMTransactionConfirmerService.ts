@@ -9,7 +9,7 @@ import { BridgeV1__factory, ERC20__factory } from 'smartcontracts';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
-import { getEndOfDayTimeStamp } from '../../utils/MathUtils';
+import { getNextDayTimestamp } from '../../utils/DateUtils';
 import { getDTokenDetailsByWToken } from '../../utils/TokensUtils';
 
 @Injectable()
@@ -77,7 +77,11 @@ export class EVMTransactionConfirmerService {
     return { numberOfConfirmations, isConfirmed: true };
   }
 
-  async signClaim({ receiverAddress, tokenAddress, amount }: SignClaim): Promise<{ signature: string; nonce: number }> {
+  async signClaim({
+    receiverAddress,
+    tokenAddress,
+    amount,
+  }: SignClaim): Promise<{ signature: string; nonce: number; deadline: number }> {
     try {
       // Connect signer ETH wallet (admin/operational wallet)
       const wallet = new ethers.Wallet(
@@ -89,7 +93,7 @@ export class EVMTransactionConfirmerService {
       const nonce = await this.contract.eoaAddressToNonce(receiverAddress);
       const domainName = await this.contract.name();
       const domainVersion = await this.contract.version();
-      const deadline = getEndOfDayTimeStamp();
+      const deadline = getNextDayTimestamp();
 
       const domain = {
         name: domainName,
@@ -116,18 +120,9 @@ export class EVMTransactionConfirmerService {
 
       // eslint-disable-next-line no-underscore-dangle
       const signature = await wallet._signTypedData(domain, types, data);
-      return { signature, nonce };
+      return { signature, nonce, deadline };
     } catch (e: any) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'There is a problem in signing this claim',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {
-          cause: e,
-        },
-      );
+      throw new Error('There is a problem in signing this claim', { cause: e });
     }
   }
 

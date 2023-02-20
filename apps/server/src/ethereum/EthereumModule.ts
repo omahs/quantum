@@ -22,6 +22,6 @@ import { EVMTransactionConfirmerService } from './services/EVMTransactionConfirm
   ],
   controllers: [EthereumController],
   imports: [EthersModule],
-  exports: [],
+  exports: [EVMTransactionConfirmerService],
 })
 export class EthereumModule {}

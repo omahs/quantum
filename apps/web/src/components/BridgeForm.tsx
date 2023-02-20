@@ -24,12 +24,11 @@ import NumericFormat from "@components/commons/NumericFormat";
 import { QuickInputCard } from "@components/commons/QuickInputCard";
 import { useContractContext } from "@contexts/ContractContext";
 import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
-import { useGetAddressDetailMutation } from "@store/website";
+import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
 import InputSelector from "./InputSelector";
 import WalletAddressInput from "./WalletAddressInput";
-import DailyLimit from "./DailyLimit";
 import ConfirmTransferModal from "./ConfirmTransferModal";
 import {
   DFC_TO_ERC_RESET_FORM_TIME_LIMIT,
@@ -215,7 +214,6 @@ export default function BridgeForm({
       if (localDfcAddress) {
         const addressDetailRes = await getAddressDetail({
           address: localDfcAddress,
-          network: networkEnv,
         }).unwrap();
         const diff = dayjs().diff(dayjs(addressDetailRes?.createdAt));
         if (diff > DFC_TO_ERC_RESET_FORM_TIME_LIMIT) {
@@ -393,9 +391,6 @@ export default function BridgeForm({
           trimTrailingZeros
         />
       </div>
-      <div className="block md:hidden px-5 mt-4">
-        <DailyLimit />
-      </div>
       <div className="mt-8 px-6 md:mt-6 md:px-4 lg:mt-16 lg:mb-0 lg:px-0 xl:px-20">
         <ConnectKitButton.Custom>
           {({ show }) => (
@@ -408,6 +403,11 @@ export default function BridgeForm({
             />
           )}
         </ConnectKitButton.Custom>
+        {hasPendingTxn && (
+          <span className="block pt-2 text-xs text-warning text-center lg:px-6 lg:text-sm">
+            Unable to edit while transaction is pending
+          </span>
+        )}
         {hasUnconfirmedTxn && !hasPendingTxn && (
           <div className="mt-3">
             <ActionButton
