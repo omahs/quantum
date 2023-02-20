@@ -11,7 +11,7 @@ export default function ProgressStepIndicator({
   const getProgressWidth = () => {
     switch (activeStep) {
       case 1:
-        return "after:w-[40px]";
+        return "after:w-[10%]";
       case 2:
         return "after:w-[35%]";
       case 3:
