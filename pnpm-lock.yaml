@@ -45,7 +45,7 @@ importers:
       class-transformer: ^0.5.1
       class-validator: ^0.14.0
       ethers: ^5.7.2
-      joi: ^17.7.1
+      joi: ^17.8.1
       light-my-request: ^5.8.0
       nestjs-pino: ^3.1.2
       pg: ^8.9.0
@@ -76,7 +76,7 @@ importers:
       class-transformer: 0.5.1
       class-validator: 0.14.0
       ethers: 5.7.2
-      joi: 17.7.1
+      joi: 17.8.1
       nestjs-pino: 3.1.2_r3e4gsrsndy2wby6qerdv3i4j4
       pg: 8.9.0
       typeorm: 0.3.12_pg@8.9.0+ts-node@10.9.1
@@ -2528,14 +2528,34 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /@hapi/hoek/9.3.0:
-    resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
+  /@hapi/address/5.1.0:
+    resolution: {integrity: sha512-b/OicomrGhG+aRgAhtxqOArHDH7kE2sY0IQ5MwIU6EkzUIOmsfi4YfYPZxGSauHLgVzcwk2rseCi7fjeMpQh+w==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@hapi/hoek': 11.0.2
     dev: false
 
-  /@hapi/topo/5.1.0:
-    resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+  /@hapi/formula/3.0.2:
+    resolution: {integrity: sha512-hY5YPNXzw1He7s0iqkRQi+uMGh383CGdyyIGYtB+W5N3KHPXoqychklvHhKCC9M3Xtv0OCs/IHw+r4dcHtBYWw==}
+    dev: false
+
+  /@hapi/hoek/11.0.2:
+    resolution: {integrity: sha512-aKmlCO57XFZ26wso4rJsW4oTUnrgTFw2jh3io7CAtO9w4UltBNwRXvXIVzzyfkaaLRo3nluP/19msA8vDUUuKw==}
+    dev: false
+
+  /@hapi/pinpoint/2.0.1:
+    resolution: {integrity: sha512-EKQmr16tM8s16vTT3cA5L0kZZcTMU5DUOZTuvpnY738m+jyP3JIUj+Mm1xc1rsLkGBQ/gVnfKYPwOmPg1tUR4Q==}
+    dev: false
+
+  /@hapi/tlds/1.0.1:
+    resolution: {integrity: sha512-OXs5OliWsLTmvzQKZtb3KhfEz30WuuaizwAn95GLfeK+JpGnBxR55lALv3kA4T1RRb3wlrNjnboBg6ur1Czvig==}
+    engines: {node: '>=14.0.0'}
+    dev: false
+
+  /@hapi/topo/6.0.1:
+    resolution: {integrity: sha512-JioWUZL1Bm7r8bnCDx2AUggiPwpV7djFfDTWT1aZSyHjN++fVz7XPdW8YVCxvyv9bSWcbbOLV/h4U1zGdwrN3w==}
     dependencies:
-      '@hapi/hoek': 9.3.0
+      '@hapi/hoek': 11.0.2
     dev: false
 
   /@headlessui/react/1.7.11_biqbaboplfbrettd7655fr4n2y:
@@ -4347,7 +4367,7 @@ packages:
       cosmiconfig: 5.2.1
       deepmerge: 3.3.0
       glob: 7.2.3
-      joi: 17.7.1
+      joi: 17.8.1
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -4480,7 +4500,7 @@ packages:
   /@react-native-community/cli-types/9.1.0:
     resolution: {integrity: sha512-KDybF9XHvafLEILsbiKwz5Iobd+gxRaPyn4zSaAerBxedug4er5VUWa8Szy+2GeYKZzMh/gsb1o9lCToUwdT/g==}
     dependencies:
-      joi: 17.7.1
+      joi: 17.8.1
     dev: false
 
   /@react-native-community/cli/9.3.2_@babel+core@7.20.5:
@@ -4741,20 +4761,6 @@ packages:
       '@sentry/types': 6.19.7
       tslib: 1.14.1
     dev: true
-
-  /@sideway/address/4.1.4:
-    resolution: {integrity: sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==}
-    dependencies:
-      '@hapi/hoek': 9.3.0
-    dev: false
-
-  /@sideway/formula/3.0.1:
-    resolution: {integrity: sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==}
-    dev: false
-
-  /@sideway/pinpoint/2.0.0:
-    resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
-    dev: false
 
   /@sinclair/typebox/0.24.51:
     resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
@@ -12245,16 +12251,6 @@ packages:
       jest-get-type: 29.2.0
       pretty-format: 29.4.1
 
-  /jest-diff/29.4.1:
-    resolution: {integrity: sha512-uazdl2g331iY56CEyfbNA0Ut7Mn2ulAG5vUaEHXycf1L6IPyuImIxSz4F0VYBKi7LYIuxOwTZzK3wh5jHzASMw==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      chalk: 4.1.2
-      diff-sequences: 29.3.1
-      jest-get-type: 29.2.0
-      pretty-format: 29.4.1
-    dev: true
-
   /jest-diff/29.4.2:
     resolution: {integrity: sha512-EK8DSajVtnjx9sa1BkjZq3mqChm2Cd8rIzdXkQMA8e0wuXq53ypz6s5o5V8HRZkoEt2ywJ3eeNWFKWeYr8HK4g==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -12340,8 +12336,8 @@ packages:
         optional: true
     dependencies:
       jest: 29.4.2_lszm27wzplody5hzcr5ax274dy
-      jest-diff: 29.4.1
-      jest-get-type: 29.2.0
+      jest-diff: 29.4.2
+      jest-get-type: 29.4.2
     dev: true
 
   /jest-extended/3.2.3_jest@29.4.3:
@@ -12972,14 +12968,15 @@ packages:
       - supports-color
       - ts-node
 
-  /joi/17.7.1:
-    resolution: {integrity: sha512-teoLhIvWE298R6AeJywcjR4sX2hHjB3/xJX4qPjg+gTg+c0mzUDsziYlqPmLomq9gVsfaMcgPaGc7VxtD/9StA==}
+  /joi/17.8.1:
+    resolution: {integrity: sha512-Zoafe6E2kQ+hkkJQSBnOxA8beb2LF33keCxZP3vSy7qTHj9/2GAEQ9KLwfe+PR35WvspwNz0jWajDIHLnCKfpg==}
     dependencies:
-      '@hapi/hoek': 9.3.0
-      '@hapi/topo': 5.1.0
-      '@sideway/address': 4.1.4
-      '@sideway/formula': 3.0.1
-      '@sideway/pinpoint': 2.0.0
+      '@hapi/address': 5.1.0
+      '@hapi/formula': 3.0.2
+      '@hapi/hoek': 11.0.2
+      '@hapi/pinpoint': 2.0.1
+      '@hapi/tlds': 1.0.1
+      '@hapi/topo': 6.0.1
     dev: false
 
   /jpeg-js/0.4.4:
