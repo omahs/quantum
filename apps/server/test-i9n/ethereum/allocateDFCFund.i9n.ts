@@ -1,5 +1,7 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
+import { WhaleWalletAccount } from '@defichain/whale-api-wallet';
 import { EthereumTransactionStatus } from '@prisma/client';
+import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import {
   BridgeV1,
@@ -9,12 +11,17 @@ import {
   TestToken,
 } from 'smartcontracts';
 
+import { WhaleWalletProvider } from '../../src/defichain/providers/WhaleWalletProvider';
 import { PrismaService } from '../../src/PrismaService';
+import { DeFiChainStubContainer, StartedDeFiChainStubContainer } from '../defichain/containers/DeFiChainStubContainer';
 import { BridgeContractFixture } from '../testing/BridgeContractFixture';
 import { BridgeServerTestingApp } from '../testing/BridgeServerTestingApp';
 import { buildTestConfig, TestingModule } from '../testing/TestingModule';
 
-describe('Bridge Service Integration Tests', () => {
+describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
+  jest.setTimeout(3600000);
+  const address = 'bcrt1q0c78n7ahqhjl67qc0jaj5pzstlxykaj3lyal8g';
+  let defichain: StartedDeFiChainStubContainer;
   let startedHardhatContainer: StartedHardhatNetworkContainer;
   let hardhatNetwork: HardhatNetwork;
   let testing: BridgeServerTestingApp;
@@ -23,6 +30,9 @@ describe('Bridge Service Integration Tests', () => {
   let musdcContract: TestToken;
   let prismaService: PrismaService;
   let startedPostgresContainer: StartedPostgreSqlContainer;
+  let whaleWalletProvider: WhaleWalletProvider;
+  let fromWallet: string;
+  let wallet: WhaleWalletAccount;
 
   beforeAll(async () => {
     startedPostgresContainer = await new PostgreSqlContainer().start();
@@ -35,12 +45,14 @@ describe('Bridge Service Integration Tests', () => {
     // Using the default signer of the container to carry out tests
     ({ bridgeProxy: bridgeContract, musdc: musdcContract } =
       bridgeContractFixture.contractsWithAdminAndOperationalSigner);
-
+    defichain = await new DeFiChainStubContainer().start();
+    const whaleURL = await defichain.getWhaleURL();
     // initialize config variables
     testing = new BridgeServerTestingApp(
       TestingModule.register(
         buildTestConfig({
           startedHardhatContainer,
+          defichain: { whaleURL, key: StartedDeFiChainStubContainer.LOCAL_MNEMONIC },
           testnet: { bridgeContractAddress: bridgeContract.address },
           startedPostgresContainer,
           usdcAddress: musdcContract.address,
@@ -49,6 +61,25 @@ describe('Bridge Service Integration Tests', () => {
     );
     const app = await testing.start();
 
+    whaleWalletProvider = app.get<WhaleWalletProvider>(WhaleWalletProvider);
+    wallet = whaleWalletProvider.getHotWallet();
+    fromWallet = await wallet.getAddress();
+
+    // Top up UTXO
+    await defichain.playgroundRpcClient?.wallet.sendToAddress(fromWallet, 1);
+    await defichain.generateBlock();
+    // Sends token to the address
+    await defichain.playgroundClient?.rpc.call(
+      'sendtokenstoaddress',
+      [
+        {},
+        {
+          [fromWallet]: `10@USDC`,
+        },
+      ],
+      'number',
+    );
+    await defichain.generateBlock();
     // init postgres database
     prismaService = app.get<PrismaService>(PrismaService);
   });
@@ -61,50 +92,12 @@ describe('Bridge Service Integration Tests', () => {
     await testing.stop();
   });
 
-  it('Validates that the symbol inputted is supported by the bridge', async () => {
-    const txReceipt = await testing.inject({
-      method: 'GET',
-      url: `/ethereum/balance/invalid_symbol`,
-    });
-    expect(JSON.parse(txReceipt.body).error).toBe('Bad Request');
-    expect(JSON.parse(txReceipt.body).message).toBe('Token: "invalid_symbol" is not supported');
-    expect(JSON.parse(txReceipt.body).statusCode).toBe(400);
-  });
-
-  it('Validates that the transaction inputted is of the correct format', async () => {
-    const txReceipt = await testing.inject({
-      method: 'POST',
-      url: `/ethereum/handleTransaction`,
-      payload: {
-        transactionHash: 'wrong_transaction_test',
-      },
-    });
-    expect(JSON.parse(txReceipt.body).error).toBe('Bad Request');
-    expect(JSON.parse(txReceipt.body).message).toBe('Invalid Ethereum transaction hash: wrong_transaction_test');
-    expect(JSON.parse(txReceipt.body).statusCode).toBe(400);
-  });
-
-  it('Returns the starting usdc balance of the bridge (should be 0)', async () => {
-    const balance = await testing.inject({
-      method: 'GET',
-      url: `/ethereum/balance/USDC`,
-    });
-    expect(JSON.parse(balance.body)).toStrictEqual(0);
-  });
-  it('Returns the starting eth balance of the bridge (should be 0)', async () => {
-    const balance = await testing.inject({
-      method: 'GET',
-      url: `/ethereum/balance/ETH`,
-    });
-    expect(JSON.parse(balance.body)).toStrictEqual(0);
-  });
-
-  it('Checks if a transaction is confirmed, and stores it in the database', async () => {
+  it('should allocate DFC fund by txnId to receiving address', async () => {
     // Step 1: Call bridgeToDeFiChain(_defiAddress, _tokenAddress, _amount) function (bridge 100 USDC) and mine the block
     const transactionCall = await bridgeContract.bridgeToDeFiChain(
-      ethers.constants.AddressZero,
+      ethers.utils.toUtf8Bytes(address),
       musdcContract.address,
-      100000000,
+      new BigNumber(1).multipliedBy(new BigNumber(10).pow(18)).toFixed(0),
     );
 
     // to test pending transaction (unmined block)
@@ -140,8 +133,32 @@ describe('Bridge Service Integration Tests', () => {
     });
     expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.NOT_CONFIRMED);
 
+    // Check transaction is not yet confirmed error
+    let sendTransactionDetails = await testing.inject({
+      method: 'POST',
+      url: `/ethereum/allocateDFCFund`,
+      payload: {
+        transactionHash: transactionCall.hash,
+      },
+    });
+    expect(sendTransactionDetails.statusCode).toStrictEqual(500);
+    let response = JSON.parse(sendTransactionDetails.body);
+    expect(response.error).toContain('Transaction is not yet confirmed with min block threshold');
+
     // Step 4: mine 65 blocks to make the transaction confirmed
     await hardhatNetwork.generate(65);
+
+    // Check transaction is not yet confirmed error
+    sendTransactionDetails = await testing.inject({
+      method: 'POST',
+      url: `/ethereum/allocateDFCFund`,
+      payload: {
+        transactionHash: transactionCall.hash,
+      },
+    });
+    expect(sendTransactionDetails.statusCode).toStrictEqual(500);
+    response = JSON.parse(sendTransactionDetails.body);
+    expect(response.error).toContain('Transaction is not yet confirmed');
 
     // Step 5: service should update record in db with status='CONFIRMED', as number of confirmations now hit 65.
     txReceipt = await testing.inject({
@@ -153,17 +170,38 @@ describe('Bridge Service Integration Tests', () => {
     });
     expect(JSON.parse(txReceipt.body)).toStrictEqual({ numberOfConfirmations: 65, isConfirmed: true });
 
+    // Step 6: call allocate DFC fund
+    sendTransactionDetails = await testing.inject({
+      method: 'POST',
+      url: `/ethereum/allocateDFCFund`,
+      payload: {
+        transactionHash: transactionCall.hash,
+      },
+    });
+    const res = JSON.parse(sendTransactionDetails.body);
     transactionDbRecord = await prismaService.bridgeEventTransactions.findFirst({
       where: { transactionHash: transactionCall.hash },
     });
+    expect(transactionDbRecord?.sendTransactionHash).toStrictEqual(res.transactionHash);
     expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
-  });
+    await defichain.generateBlock();
 
-  it('Returns the usdc balance of the bridge after bridging 100 usdc and transaction fee', async () => {
-    const balance = await testing.inject({
-      method: 'GET',
-      url: `/ethereum/balance/USDC`,
+    // check token gets transferred to the address
+    const listToken = await defichain.whaleClient?.address.listToken(address);
+    expect(listToken?.[0].id).toStrictEqual('5');
+    expect(listToken?.[0].amount).toStrictEqual(new BigNumber(1).toFixed(8));
+    expect(listToken?.[0].symbol).toStrictEqual('USDC');
+
+    // check fund is already allocated
+    sendTransactionDetails = await testing.inject({
+      method: 'POST',
+      url: `/ethereum/allocateDFCFund`,
+      payload: {
+        transactionHash: transactionCall.hash,
+      },
     });
-    expect(JSON.parse(balance.body)).toStrictEqual(99.7);
+    expect(sendTransactionDetails.statusCode).toStrictEqual(500);
+    response = JSON.parse(sendTransactionDetails.body);
+    expect(response.error).toContain('Fund already allocated');
   });
 });
