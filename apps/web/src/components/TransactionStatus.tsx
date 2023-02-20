@@ -108,16 +108,15 @@ export default function TransactionStatus({
               isConfirmed={isConfirmed}
               isApiSuccess={isApiSuccess}
             />
-            {isConfirmed ||
-              (isReverted && (
-                <div>
-                  <IoCloseOutline
-                    onClick={onClose}
-                    size={20}
-                    className="hover:opacity-70 cursor-pointer"
-                  />
-                </div>
-              ))}
+            {(isConfirmed || isReverted) && (
+              <div>
+                <IoCloseOutline
+                  onClick={onClose}
+                  size={20}
+                  className="hover:opacity-70 cursor-pointer"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
