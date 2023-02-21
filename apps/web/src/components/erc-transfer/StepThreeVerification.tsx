@@ -48,8 +48,8 @@ export default function StepThreeVerification({
   const contentLabelRejected = (
     <span>
       <span>Please check our {/* TODO insert link once available */}</span>
-      <button type="button" onClick={() => {}}>
-        <u>Error guide</u>
+      <button type="button" onClick={() => {}} className="underline">
+        Error guide
       </button>
       <span> and try again</span>
     </span>
