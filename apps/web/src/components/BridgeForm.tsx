@@ -119,6 +119,9 @@ export default function BridgeForm({
 
   const { TXN_KEY, DFC_ADDR_KEY } = useBridgeFormStorageKeys();
 
+  const isFormValid =
+    amount && new BigNumber(amount).gt(0) && !amountErr && !hasAddressInputErr;
+
   const switchNetwork = () => {
     setSelectedNetworkA(selectedNetworkB);
   };
@@ -270,9 +273,6 @@ export default function BridgeForm({
     y,
     floating,
   };
-
-  const isFormValid =
-    amount && new BigNumber(amount).gt(0) && !amountErr && !hasAddressInputErr;
 
   return (
     <div className="w-full md:w-[calc(100%+2px)] lg:w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-12 rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px]">
