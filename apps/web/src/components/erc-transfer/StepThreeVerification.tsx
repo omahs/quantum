@@ -46,13 +46,13 @@ export default function StepThreeVerification({
     TitleLabel.Validating
   );
   const contentLabelRejected = (
-    <div>
-      Please check our {/* TODO insert link once available */}
+    <span>
+      <span>Please check our {/* TODO insert link once available */}</span>
       <button type="button" onClick={() => {}}>
         <u>Error guide</u>
       </button>
-      and try again.
-    </div>
+      <span> and try again</span>
+    </span>
   );
   const [content, setContent] = useState<ContentLabel | JSX.Element>(
     contentLabelRejected
