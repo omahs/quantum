@@ -122,14 +122,14 @@ export class EVMTransactionConfirmerService {
       const { chainId } = await this.ethersRpcProvider.getNetwork();
       const nonce = await this.contract.eoaAddressToNonce(receiverAddress);
       const domainName = await this.contract.name();
-      const domainVersion = await this.contract.version();
+      // const domainVersion = await this.contract.version();
       const deadline = getNextDayTimestamp();
 
       const domain = {
         name: domainName,
         chainId,
         verifyingContract: this.contract.address,
-        version: domainVersion,
+        version: '1.0', // domainVersion, // TODO: Remove hardcoded version here
       };
       const types = {
         CLAIM: [
@@ -238,17 +238,6 @@ export class EVMTransactionConfirmerService {
   }
 }
 
-interface SignClaim {
-  receiverAddress: string;
-  tokenAddress: string;
-  amount: string;
-}
-
-export interface HandledEVMTransaction {
-  numberOfConfirmations: number;
-  isConfirmed: boolean;
-}
-
 const decodeTxnData = (txDetail: ethers.providers.TransactionResponse) => {
   const iface = new ethers.utils.Interface(BridgeV1__factory.abi);
   const decodedData = iface.parseTransaction({ data: txDetail.data, value: txDetail.value });
@@ -289,3 +278,14 @@ const decodeTxnData = (txDetail: ethers.providers.TransactionResponse) => {
     name: decodedData.name,
   };
 };
+
+interface SignClaim {
+  receiverAddress: string;
+  tokenAddress: string;
+  amount: string;
+}
+
+export interface HandledEVMTransaction {
+  numberOfConfirmations: number;
+  isConfirmed: boolean;
+}
