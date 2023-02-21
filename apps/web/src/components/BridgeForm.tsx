@@ -23,7 +23,6 @@ import IconTooltip from "@components/commons/IconTooltip";
 import NumericFormat from "@components/commons/NumericFormat";
 import { QuickInputCard } from "@components/commons/QuickInputCard";
 import { useContractContext } from "@contexts/ContractContext";
-import { useTransactionHashContext } from "@contexts/TransactionHashContext";
 import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
@@ -88,7 +87,6 @@ export default function BridgeForm({
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
   const { Erc20Tokens } = useContractContext();
-  const { txnHash } = useTransactionHashContext();
 
   const [amount, setAmount] = useState<string>("");
   const [amountErr, setAmountErr] = useState<string>("");
@@ -212,12 +210,6 @@ export default function BridgeForm({
       setHasUnconfirmedTxn(false);
     }
   }, [networkEnv]);
-
-  useEffect(() => {
-    if (txnHash.confirmed && !hasPendingTxn && isFormValid) {
-      onResetTransferForm();
-    }
-  }, [txnHash.confirmed]);
 
   const fetchAddressDetail = async (): Promise<void> => {
     try {
