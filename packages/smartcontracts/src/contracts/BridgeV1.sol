@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
-import 'hardhat/console.sol';
-
+import '@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 /** @notice @dev  
 /* This error occurs when incoorect nonce provided
 */
@@ -70,7 +67,8 @@ error AMOUNT_PARAMETER_NOT_ZERO_WHEN_BRIDGING_ETH();
 error MSG_VALUE_NOT_ZERO_WHEN_BRIDGING_ERC20();
 
 contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
-    using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     bytes32 constant DATA_TYPE_HASH =
         keccak256('CLAIM(address to,uint256 amount,uint256 nonce,uint256 deadline,address tokenAddress)');
@@ -86,7 +84,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     mapping(address => uint256) public eoaAddressToNonce;
 
     // Enumerable set of supportedTokens
-    EnumerableSet.AddressSet internal supportedTokens;
+    EnumerableSetUpgradeable.AddressSet internal supportedTokens;
 
     address public relayerAddress;
     // Mapping to track the maximum balance of tokens the contract can hold per token address.
@@ -190,9 +188,17 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
 
     /**
      * @notice Emitted when ETH is received via receive external payable
+     * @param sender The sender of ETH
      * @param ethAmount The amount of ETH sent to the smart contract
      */
     event ETH_RECEIVED_VIA_RECEIVE_FUNCTION(address indexed sender, uint256 indexed ethAmount);
+
+    /**
+     * constructor to disable initalization of implementation contract
+     */
+    constructor() {
+        _disableInitializers();
+    }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
@@ -247,10 +253,10 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         if (ECDSAUpgradeable.recover(msg_hash, signature) != relayerAddress) revert FAKE_SIGNATURE();
         eoaAddressToNonce[_to]++;
         if (_tokenAddress == ETH) {
-            (bool sent, ) = msg.sender.call{value: _amount}('');
+            (bool sent, ) = _to.call{value: _amount}('');
             if (!sent) revert ETH_TRANSFER_FAILED();
         } else {
-            IERC20(_tokenAddress).transfer(_to, _amount);
+            IERC20Upgradeable(_tokenAddress).safeTransfer(_to, _amount);
         }
         emit CLAIM_FUND(_tokenAddress, _to, _amount);
     }
@@ -283,8 +289,8 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
             (bool sent, ) = communityWallet.call{value: netTxFee}('');
             if (!sent) revert ETH_TRANSFER_FAILED();
         } else {
-            IERC20(_tokenAddress).transferFrom(msg.sender, address(this), netAmountInWei);
-            IERC20(_tokenAddress).transferFrom(msg.sender, communityWallet, netTxFee);
+            IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, address(this), netAmountInWei);
+            IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, communityWallet, netTxFee);
         }
         emit BRIDGE_TO_DEFI_CHAIN(_defiAddress, _tokenAddress, netAmountInWei, block.timestamp);
     }
@@ -323,7 +329,7 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         if (_tokenAddress == ETH) {
             (bool sent, ) = msg.sender.call{value: amount}('');
             if (!sent) revert ETH_TRANSFER_FAILED();
-        } else IERC20(_tokenAddress).transfer(msg.sender, amount);
+        } else IERC20Upgradeable(_tokenAddress).safeTransfer(msg.sender, amount);
         emit WITHDRAWAL_BY_OWNER(msg.sender, _tokenAddress, amount);
     }
 
@@ -340,9 +346,9 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
                     (bool sent, ) = flushReceiveAddress.call{value: amountToFlush}('');
                     if (!sent) revert ETH_TRANSFER_FAILED();
                 }
-            } else if (IERC20(supToken).balanceOf(address(this)) > tokenCap[supToken]) {
-                uint256 amountToFlush = IERC20(supToken).balanceOf(address(this)) - tokenCap[supToken];
-                IERC20(supToken).transfer(flushReceiveAddress, amountToFlush);
+            } else if (IERC20Upgradeable(supToken).balanceOf(address(this)) > tokenCap[supToken]) {
+                uint256 amountToFlush = IERC20Upgradeable(supToken).balanceOf(address(this)) - tokenCap[supToken];
+                IERC20Upgradeable(supToken).safeTransfer(flushReceiveAddress, amountToFlush);
             }
         }
         emit FLUSH_FUND();
