@@ -23,18 +23,18 @@ function Home() {
     return numOfConfirmations;
   };
 
+  const resetConfirmedTxnHash = () => {
+    if (txnHash.confirmed) {
+      setTxnHash("confirmed", null);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("beforeunload", resetConfirmedTxnHash);
     return () => {
       window.removeEventListener("beforeunload", resetConfirmedTxnHash);
     };
   }, [txnHash.confirmed]);
-
-  const resetConfirmedTxnHash = () => {
-    if (txnHash.confirmed) {
-      setTxnHash("confirmed", null);
-    }
-  };
 
   return (
     <section
