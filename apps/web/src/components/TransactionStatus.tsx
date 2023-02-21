@@ -134,18 +134,6 @@ export default function TransactionStatus({
           </div>
         </div>
         {isUnsentFund && (
-          // <button
-          //   type="button"
-          //   className="w-full lg:w-fit mt-6 lg:mt-0 text-xs text-dark-100 font-semibold bg-dark-1000 px-4 py-3 h-[40px] self-center rounded-full"
-          //   onClick={handleRetrySend}
-          // >
-          //   Try again
-          //   <FiRefreshCw
-          //     size={16}
-          //     className="text-dark-100 ml-1 hidden lg:inline-block"
-          //   />
-          // </button>
-
           <ActionButton
             label="Try again"
             variant="primary"
