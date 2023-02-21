@@ -21,4 +21,12 @@ export class EthereumController {
   ): Promise<HandledEVMTransaction> {
     return this.evmTransactionConfirmerService.handleTransaction(transactionHash);
   }
+
+  @Post('allocateDFCFund')
+  @UseGuards(ThrottlerGuard)
+  async allocateDFCFund(
+    @Body('transactionHash', new EthereumTransactionValidationPipe()) transactionHash: string,
+  ): Promise<any> {
+    return this.evmTransactionConfirmerService.allocateDFCFund(transactionHash);
+  }
 }

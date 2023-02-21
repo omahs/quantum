@@ -117,13 +117,13 @@ export default function EvmToDeFiChainTransfer({
 
     if ((hasPendingTx && requiresApproval) || isApproveTxnLoading) {
       status = BridgeStatus.IsTokenApprovalInProgress;
-    } else if (hasPendingTx) {
-      status = BridgeStatus.IsBridgeToDfcInProgress;
     } else if (
       eventError !== undefined &&
       eventError?.customErrorDisplay !== "InsufficientAllowanceError"
     ) {
       setErrorMessage(eventError.message);
+    } else if (hasPendingTx) {
+      status = BridgeStatus.IsBridgeToDfcInProgress;
     } else if (isApproveTxnSuccess && requiresApproval) {
       status = BridgeStatus.IsTokenApproved;
     } else if (!isApproveTxnSuccess && requiresApproval) {
@@ -223,7 +223,10 @@ export default function EvmToDeFiChainTransfer({
           testId="confirm-transfer-btn"
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
           onClick={() => handleInitiateTransfer()}
-          disabled={hasPendingTx}
+          disabled={
+            hasPendingTx ||
+            (writeApprove === undefined && writeBridgeToDeFiChain === undefined)
+          }
         />
       </div>
     </>
