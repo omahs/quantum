@@ -24,7 +24,6 @@ COPY .npmrc ./
 COPY apps ./apps
 COPY packages ./packages
 
-ENV APP_PORT 5741
 EXPOSE 5741
 
 RUN pnpm fetch
