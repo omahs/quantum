@@ -60,6 +60,11 @@ export default function useWatchEthTxn() {
           setTxnHash("unsent-fund", unconfirmed ?? null);
           setTxnHash("unconfirmed", null);
         } else if (
+          data?.error?.includes("There is a problem in allocating fund")
+        ) {
+          setTxnHash("unsent-fund", unconfirmed ?? null);
+          setTxnHash("unconfirmed", null);
+        } else if (
           data?.statusCode === HttpStatusCode.BadRequest &&
           data?.message === "Transaction Reverted"
         ) {

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiArrowUpRight, FiRefreshCw } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
@@ -11,7 +11,6 @@ import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import ConfirmationProgress from "./TransactionConfirmationProgressBar";
 import useResponsive from "../hooks/useResponsive";
 import { useContractContext } from "../layouts/contexts/ContractContext";
-import ActionButton from "./commons/ActionButton";
 
 export default function TransactionStatus({
   isConfirmed,
@@ -106,17 +105,15 @@ export default function TransactionStatus({
           />
         </div>
       )}
-      <div className="flex flex-row items-center">
+
+      <div
+        className={clsx("flex flex-col lg:flex-row", {
+          "items-center": !isUnsentFund,
+        })}
+      >
         <div className="flex-1 flex-col">
           <div className="leading-5 lg:text-xl lg:font-semibold">{title}</div>
           <div className="pt-1 text-sm text-dark-700">{description}</div>
-          {isUnsentFund && (
-            <ActionButton
-              label="Try again"
-              customStyle="my-6 p-0.5"
-              onClick={handleRetrySend}
-            />
-          )}
           <div className="flex flex-row items-center mt-2 text-dark-900 text-xl font-bold ">
             <a
               className="flex flex-row items-center hover:opacity-70"
@@ -134,15 +131,20 @@ export default function TransactionStatus({
               </a>
             )} */}
           </div>
-          {(isConfirmed || isReverted) && !isLg && (
-            <ActionButton
-              label="Close"
-              variant="secondary"
-              customStyle="mt-6 dark-section-bg"
-              onClick={onClose}
-            />
-          )}
         </div>
+        {isUnsentFund && (
+          <button
+            type="button"
+            className="w-full lg:w-fit mt-6 lg:mt-0 text-xs text-dark-100 font-semibold bg-dark-1000 px-4 py-3 h-[40px] self-center rounded-full"
+            onClick={handleRetrySend}
+          >
+            Try again
+            <FiRefreshCw
+              size={16}
+              className="text-dark-100 ml-1 hidden lg:inline-block"
+            />
+          </button>
+        )}
         {isLg && (
           <div className="flex flex-row pl-8">
             {!isUnsentFund && (
@@ -153,7 +155,8 @@ export default function TransactionStatus({
                 isApiSuccess={isApiSuccess}
               />
             )}
-            {(isConfirmed || isReverted) && (
+
+            {(isConfirmed || isReverted || isUnsentFund) && (
               <div>
                 <IoCloseOutline
                   onClick={onClose}
