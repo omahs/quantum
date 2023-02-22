@@ -124,14 +124,17 @@ describe('DeFiChain Send Transaction Testing', () => {
     );
     await defichain.generateBlock();
 
-    // // Send 10 DFI to hotwallet
+    // Send 10 UTXO to hotwallet
     await defichain.playgroundRpcClient?.wallet.sendToAddress(hotWalletAddress, 10);
     await defichain.generateBlock();
 
     expect(await getBalance('BTC')).toStrictEqual(10);
     expect(await getBalance('USDC')).toStrictEqual(10);
     expect(await getBalance('USDT')).toStrictEqual(10);
+
+    // Delay to workaround throttler exception
     await delay(30000);
+
     expect(await getBalance('ETH')).toStrictEqual(10);
     expect(await getBalance('DFI')).toStrictEqual(10);
   });
