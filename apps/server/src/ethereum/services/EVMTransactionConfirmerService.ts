@@ -1,5 +1,5 @@
 import { fromAddress } from '@defichain/jellyfish-address';
-import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EthereumTransactionStatus } from '@prisma/client';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
@@ -21,6 +21,8 @@ export class EVMTransactionConfirmerService {
 
   private network: EnvironmentNetwork;
 
+  private readonly logger: Logger;
+
   constructor(
     @Inject(ETHERS_RPC_PROVIDER) readonly ethersRpcProvider: ethers.providers.StaticJsonRpcProvider,
     private readonly clientProvider: WhaleApiClientProvider,
@@ -34,6 +36,7 @@ export class EVMTransactionConfirmerService {
       BridgeV2__factory.abi,
       this.ethersRpcProvider,
     );
+    this.logger = new Logger(EVMTransactionConfirmerService.name);
   }
 
   async getBalance(tokenSymbol: SupportedTokenSymbols): Promise<string> {
@@ -113,6 +116,8 @@ export class EVMTransactionConfirmerService {
     amount,
   }: SignClaim): Promise<{ signature: string; nonce: number; deadline: number }> {
     try {
+      this.logger.log(`[Sign] ${amount} ${tokenAddress} ${receiverAddress}`);
+
       // Connect signer ETH wallet (admin/operational wallet)
       const wallet = new ethers.Wallet(
         this.configService.getOrThrow('ethereum.ethWalletPrivKey'),
@@ -150,6 +155,8 @@ export class EVMTransactionConfirmerService {
 
       // eslint-disable-next-line no-underscore-dangle
       const signature = await wallet._signTypedData(domain, types, data);
+
+      this.logger.log(`[Sign SUCCESS] ${amount} ${tokenAddress} ${receiverAddress}`);
       return { signature, nonce, deadline };
     } catch (e: any) {
       throw new Error('There is a problem in signing this claim', { cause: e });
@@ -158,6 +165,8 @@ export class EVMTransactionConfirmerService {
 
   async allocateDFCFund(transactionHash: string): Promise<{ transactionHash: string }> {
     try {
+      this.logger.log(`[AllocateDFCFund] ${transactionHash}`);
+
       const txDetails = await this.prisma.bridgeEventTransactions.findFirst({
         where: {
           transactionHash,
@@ -225,6 +234,8 @@ export class EVMTransactionConfirmerService {
           sendTransactionHash,
         },
       });
+
+      this.logger.log(`[AllocateDFCFund SUCCESS] ${transactionHash} ${sendTransactionHash}`);
       return { transactionHash: sendTransactionHash };
     } catch (e: any) {
       throw new HttpException(
