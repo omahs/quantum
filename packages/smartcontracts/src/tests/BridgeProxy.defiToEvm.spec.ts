@@ -130,6 +130,7 @@ describe('DeFiChain --> EVM', () => {
     });
 
     it('Unsupported token', async () => {
+      await testToken2.mint(proxyBridge.address, toWei('100'));
       await expect(
         proxyBridge.claimFund(
           operationalAdminSigner.address,
@@ -140,6 +141,7 @@ describe('DeFiChain --> EVM', () => {
           '0x00',
         ),
       ).to.be.revertedWithCustomError(proxyBridge, 'TOKEN_NOT_SUPPORTED');
+      expect(await testToken2.balanceOf(proxyBridge.address)).to.equal(toWei('100'));
       // Checking Balance after Unsuccessfully claiming fund, should be 0
       expect(await testToken2.balanceOf(operationalAdminSigner.address)).to.equal(0);
     });
