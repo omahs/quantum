@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import BridgeForm from "@components/BridgeForm";
 import WelcomeHeader from "@components/WelcomeHeader";
-// import MobileBottomMenu from "@components/MobileBottomMenu";
+import MobileBottomMenu from "@components/MobileBottomMenu";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
 import { useTransactionHashContext } from "@contexts/TransactionHashContext";
@@ -79,9 +79,9 @@ function Home() {
           <BridgeForm hasPendingTxn={txnHash.unconfirmed !== undefined} />
         </div>
       </div>
-      {/* <div className="md:hidden mt-6 mb-12 mx-6"> TODO:: Hide Temporary
+      <div className="md:hidden mt-6 mb-12 mx-6">
         <MobileBottomMenu />
-      </div> */}
+      </div>
     </section>
   );
 }
