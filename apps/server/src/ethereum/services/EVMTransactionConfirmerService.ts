@@ -221,7 +221,11 @@ export class EVMTransactionConfirmerService {
         amount: amountLessFee,
       };
 
-      this.logger.log(`[Send] ${sendTxPayload.amount} ${sendTxPayload.id} ${sendTxPayload.symbol} ${toAddress}`);
+      this.logger.log(
+        `[Send] ${sendTxPayload.amount.toFixed(8)} ${fee.toFixed(8)} ${amountLessFee.toFixed(8)} ${sendTxPayload.id} ${
+          sendTxPayload.symbol
+        } ${toAddress}`,
+      );
 
       const sendTransactionHash = await this.sendService.send(toAddress, sendTxPayload);
       // update status in db

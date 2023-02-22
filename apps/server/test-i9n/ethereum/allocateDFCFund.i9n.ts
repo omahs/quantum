@@ -393,7 +393,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     // Deduct fee
     const evmToDfcFee = config.get('evmToDfcFee');
     const amount = new BigNumber(1);
-    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(evmToDfcFee));
+    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(evmToDfcFee)).toFixed(8);
 
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);
