@@ -211,9 +211,19 @@ export class EVMTransactionConfirmerService {
       if (decodedAddress === undefined) {
         throw new Error(`Invalid send address for DeFiChain ${this.network}`);
       }
-      this.logger.log(`[Send] ${dTokenDetails.amount} ${dTokenDetails.id} ${dTokenDetails.symbol} ${toAddress}`);
 
-      const sendTransactionHash = await this.sendService.send(toAddress, dTokenDetails);
+      const amount = new BigNumber(dTokenDetails.amount);
+      const fee = amount.multipliedBy(this.configService.getOrThrow('evmToDfcFee'));
+      const amountLessFee = amount.minus(fee);
+
+      const sendTxPayload = {
+        ...dTokenDetails,
+        amount: amountLessFee,
+      };
+
+      this.logger.log(`[Send] ${sendTxPayload.amount} ${sendTxPayload.id} ${sendTxPayload.symbol} ${toAddress}`);
+
+      const sendTransactionHash = await this.sendService.send(toAddress, sendTxPayload);
       // update status in db
       await this.prisma.bridgeEventTransactions.update({
         where: {

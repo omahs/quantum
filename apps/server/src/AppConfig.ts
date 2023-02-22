@@ -28,6 +28,7 @@ export function appConfig() {
       },
       ethWalletPrivKey: process.env.ETHEREUM_WALLET_PRIVATE_KEY,
     },
+    evmToDfcFee: process.env.EVM_TO_DFC_FEE,
   };
 }
 

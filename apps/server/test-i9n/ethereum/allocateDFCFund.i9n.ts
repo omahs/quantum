@@ -1,5 +1,6 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 import { WhaleWalletAccount } from '@defichain/whale-api-wallet';
+import { ConfigService } from '@nestjs/config';
 import { EthereumTransactionStatus } from '@prisma/client';
 import BigNumber from 'bignumber.js';
 import { ContractTransaction, ethers } from 'ethers';
@@ -35,6 +36,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
   let fromWallet: string;
   let wallet: WhaleWalletAccount;
   let transactionCall: ContractTransaction;
+  let config: ConfigService;
 
   beforeAll(async () => {
     startedPostgresContainer = await new PostgreSqlContainer().start();
@@ -62,6 +64,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
       ),
     );
     const app = await testing.start();
+    config = app.get(ConfigService);
 
     whaleWalletProvider = app.get<WhaleWalletProvider>(WhaleWalletProvider);
     wallet = whaleWalletProvider.getHotWallet();
@@ -387,11 +390,16 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
     await defichain.generateBlock();
 
+    // Deduct fee
+    const evmToDfcFee = config.get('evmToDfcFee');
+    const amount = new BigNumber(1);
+    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(evmToDfcFee));
+
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);
     const token = listToken.find((each) => each.id === '2');
     expect(token?.id).toStrictEqual('2');
-    expect(token?.amount).toStrictEqual(new BigNumber(1).toFixed(8));
+    expect(new BigNumber(token?.amount ?? 0).toFixed(8)).toStrictEqual(amountLessFee);
     expect(token?.symbol).toStrictEqual('ETH');
   });
 });
