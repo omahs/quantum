@@ -49,7 +49,9 @@ export default function TransactionStatus({
       );
     } else if (isReverted) {
       setTitle("Transaction reverted");
-      setDescription("");
+      setDescription(
+        "Something went wrong as the transaction was being processed. Please wait for the required confirmations to proceed with your transaction."
+      );
     } else if (isConfirmed) {
       setTitle("Transaction confirmed");
       setDescription("Expect to receive your tokens in your wallet shortly.");
@@ -88,12 +90,17 @@ export default function TransactionStatus({
   return (
     <div
       className={clsx(
-        "flex-1 px-8 py-6 text-dark-1000 rounded-xl border bg-dark-100 ",
-        isConfirmed
-          ? "border-dark-card-stroke"
-          : "dark-bg-gradient-1 border-transparent",
-        isMd ? "mb-6" : "m-6",
-        { "pr-6": isLg && isConfirmed }
+        "flex-1 px-8 py-6 text-dark-1000 rounded-xl border bg-dark-100",
+        {
+          "border-warning": isReverted,
+          "border-error": isUnsentFund,
+          "border-dark-card-stroke": isConfirmed,
+          "dark-bg-gradient-1 border-transparent":
+            !isConfirmed && !isUnsentFund,
+          "mb-6": isMd,
+          "m-6": !isMd,
+          "pr-6": isLg && isConfirmed,
+        }
       )}
     >
       {!isLg && !isUnsentFund && (
@@ -102,6 +109,8 @@ export default function TransactionStatus({
             confirmationBlocksTotal={CONFIRMATIONS_BLOCK_TOTAL}
             confirmationBlocksCurrent={confirmationBlocksCurrent}
             isConfirmed={isConfirmed}
+            isReverted={isReverted}
+            isUnsentFund={isUnsentFund}
             isApiSuccess={isApiSuccess}
           />
         </div>
@@ -113,9 +122,9 @@ export default function TransactionStatus({
         })}
       >
         <div className="flex-1 flex-col">
-          <div className="leading-5 lg:text-xl lg:font-semibold">{title}</div>
+          <div className="leading-5 lg:text-xl font-semibold">{title}</div>
           <div className="pt-1 text-sm text-dark-700">{description}</div>
-          <div className="flex flex-row items-center mt-2 text-dark-900 text-xl font-bold ">
+          <div className="flex flex-row items-center mt-2.5 text-dark-900 lg:text-xl font-bold ">
             <a
               className="flex flex-row items-center hover:opacity-70"
               href={`${ExplorerURL}/tx/${txnHash}`}
@@ -142,7 +151,7 @@ export default function TransactionStatus({
             isRefresh
           />
         )}
-        {isConfirmed && !isLg && (
+        {(isConfirmed || isReverted) && !isLg && (
           <ActionButton
             label="Close"
             variant="secondary"
