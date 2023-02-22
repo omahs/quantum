@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { useAllocateDfcFundMutation } from "@store/index";
 import { useTransactionHashContext } from "@contexts/TransactionHashContext";
 import { HttpStatusCode } from "axios";
+import useTimeout from "@hooks/useSetTimeout";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import ConfirmationProgress from "./TransactionConfirmationProgressBar";
 import useResponsive from "../hooks/useResponsive";
@@ -32,14 +33,21 @@ export default function TransactionStatus({
 }) {
   const { ExplorerURL } = useContractContext();
   const { isLg, isMd } = useResponsive();
+
+  const [allocateDfcFund] = useAllocateDfcFundMutation();
+  const { setTxnHash } = useTransactionHashContext();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const confirmationBlocksCurrent = BigNumber.min(
     CONFIRMATIONS_BLOCK_TOTAL,
     numberOfConfirmations
   ).toFixed();
-  const [allocateDfcFund] = useAllocateDfcFundMutation();
-  const { setTxnHash } = useTransactionHashContext();
+  const [isThrottleLimitReached, setIsThrottleLimitReached] = useState(false);
+
+  const [throttledTimeOut] = useTimeout(() => {
+    setIsThrottleLimitReached(false);
+  }, 5000);
 
   useEffect(() => {
     if (isUnsentFund) {
@@ -76,6 +84,8 @@ export default function TransactionStatus({
         }
       } catch ({ data }) {
         if (data?.statusCode === HttpStatusCode.TooManyRequests) {
+          setIsThrottleLimitReached(true);
+          throttledTimeOut();
           setDescription(
             "Retry limit has been reached, please wait for a minute and try again"
           );
@@ -134,7 +144,8 @@ export default function TransactionStatus({
               <FiArrowUpRight size={20} className="mr-2" />
               View on Etherscan
             </a>
-            {/* {ethTxnStatus.isConfirmed && (
+            {/*
+             {ethTxnStatus.isConfirmed && (
               <a className="flex flex-row items-center hover:opacity-70 ml-5">
                 <IoHelpCircle size={20} className="mr-2" />
                 Help
@@ -148,6 +159,7 @@ export default function TransactionStatus({
             variant="primary"
             customStyle="mt-6 lg:mt-0 text-dark-100 w-full lg:w-fit lg:h-[40px] lg:self-center lg:text-xs"
             onClick={handleRetrySend}
+            disabled={isThrottleLimitReached}
             isRefresh
           />
         )}
@@ -166,6 +178,8 @@ export default function TransactionStatus({
                 confirmationBlocksTotal={CONFIRMATIONS_BLOCK_TOTAL}
                 confirmationBlocksCurrent={confirmationBlocksCurrent}
                 isConfirmed={isConfirmed}
+                isReverted={isReverted}
+                isUnsentFund={isUnsentFund}
                 isApiSuccess={isApiSuccess}
               />
             )}
