@@ -4,6 +4,7 @@ import { DeFiChainAddressIndex } from '@prisma/client';
 import { EnvironmentNetwork, getJellyfishNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 
+import { SupportedDFCTokenSymbols } from '../../AppConfig';
 import { CustomErrorCodes } from '../../CustomErrorCodes';
 import { EVMTransactionConfirmerService } from '../../ethereum/services/EVMTransactionConfirmerService';
 import { PrismaService } from '../../PrismaService';
@@ -163,6 +164,26 @@ export class WhaleWalletService {
         },
       );
     }
+  }
+
+  async getBalance(tokenSymbol: SupportedDFCTokenSymbols): Promise<string> {
+    if (!SupportedDFCTokenSymbols[tokenSymbol]) {
+      throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
+    }
+    const hotWallet = await this.whaleWalletProvider.getHotWallet();
+    const hotWalletAddress = await hotWallet.getAddress();
+
+    if (tokenSymbol === SupportedDFCTokenSymbols.DFI) {
+      return hotWallet.client.address.getBalance(hotWalletAddress);
+    }
+
+    const tokens = await hotWallet.client.address.listToken(hotWalletAddress);
+    const token = tokens.find((t) => t.symbol === SupportedDFCTokenSymbols[tokenSymbol]);
+
+    if (token === undefined) {
+      return '0';
+    }
+    return token.amount;
   }
 
   private verifyValidAddress(address: string, network: EnvironmentNetwork): { isAddressValid: boolean } {

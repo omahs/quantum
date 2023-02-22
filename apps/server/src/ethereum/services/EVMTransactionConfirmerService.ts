@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, Contract, ethers } from 'ethers';
 import { BridgeV2__factory, ERC20__factory } from 'smartcontracts';
 
-import { SupportedTokenSymbols } from '../../AppConfig';
+import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { WhaleApiClientProvider } from '../../defichain/providers/WhaleApiClientProvider';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
@@ -36,19 +36,19 @@ export class EVMTransactionConfirmerService {
     );
   }
 
-  async getBalance(tokenSymbol: SupportedTokenSymbols): Promise<string> {
+  async getBalance(tokenSymbol: SupportedEVMTokenSymbols): Promise<string> {
     const contractABI = ['function balanceOf(address) view returns (uint256)'];
-    if (!SupportedTokenSymbols[tokenSymbol]) {
+    if (!SupportedEVMTokenSymbols[tokenSymbol]) {
       throw new BadRequestException(`Token: "${tokenSymbol}" is not supported`);
     }
 
-    if (tokenSymbol === SupportedTokenSymbols.ETH) {
+    if (tokenSymbol === SupportedEVMTokenSymbols.ETH) {
       const balance = await this.ethersRpcProvider.getBalance(this.contract.address);
       return ethers.utils.formatEther(balance);
     }
 
     const tokenContract = new ethers.Contract(
-      this.configService.getOrThrow(`ethereum.contracts.${SupportedTokenSymbols[tokenSymbol]}.address`),
+      this.configService.getOrThrow(`ethereum.contracts.${SupportedEVMTokenSymbols[tokenSymbol]}.address`),
       contractABI,
       this.ethersRpcProvider,
     );
