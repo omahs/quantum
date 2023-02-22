@@ -92,15 +92,14 @@ contract BridgeV2 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     // Mapping to track the maximum balance of tokens the contract can hold per token address.
     mapping(address => uint256) public tokenCap;
 
-    // Contract version
-    string public version;
     // Transaction fee when bridging from EVM to DeFiChain. Based on dps (e.g 1% == 100dps)
     uint256 public transactionFee;
     // Community wallet to send tx fees to
     address public communityWallet;
-
     // Address to receive the flush
     address public flushReceiveAddress;
+    // Contract version
+    string public version;
 
     /**
      * @notice Emitted when the user claims funds from the bridge
