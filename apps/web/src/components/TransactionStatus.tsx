@@ -39,15 +39,16 @@ export default function TransactionStatus({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isThrottleLimitReached, setIsThrottleLimitReached] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const confirmationBlocksCurrent = BigNumber.min(
     CONFIRMATIONS_BLOCK_TOTAL,
     numberOfConfirmations
   ).toFixed();
-  const [isThrottleLimitReached, setIsThrottleLimitReached] = useState(false);
 
   const [throttledTimeOut] = useTimeout(() => {
     setIsThrottleLimitReached(false);
-  }, 5000);
+  }, 60000);
 
   useEffect(() => {
     if (isUnsentFund) {
@@ -74,6 +75,7 @@ export default function TransactionStatus({
   const handleRetrySend = async () => {
     if (txnHash !== undefined) {
       try {
+        setIsRetrying(true);
         const fundData = await allocateDfcFund({
           txnHash,
         }).unwrap();
@@ -93,6 +95,8 @@ export default function TransactionStatus({
           setTxnHash("confirmed", txnHash);
           setTxnHash("unsent-fund", null);
         }
+      } finally {
+        setIsRetrying(false);
       }
     }
   };
@@ -159,8 +163,9 @@ export default function TransactionStatus({
             variant="primary"
             customStyle="mt-6 lg:mt-0 text-dark-100 w-full lg:w-fit lg:h-[40px] lg:self-center lg:text-xs"
             onClick={handleRetrySend}
-            disabled={isThrottleLimitReached}
-            isRefresh
+            disabled={isThrottleLimitReached || isRetrying}
+            isRefresh={!isRetrying}
+            isLoading={isRetrying}
           />
         )}
         {(isConfirmed || isReverted) && !isLg && (
