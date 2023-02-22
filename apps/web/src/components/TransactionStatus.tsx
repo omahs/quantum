@@ -59,7 +59,7 @@ export default function TransactionStatus({
         "Do not refresh, leave the browser, or close the tab until transaction is complete. Doing so may interrupt the transaction and cause loss of funds."
       );
     }
-  }, [isConfirmed, isReverted]);
+  }, [isConfirmed, isReverted, isUnsentFund]);
 
   const handleRetrySend = async () => {
     if (txnHash !== undefined) {
@@ -142,7 +142,7 @@ export default function TransactionStatus({
             isRefresh
           />
         )}
-        {(isConfirmed || isUnsentFund) && !isLg && (
+        {isConfirmed && !isLg && (
           <ActionButton
             label="Close"
             variant="secondary"
@@ -161,7 +161,7 @@ export default function TransactionStatus({
               />
             )}
 
-            {(isConfirmed || isReverted || isUnsentFund) && (
+            {(isConfirmed || isReverted) && (
               <div>
                 <IoCloseOutline
                   onClick={onClose}
