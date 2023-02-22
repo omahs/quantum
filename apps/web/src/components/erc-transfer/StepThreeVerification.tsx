@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import UtilityButton from "@components/commons/UtilityButton";
@@ -11,12 +12,13 @@ import { SignedClaim, UnconfirmedTxnI } from "types";
 import { HttpStatusCode } from "axios";
 import { useContractContext } from "@contexts/ContractContext";
 import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
+import useTimeout from "@hooks/useSetTimeout";
 import { DISCLAIMER_MESSAGE } from "../../constants";
 
 enum ButtonLabel {
   Validating = "Verifying",
   Validated = "Verified",
-  Rejected = "Rejected",
+  Rejected = "Try again",
 }
 
 enum TitleLabel {
@@ -28,9 +30,8 @@ enum TitleLabel {
 type RejectedLabelType = `Something went wrong${string}`;
 
 enum ContentLabel {
-  Validating = "Please wait as your transaction is being verified. This usually takes 10 confirmations from the blockchain. Once verified, you will be redirected to the next step.",
+  Validating = "Please wait as your transaction is being verified. Once verified, you will be redirected to the next step.",
   Validated = "Please wait as we redirect you to the next step.",
-  Rejected = "Please check our Error guide and try again.",
   ThrottleLimit = "Please wait for a minute and try again.",
 }
 
@@ -46,7 +47,24 @@ export default function StepThreeVerification({
   const [title, setTitle] = useState<TitleLabel | RejectedLabelType>(
     TitleLabel.Validating
   );
-  const [content, setContent] = useState<ContentLabel>(ContentLabel.Rejected);
+
+  const contentLabelRejected = (
+    <span>
+      <span>Please check our </span>
+      <Link
+        href="https://birthdayresearch.notion.site/Error-Codes-d5c0bfd68359466e88223791e69adb4f"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline"
+      >
+        Error guide
+      </Link>
+      <span> and try again</span>
+    </span>
+  );
+  const [content, setContent] = useState<ContentLabel | JSX.Element>(
+    contentLabelRejected
+  );
   const [buttonLabel, setButtonLabel] = useState<ButtonLabel>(
     ButtonLabel.Validating
   );
@@ -56,6 +74,11 @@ export default function StepThreeVerification({
   const txn = getStorageItem<UnconfirmedTxnI>(TXN_KEY);
   const [validationSuccess, setValidationSuccess] = useState(false);
   const [isValidating, setIsValidating] = useState(true);
+  const [isThrottled, setIsThrottled] = useState(false);
+
+  const [throttledTimeOut] = useTimeout(() => {
+    setIsThrottled(false);
+  }, 60000);
 
   const triggerVerify = useCallback(async () => {
     if (
@@ -65,18 +88,18 @@ export default function StepThreeVerification({
       txn?.selectedTokensA.tokenA.symbol !== undefined
     ) {
       try {
-        const { data } = await trigger({
+        const response = await trigger({
           address: dfcAddress,
           ethReceiverAddress: txn.toAddress,
           tokenAddress: Erc20Tokens[txn.selectedTokensB.tokenA.name].address,
           amount: new BigNumber(txn.amount).toFixed(8),
           symbol: txn.selectedTokensA.tokenA.symbol,
-        });
+        }).unwrap();
 
-        if (data?.statusCode !== undefined) {
-          Logging.info(`Returned statusCode: ${data?.statusCode}`);
-          setContent(ContentLabel.Rejected);
-          setTitle(`Something went wrong (Error code ${data.statusCode})`);
+        if (response.statusCode !== undefined) {
+          Logging.info(`Returned statusCode: ${response.statusCode}`);
+          setContent(contentLabelRejected);
+          setTitle(`Something went wrong (Error code ${response.statusCode})`);
           setValidationSuccess(false);
           setIsValidating(false);
           setButtonLabel(ButtonLabel.Rejected);
@@ -87,7 +110,7 @@ export default function StepThreeVerification({
         setContent(ContentLabel.Validated);
         setButtonLabel(ButtonLabel.Validated);
         setValidationSuccess(true);
-        onSuccess(data);
+        onSuccess(response);
         goToNextStep();
       } catch (e) {
         setButtonLabel(ButtonLabel.Rejected);
@@ -97,9 +120,11 @@ export default function StepThreeVerification({
         if (e.data?.statusCode === HttpStatusCode.TooManyRequests) {
           setTitle(TitleLabel.ThrottleLimit);
           setContent(ContentLabel.ThrottleLimit);
+          setIsThrottled(true);
+          throttledTimeOut();
         } else {
           setTitle(TitleLabel.Rejected);
-          setContent(ContentLabel.Rejected);
+          setContent(contentLabelRejected);
         }
         Logging.error(e);
       }
@@ -135,7 +160,7 @@ export default function StepThreeVerification({
           <UtilityButton
             label={buttonLabel}
             isLoading={isValidating}
-            disabled={isValidating || validationSuccess}
+            disabled={isValidating || validationSuccess || isThrottled}
             withRefreshIcon={!validationSuccess && !isValidating}
             onClick={() => {
               setTitle(TitleLabel.Validating);
