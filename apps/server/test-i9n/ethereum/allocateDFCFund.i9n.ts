@@ -223,11 +223,16 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
     await defichain.generateBlock();
 
+    // Deduct fee
+    const ethTransferFee = config.get('ethereum.transferFee');
+    const amount = new BigNumber(1);
+    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(ethTransferFee)).toFixed(8);
+
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);
     const token = listToken.find((each) => each.id === '5');
     expect(token?.id).toStrictEqual('5');
-    expect(token?.amount).toStrictEqual(new BigNumber(1).toFixed(8));
+    expect(new BigNumber(token?.amount ?? 0)).toStrictEqual(amountLessFee);
     expect(token?.symbol).toStrictEqual('USDC');
   });
 
