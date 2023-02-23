@@ -6,47 +6,47 @@ import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol'
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when incoorect nonce provided
 */
 error INCORRECT_NONCE();
 
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when token is not in supported list
 */
 error TOKEN_NOT_SUPPORTED();
 
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when fake signatures being used to claim fund
 */
 error FAKE_SIGNATURE();
 
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when token is already in supported list
 */
 error TOKEN_ALREADY_SUPPORTED();
 
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when using Zero address
 */
 error ZERO_ADDRESS();
 
-/** @notice @dev  
+/** @notice @dev
 /* This error occurs when the msg.sender doesn't have neither DEFAULT_ADMIN_ROLE or OPERATIONAL_ROLE assigned
 */
 error NON_AUTHORIZED_ADDRESS();
 
-/** @notice @dev 
+/** @notice @dev
 /* This error occurs when Admin(s) try to change daily allowance of un-supported token.
 */
 error ONLY_SUPPORTED_TOKENS();
 
-/** @notice @dev 
+/** @notice @dev
 /* This error occurs when `_newResetTimeStamp` is before block.timestamp
 */
 error EXPIRED_CLAIM();
 
-/** @notice @dev 
+/** @notice @dev
 /* This error occurs when `_amount` is zero
 */
 error REQUESTED_BRIDGE_AMOUNT_IS_ZERO();
@@ -76,9 +76,6 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     bytes32 public constant OPERATIONAL_ROLE = keccak256('OPERATIONAL_ROLE');
 
     string public constant NAME = 'QUANTUM_BRIDGE';
-
-    // Contract version
-    string public constant VERSION = '1';
 
     address public constant ETH = address(0);
 
@@ -220,13 +217,20 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         address _flushReceiveAddress
     ) external initializer {
         __UUPSUpgradeable_init();
-        __EIP712_init(NAME, VERSION);
+        __EIP712_init(NAME, '1');
         _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
         _grantRole(OPERATIONAL_ROLE, _initialOperational);
         communityWallet = _communityWallet;
         relayerAddress = _relayerAddress;
         transactionFee = _fee;
         flushReceiveAddress = _flushReceiveAddress;
+    }
+
+    /**
+    * @notice To get the current version of the contract
+     */
+    function version() external view returns (string memory) {
+        return StringsUpgradeable.toString(_getInitializedVersion());
     }
 
     /**

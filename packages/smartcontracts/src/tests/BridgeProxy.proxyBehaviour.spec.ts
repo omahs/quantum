@@ -22,7 +22,7 @@ describe('Proxy behaviour', () => {
       deployContracts,
     );
     // BridgeV1 should have version 1
-    expect(await proxyBridge.VERSION()).to.equal('1');
+    expect(await proxyBridge.version()).to.equal('1');
     // Supporting testToken with hard cap of 15
     await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
     // Minting 100 testToken to ProxyContract
@@ -120,7 +120,7 @@ describe('Proxy behaviour', () => {
     const { proxyBridge, defaultAdminSigner, operationalAdminSigner, communityAddress } = await loadFixture(
       deployContracts,
     );
-    expect(await proxyBridge.VERSION()).to.equal('1');
+    expect(await proxyBridge.version()).to.equal('1');
     // Deploying the Contract with `initializer` modifier
     const BridgeUpgradeableInit = await ethers.getContractFactory('InitilaizeV1');
     const bridgeUpgradeableInit = await BridgeUpgradeableInit.deploy();
@@ -152,7 +152,7 @@ describe('Proxy behaviour', () => {
     await proxyBridge.addSupportedTokens(testToken.address, toWei('15'));
     // Minting 100 testToken to ProxyContract
     await testToken.mint(proxyBridge.address, toWei('100'));
-    const version = await proxyBridge.VERSION();
+    const version = await proxyBridge.version();
     expect(version).to.equal('1');
 
     // ---------------------------Claiming fund on bridge V1-------------------------
