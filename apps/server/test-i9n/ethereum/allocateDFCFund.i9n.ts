@@ -116,6 +116,14 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     await testing.stop();
   });
 
+  function deductTransferFee(amount: BigNumber): string {
+    // Deduct fee
+    const ethTransferFee = config.get('ethereum.transferFee');
+    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(ethTransferFee)).toFixed(8);
+
+    return amountLessFee;
+  }
+
   it('should fail api request before handleTransaction api call', async () => {
     const transactionDbRecord = await prismaService.bridgeEventTransactions.findFirst({
       where: { transactionHash: transactionCall.hash },
@@ -224,9 +232,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     await defichain.generateBlock();
 
     // Deduct fee
-    const ethTransferFee = config.get('ethereum.transferFee');
-    const amount = new BigNumber(1);
-    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(ethTransferFee)).toFixed(8);
+    const amountLessFee = deductTransferFee(new BigNumber(1));
 
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);
@@ -397,9 +403,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     await defichain.generateBlock();
 
     // Deduct fee
-    const ethTransferFee = config.get('ethereum.transferFee');
-    const amount = new BigNumber(1);
-    const amountLessFee = new BigNumber(amount).minus(amount.multipliedBy(ethTransferFee)).toFixed(8);
+    const amountLessFee = deductTransferFee(new BigNumber(1));
 
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);
