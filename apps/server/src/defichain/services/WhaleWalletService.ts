@@ -1,5 +1,6 @@
 import { fromAddress } from '@defichain/jellyfish-address';
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DeFiChainAddressIndex } from '@prisma/client';
 import { EnvironmentNetwork, getJellyfishNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
@@ -20,6 +21,7 @@ export class WhaleWalletService {
     private readonly whaleWalletProvider: WhaleWalletProvider,
     private readonly clientProvider: WhaleApiClientProvider,
     private readonly evmTransactionService: EVMTransactionConfirmerService,
+    private configService: ConfigService,
     private prisma: PrismaService,
   ) {
     this.logger = new Logger(WhaleWalletService.name);
@@ -74,15 +76,19 @@ export class WhaleWalletService {
       }
 
       // Successful verification, proceed to sign the claim
+      const fee = new BigNumber(verify.amount).multipliedBy(this.configService.getOrThrow('defichain.transferFee'));
+      const amountLessFee = BigNumber.max(verify.amount.minus(fee), 0).toString();
       const claim = await this.evmTransactionService.signClaim({
         receiverAddress: verify.ethReceiverAddress,
         tokenAddress: verify.tokenAddress,
-        amount: verify.amount.toString(),
+        amount: amountLessFee,
         uniqueDfcAddress: verify.address,
       });
 
       this.logger.log(
-        `[Verify SUCCESS] ${verify.amount} ${verify.symbol} ${verify.address} ${verify.ethReceiverAddress}`,
+        `[Verify SUCCESS] ${verify.amount} ${fee.toString()} ${amountLessFee} ${verify.symbol} ${verify.address} ${
+          verify.ethReceiverAddress
+        }`,
       );
 
       return { isValid: true, signature: claim.signature, nonce: claim.nonce, deadline: claim.deadline };
