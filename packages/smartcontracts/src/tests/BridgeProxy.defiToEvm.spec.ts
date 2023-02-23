@@ -13,6 +13,7 @@ describe('DeFiChain --> EVM', () => {
   let testToken2: TestToken;
   let defaultAdminSigner: SignerWithAddress;
   let operationalAdminSigner: SignerWithAddress;
+  let arbitrarySigner: SignerWithAddress;
   let domainData: any;
   const eip712Types = {
     CLAIM: [
@@ -26,9 +27,8 @@ describe('DeFiChain --> EVM', () => {
 
   describe('Test for ERC20', () => {
     beforeEach(async () => {
-      ({ proxyBridge, testToken, testToken2, defaultAdminSigner, operationalAdminSigner } = await loadFixture(
-        deployContracts,
-      ));
+      ({ proxyBridge, testToken, testToken2, defaultAdminSigner, operationalAdminSigner, arbitrarySigner } =
+        await loadFixture(deployContracts));
       domainData = {
         name: 'QUANTUM_BRIDGE',
         version: '1',
@@ -77,14 +77,16 @@ describe('DeFiChain --> EVM', () => {
       const signature = await defaultAdminSigner._signTypedData(domainData, eip712Types, eip712Data);
       // Checking Balance before claiming fund, should be 0
       expect(await testToken.balanceOf(operationalAdminSigner.address)).to.equal(0);
-      await proxyBridge.claimFund(
-        operationalAdminSigner.address,
-        toWei('10'),
-        0,
-        ethers.constants.MaxUint256,
-        testToken.address,
-        signature,
-      );
+      await proxyBridge
+        .connect(defaultAdminSigner)
+        .claimFund(
+          operationalAdminSigner.address,
+          toWei('10'),
+          0,
+          ethers.constants.MaxUint256,
+          testToken.address,
+          signature,
+        );
       // Checking Balance after claiming fund, should be 10
       expect(await testToken.balanceOf(operationalAdminSigner.address)).to.equal(toWei('10'));
     });
@@ -286,14 +288,16 @@ describe('DeFiChain --> EVM', () => {
       const ethBalanceOperationalAdminBeforeClaim = await ethers.provider.getBalance(operationalAdminSigner.address);
       const ethBalanceBridgeBeforeClaim = await ethers.provider.getBalance(proxyBridge.address);
       const ethBalanceDefaultAdminBeforeClaim = await ethers.provider.getBalance(defaultAdminSigner.address);
-      const tx = await proxyBridge.claimFund(
-        operationalAdminSigner.address,
-        toWei('10'),
-        0,
-        ethers.constants.MaxUint256,
-        ethers.constants.AddressZero,
-        signature,
-      );
+      const tx = await proxyBridge
+        .connect(defaultAdminSigner)
+        .claimFund(
+          operationalAdminSigner.address,
+          toWei('10'),
+          0,
+          ethers.constants.MaxUint256,
+          ethers.constants.AddressZero,
+          signature,
+        );
       const receipt = await tx.wait();
       const ethBalanceOperationalAdminAfterClaim = await ethers.provider.getBalance(operationalAdminSigner.address);
       const ethBalanceBridgeAfterClaim = await ethers.provider.getBalance(proxyBridge.address);
@@ -315,7 +319,7 @@ describe('DeFiChain --> EVM', () => {
         tokenAddress: ethers.constants.AddressZero,
       };
       // Relayer address is defaultAdminSigner, if not signed by relayer address, txn should fail.
-      const signature = await operationalAdminSigner._signTypedData(domainData, eip712Types, eip712Data);
+      const signature = await arbitrarySigner._signTypedData(domainData, eip712Types, eip712Data);
       const balanceOperationalAdminBeforeClaim = await ethers.provider.getBalance(operationalAdminSigner.address);
       await expect(
         proxyBridge.claimFund(
