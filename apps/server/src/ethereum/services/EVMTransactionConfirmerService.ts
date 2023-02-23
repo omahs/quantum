@@ -216,7 +216,7 @@ export class EVMTransactionConfirmerService {
 
       const amount = new BigNumber(dTokenDetails.amount);
       const fee = amount.multipliedBy(this.configService.getOrThrow('ethereum.transferFee'));
-      const amountLessFee = amount.minus(fee);
+      const amountLessFee = BigNumber.max(amount.minus(fee), 0);
 
       const sendTxPayload = {
         ...dTokenDetails,
