@@ -232,7 +232,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     const listToken = await defichain.whaleClient?.address.listToken(address);
     const token = listToken.find((each) => each.id === '5');
     expect(token?.id).toStrictEqual('5');
-    expect(new BigNumber(token?.amount ?? 0)).toStrictEqual(amountLessFee);
+    expect(new BigNumber(token?.amount ?? 0).toFixed(8)).toStrictEqual(amountLessFee);
     expect(token?.symbol).toStrictEqual('USDC');
   });
 
