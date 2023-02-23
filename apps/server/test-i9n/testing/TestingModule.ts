@@ -26,6 +26,8 @@ export function buildTestConfig({
   ethereum,
   startedPostgresContainer,
   usdcAddress,
+  usdtAddress,
+  wbtcAddress,
 }: BuildTestConfigParams) {
   if (startedPostgresContainer === undefined) {
     throw Error('Must pass in StartedPostgresContainer');
@@ -49,6 +51,12 @@ export function buildTestConfig({
         },
         USDC: {
           address: usdcAddress,
+        },
+        USDT: {
+          address: usdtAddress,
+        },
+        WBTC: {
+          address: wbtcAddress,
         },
       },
       ethWalletPrivKey: testnet?.ethWalletPrivKey,
@@ -77,4 +85,6 @@ type OptionalBuildTestConfigParams = {
     ethWalletPrivKey: string;
   };
   usdcAddress: string;
+  usdtAddress: string;
+  wbtcAddress: string;
 };
