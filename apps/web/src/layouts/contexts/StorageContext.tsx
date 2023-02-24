@@ -8,43 +8,48 @@ import {
   useMemo,
   PropsWithChildren,
 } from "react";
+import { AddressDetails } from "types";
 import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 
-type TransactionHashType =
+type StorageKey =
   | "confirmed"
   | "unconfirmed"
   | "reverted"
-  | "unsent-fund";
-interface TransactionHashI {
+  | "unsent-fund"
+  | "dfc-address"
+  | "dfc-address-details";
+
+interface StorageContextI {
   txnHash: {
     confirmed?: string;
     unconfirmed?: string;
     reverted?: string;
     unsentFund?: string;
   };
-  getTxnHash: (key: TransactionHashType) => string | undefined;
-  setTxnHash: (key: TransactionHashType, txnHash: string | null) => void;
+  dfcAddress?: string;
+  dfcAddressDetails?: AddressDetails;
+  getStorage: (key: StorageKey) => string | undefined;
+  setStorage: (key: StorageKey, value: string | null) => void;
 }
 
-export interface PoolpairId {
-  id: string;
+/*
+  - To serve as a global state that syncs with the local storage 
+*/
+const StorageContext = createContext<StorageContextI>(undefined as any);
+
+export function useStorageContext(): StorageContextI {
+  return useContext(StorageContext);
 }
 
-const TransactionHashContext = createContext<TransactionHashI>(
-  undefined as any
-);
-
-export function useTransactionHashContext(): TransactionHashI {
-  return useContext(TransactionHashContext);
-}
-
-export function TransactionHashProvider({
+export function StorageProvider({
   children,
 }: PropsWithChildren<any>): JSX.Element | null {
   const [unconfirmedTxnHashKey, setUnconfirmedTxnHashKey] = useState<string>();
   const [confirmedTxnHashKey, setConfirmedTxnHashKey] = useState<string>();
   const [revertedTxnHashKey, setRevertedTxnHashKey] = useState<string>();
   const [unsentFundTxnHashKey, setUnsentFundTxnHashKey] = useState<string>();
+  const [dfcAddress, setDfcAddress] = useState<string>();
+  const [dfcAddressDetails, setDfcAddressDetails] = useState<AddressDetails>();
 
   const { networkEnv } = useNetworkEnvironmentContext();
 
@@ -53,9 +58,21 @@ export function TransactionHashProvider({
     CONFIRMED_TXN_HASH_KEY,
     REVERTED_TXN_HASH_KEY,
     UNSENT_FUND_TXN_HASH_KEY,
+    DFC_ADDR_KEY,
+    DFC_ADDR_DETAILS_KEY,
   } = useBridgeFormStorageKeys();
 
   useEffect(() => {
+    // DFC -> EVM
+    const dfcAddressStorage = getStorageItem<string>(DFC_ADDR_KEY) ?? undefined;
+    console.log({ DFC_ADDR_DETAILS_KEY });
+    const dfcAddressDetailsStorage =
+      getStorageItem<AddressDetails>(DFC_ADDR_DETAILS_KEY) ?? undefined;
+
+    setDfcAddress(dfcAddressStorage);
+    setDfcAddressDetails(dfcAddressDetailsStorage);
+
+    // EVM -> DFC
     const unconfirmedTxnHashKeyStorage =
       getStorageItem<string>(UNCONFIRMED_TXN_HASH_KEY) ?? undefined;
     const confirmedTxnHashKeyStorage =
@@ -75,39 +92,53 @@ export function TransactionHashProvider({
     UNCONFIRMED_TXN_HASH_KEY,
     REVERTED_TXN_HASH_KEY,
     UNSENT_FUND_TXN_HASH_KEY,
+    DFC_ADDR_KEY,
+    DFC_ADDR_DETAILS_KEY,
   ]);
 
-  const context: TransactionHashI = useMemo(() => {
-    const setTxnHash = (key: TransactionHashType, newTxnHash: string) => {
+  const context: StorageContextI = useMemo(() => {
+    const setStorage = (key: StorageKey, value: string) => {
+      // export function setStorage<T>(key: StorageKey, value: T) {
       if (key === "confirmed") {
-        setConfirmedTxnHashKey(newTxnHash);
-        setStorageItem(CONFIRMED_TXN_HASH_KEY, newTxnHash);
+        setConfirmedTxnHashKey(value);
+        setStorageItem(CONFIRMED_TXN_HASH_KEY, value);
       } else if (key === "reverted") {
-        setRevertedTxnHashKey(newTxnHash);
-        setStorageItem(REVERTED_TXN_HASH_KEY, newTxnHash);
+        setRevertedTxnHashKey(value);
+        setStorageItem(REVERTED_TXN_HASH_KEY, value);
       } else if (key === "unsent-fund") {
-        setUnsentFundTxnHashKey(newTxnHash);
-        setStorageItem(UNSENT_FUND_TXN_HASH_KEY, newTxnHash);
-      } else {
-        setUnconfirmedTxnHashKey(newTxnHash);
-        setStorageItem(UNCONFIRMED_TXN_HASH_KEY, newTxnHash);
+        setUnsentFundTxnHashKey(value);
+        setStorageItem(UNSENT_FUND_TXN_HASH_KEY, value);
+      } else if (key === "dfc-address") {
+        setDfcAddress(value);
+        setStorageItem(DFC_ADDR_KEY, value);
+      } else if (key === "unconfirmed") {
+        setUnconfirmedTxnHashKey(value);
+        setStorageItem(UNCONFIRMED_TXN_HASH_KEY, value);
+      } else if (key === "dfc-address-details") {
+        console.log({ value });
+        setDfcAddressDetails(JSON.parse(value));
+        setStorageItem(DFC_ADDR_DETAILS_KEY, JSON.parse(value));
       }
     };
 
-    const getTxnHash = (key: TransactionHashType) => {
-      let txnHash;
+    const getStorage = (key: StorageKey) => {
+      let value;
 
       if (key === "confirmed") {
-        txnHash = confirmedTxnHashKey;
+        value = confirmedTxnHashKey;
       } else if (key === "unconfirmed") {
-        txnHash = unconfirmedTxnHashKey;
+        value = unconfirmedTxnHashKey;
       } else if (key === "unsent-fund") {
-        txnHash = unsentFundTxnHashKey;
+        value = unsentFundTxnHashKey;
       } else if (key === "reverted") {
-        txnHash = revertedTxnHashKey;
+        value = revertedTxnHashKey;
+      } else if (key === "dfc-address") {
+        value = dfcAddress;
+      } else if (key === "dfc-address-details") {
+        value = dfcAddressDetails;
       }
 
-      return txnHash;
+      return value;
     };
 
     return {
@@ -120,23 +151,30 @@ export function TransactionHashProvider({
         unsentFund:
           unsentFundTxnHashKey === null ? undefined : unsentFundTxnHashKey,
       },
-      getTxnHash,
-      setTxnHash,
+      dfcAddress: dfcAddress === null ? undefined : dfcAddress,
+      dfcAddressDetails:
+        dfcAddressDetails === null ? undefined : dfcAddressDetails,
+      getStorage,
+      setStorage,
     };
   }, [
     unconfirmedTxnHashKey,
     confirmedTxnHashKey,
     revertedTxnHashKey,
     unsentFundTxnHashKey,
+    dfcAddress,
+    dfcAddressDetails,
     REVERTED_TXN_HASH_KEY,
     CONFIRMED_TXN_HASH_KEY,
     UNCONFIRMED_TXN_HASH_KEY,
     UNSENT_FUND_TXN_HASH_KEY,
+    DFC_ADDR_KEY,
+    DFC_ADDR_DETAILS_KEY,
   ]);
 
   return (
-    <TransactionHashContext.Provider value={context}>
+    <StorageContext.Provider value={context}>
       {children}
-    </TransactionHashContext.Provider>
+    </StorageContext.Provider>
   );
 }

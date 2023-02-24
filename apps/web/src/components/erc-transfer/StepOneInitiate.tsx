@@ -12,10 +12,12 @@ export default function StepOneInitiate({
   goToNextStep,
   refundAddress,
   setRefundAddress,
+  isDisabled,
 }: {
   refundAddress: string;
   setRefundAddress: (value: string) => void;
   goToNextStep: () => void;
+  isDisabled: boolean;
 }) {
   const { selectedNetworkA } = useNetworkContext();
   const { isConnected } = useAccount();
@@ -52,7 +54,7 @@ export default function StepOneInitiate({
           addressInput={refundAddress}
           onAddressInputChange={(addrInput) => setRefundAddress(addrInput)}
           onAddressInputError={(hasError) => setHasAddressInputErr(hasError)}
-          disabled={!isConnected}
+          disabled={!isConnected || isDisabled}
           isPrimary={false}
         />
         <div className="pt-5">
@@ -60,7 +62,6 @@ export default function StepOneInitiate({
             label="Continue"
             variant="primary"
             disabled={hasAddressInputErr}
-            // TODO to save return address to the localstorage - have to move the entire saving of unconfirmed txn
             onClick={goToNextStep}
           />
           {hasAddressInputErr && (
