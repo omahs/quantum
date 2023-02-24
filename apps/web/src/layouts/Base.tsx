@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
   appName,
   keywords,
