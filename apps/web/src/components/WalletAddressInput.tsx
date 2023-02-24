@@ -12,7 +12,7 @@ import {
   EnvironmentNetwork,
   getJellyfishNetwork,
 } from "@waveshq/walletkit-core";
-import { Network, NetworkName } from "types";
+import { Network } from "types";
 import Tooltip from "./commons/Tooltip";
 import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
 
@@ -124,7 +124,7 @@ export default function WalletAddressInput({
   };
 
   useEffect(() => {
-    const displayedName = NetworkName[blockchain];
+    const displayedName = Network[blockchain];
     if (
       networkEnv === EnvironmentNetwork.TestNet &&
       blockchain === Network.DeFiChain
@@ -149,7 +149,7 @@ export default function WalletAddressInput({
     const hasInvalidInput = !!(addressInput && !isValidAddress);
     if (hasInvalidInput) {
       const dfiNetwork = isDeFiChain ? ` ${networkEnv}` : "";
-      message = `Use correct address for ${NetworkName[blockchain]}${dfiNetwork}`;
+      message = `Use correct address for ${Network[blockchain]}${dfiNetwork}`;
     } else {
       const isTestnet =
         isDeFiChain &&
