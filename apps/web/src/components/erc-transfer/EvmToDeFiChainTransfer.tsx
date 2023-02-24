@@ -12,8 +12,6 @@ import ActionButton from "@components/commons/ActionButton";
 import ErrorModal from "@components/commons/ErrorModal";
 import Modal from "@components/commons/Modal";
 import { Erc20Token, TransferData } from "types";
-import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
-import { setStorageItem } from "@utils/localStorage";
 import { useStorageContext } from "@contexts/StorageContext";
 import {
   BridgeStatus,
@@ -40,7 +38,6 @@ export default function EvmToDeFiChainTransfer({
   const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
   const sendingFromETH = data.from.tokenName === ETHEREUM_SYMBOL;
   const { setStorage } = useStorageContext();
-  const { TXN_KEY } = useBridgeFormStorageKeys();
 
   // Read details from token contract
   const erc20TokenContract = {
@@ -99,7 +96,7 @@ export default function EvmToDeFiChainTransfer({
       setStorage("unconfirmed", transactionHash);
       setStorage("confirmed", null);
       setStorage("reverted", null);
-      setStorageItem(TXN_KEY, null);
+      setStorage("txn-form", null);
       onClose();
     }
   }, [transactionHash]);

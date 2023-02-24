@@ -6,14 +6,12 @@ import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
-import { getStorageItem, setStorageItem } from "@utils/localStorage";
 import {
   Network,
   NetworkName,
   NetworkOptionsI,
   SelectionType,
   TokensI,
-  UnconfirmedTxnI,
 } from "types";
 import SwitchIcon from "@components/icons/SwitchIcon";
 import ArrowDownIcon from "@components/icons/ArrowDownIcon";
@@ -96,7 +94,8 @@ export default function BridgeForm({
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
   const { Erc20Tokens } = useContractContext();
-  const { dfcAddress, dfcAddressDetails, setStorage } = useStorageContext();
+  const { dfcAddress, dfcAddressDetails, txnForm, setStorage } =
+    useStorageContext();
 
   const [amount, setAmount] = useState<string>("");
   const [amountErr, setAmountErr] = useState<string>("");
@@ -124,7 +123,6 @@ export default function BridgeForm({
 
   const [getAddressDetail] = useGetAddressDetailMutation();
 
-  const { TXN_KEY } = useBridgeFormStorageKeys();
   const [balanceEvm] = useBalanceEvmMutation();
   const [balanceDfc] = useBalanceDfcMutation();
   const [balanceAmount, setBalanceAmount] = useState<string>("0");
@@ -174,14 +172,14 @@ export default function BridgeForm({
         fromAddress,
         toAddress: addressInput,
       };
-      setStorageItem<UnconfirmedTxnI>(TXN_KEY, newTxn);
+      setStorage("txn-form", JSON.stringify(newTxn));
     }
     /* TODO: Handle token transfer here */
     setShowConfirmModal(true);
   };
 
   const onResetTransferForm = () => {
-    setStorageItem(TXN_KEY, null);
+    setStorage("txn-form", null);
     setStorage("dfc-address", null);
     setStorage("dfc-address-details", null);
     setHasUnconfirmedTxn(false);
@@ -214,7 +212,7 @@ export default function BridgeForm({
   }, [maxAmount]);
 
   useEffect(() => {
-    const localData = getStorageItem<UnconfirmedTxnI>(TXN_KEY);
+    const localData = txnForm;
     if (localData && networkEnv === localData.networkEnv) {
       // Load data from storage
       setHasUnconfirmedTxn(true);
@@ -229,7 +227,7 @@ export default function BridgeForm({
     } else {
       setHasUnconfirmedTxn(false);
     }
-  }, [networkEnv]);
+  }, [networkEnv, txnForm]);
 
   useEffect(() => {
     async function checkBalance() {
@@ -268,7 +266,7 @@ export default function BridgeForm({
         }).unwrap();
         const diff = dayjs().diff(dayjs(addressDetailRes?.createdAt));
         if (diff > DFC_TO_ERC_RESET_FORM_TIME_LIMIT) {
-          setStorageItem(TXN_KEY, null);
+          setStorage("txn-form", null);
           setStorage("dfc-address", null);
         } else {
           // TODO: Improve setStorage by not forcing stringified JSON

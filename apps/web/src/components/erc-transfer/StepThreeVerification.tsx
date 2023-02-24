@@ -7,12 +7,11 @@ import UtilitySecondaryButton from "@components/erc-transfer/VerifiedUtilityButt
 import { useLazyVerifyQuery } from "@store/index";
 import BigNumber from "bignumber.js";
 import Logging from "@api/logging";
-import { getStorageItem } from "@utils/localStorage";
-import { SignedClaim, UnconfirmedTxnI } from "types";
+import { SignedClaim } from "types";
 import { HttpStatusCode } from "axios";
 import { useContractContext } from "@contexts/ContractContext";
-import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import useTimeout from "@hooks/useSetTimeout";
+import { useStorageContext } from "@contexts/StorageContext";
 import { DISCLAIMER_MESSAGE } from "../../constants";
 
 enum ButtonLabel {
@@ -69,9 +68,7 @@ export default function StepThreeVerification({
     ButtonLabel.Validating
   );
 
-  const { TXN_KEY, DFC_ADDR_KEY } = useBridgeFormStorageKeys();
-  const dfcAddress = getStorageItem<string>(DFC_ADDR_KEY);
-  const txn = getStorageItem<UnconfirmedTxnI>(TXN_KEY);
+  const { txnForm: txn, dfcAddress } = useStorageContext();
   const [validationSuccess, setValidationSuccess] = useState(false);
   const [isValidating, setIsValidating] = useState(true);
   const [isThrottled, setIsThrottled] = useState(false);
@@ -84,6 +81,7 @@ export default function StepThreeVerification({
     if (
       isValidating === true &&
       dfcAddress !== null &&
+      dfcAddress !== undefined &&
       txn?.amount !== undefined &&
       txn?.selectedTokensA.tokenA.symbol !== undefined
     ) {

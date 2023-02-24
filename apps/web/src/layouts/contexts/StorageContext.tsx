@@ -8,7 +8,7 @@ import {
   useMemo,
   PropsWithChildren,
 } from "react";
-import { AddressDetails } from "types";
+import { AddressDetails, UnconfirmedTxnI } from "types";
 import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 
 type StorageKey =
@@ -17,7 +17,8 @@ type StorageKey =
   | "reverted"
   | "unsent-fund"
   | "dfc-address"
-  | "dfc-address-details";
+  | "dfc-address-details"
+  | "txn-form";
 
 interface StorageContextI {
   txnHash: {
@@ -28,6 +29,7 @@ interface StorageContextI {
   };
   dfcAddress?: string;
   dfcAddressDetails?: AddressDetails;
+  txnForm?: UnconfirmedTxnI;
   getStorage: (key: StorageKey) => string | undefined;
   setStorage: (key: StorageKey, value: string | null) => void;
 }
@@ -50,6 +52,7 @@ export function StorageProvider({
   const [unsentFundTxnHashKey, setUnsentFundTxnHashKey] = useState<string>();
   const [dfcAddress, setDfcAddress] = useState<string>();
   const [dfcAddressDetails, setDfcAddressDetails] = useState<AddressDetails>();
+  const [txnForm, setTxnForm] = useState<any>();
 
   const { networkEnv } = useNetworkEnvironmentContext();
 
@@ -60,12 +63,17 @@ export function StorageProvider({
     UNSENT_FUND_TXN_HASH_KEY,
     DFC_ADDR_KEY,
     DFC_ADDR_DETAILS_KEY,
+    TXN_KEY,
   } = useBridgeFormStorageKeys();
 
   useEffect(() => {
+    // Both ways
+    const txnFormStorage =
+      getStorageItem<UnconfirmedTxnI>(TXN_KEY) ?? undefined;
+    setTxnForm(txnFormStorage);
+
     // DFC -> EVM
     const dfcAddressStorage = getStorageItem<string>(DFC_ADDR_KEY) ?? undefined;
-    console.log({ DFC_ADDR_DETAILS_KEY });
     const dfcAddressDetailsStorage =
       getStorageItem<AddressDetails>(DFC_ADDR_DETAILS_KEY) ?? undefined;
 
@@ -94,11 +102,11 @@ export function StorageProvider({
     UNSENT_FUND_TXN_HASH_KEY,
     DFC_ADDR_KEY,
     DFC_ADDR_DETAILS_KEY,
+    TXN_KEY,
   ]);
 
   const context: StorageContextI = useMemo(() => {
     const setStorage = (key: StorageKey, value: string) => {
-      // export function setStorage<T>(key: StorageKey, value: T) {
       if (key === "confirmed") {
         setConfirmedTxnHashKey(value);
         setStorageItem(CONFIRMED_TXN_HASH_KEY, value);
@@ -115,9 +123,11 @@ export function StorageProvider({
         setUnconfirmedTxnHashKey(value);
         setStorageItem(UNCONFIRMED_TXN_HASH_KEY, value);
       } else if (key === "dfc-address-details") {
-        console.log({ value });
         setDfcAddressDetails(JSON.parse(value));
         setStorageItem(DFC_ADDR_DETAILS_KEY, JSON.parse(value));
+      } else if (key === "txn-form") {
+        setTxnForm(JSON.parse(value));
+        setStorageItem(TXN_KEY, JSON.parse(value));
       }
     };
 
@@ -136,6 +146,8 @@ export function StorageProvider({
         value = dfcAddress;
       } else if (key === "dfc-address-details") {
         value = dfcAddressDetails;
+      } else if (key === "txn-form") {
+        value = txnForm;
       }
 
       return value;
@@ -154,6 +166,7 @@ export function StorageProvider({
       dfcAddress: dfcAddress === null ? undefined : dfcAddress,
       dfcAddressDetails:
         dfcAddressDetails === null ? undefined : dfcAddressDetails,
+      txnForm: txnForm === null ? undefined : txnForm,
       getStorage,
       setStorage,
     };
@@ -164,12 +177,14 @@ export function StorageProvider({
     unsentFundTxnHashKey,
     dfcAddress,
     dfcAddressDetails,
+    txnForm,
     REVERTED_TXN_HASH_KEY,
     CONFIRMED_TXN_HASH_KEY,
     UNCONFIRMED_TXN_HASH_KEY,
     UNSENT_FUND_TXN_HASH_KEY,
     DFC_ADDR_KEY,
     DFC_ADDR_DETAILS_KEY,
+    TXN_KEY,
   ]);
 
   return (
