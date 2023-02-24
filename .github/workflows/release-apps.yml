@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [main]
     paths-ignore:
-      - "apps/web"
+      - "apps/web/**"
       - "packages/**"
 
 permissions:
