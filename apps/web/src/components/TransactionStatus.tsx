@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { useAllocateDfcFundMutation } from "@store/index";
-import { useTransactionHashContext } from "@contexts/TransactionHashContext";
 import { HttpStatusCode } from "axios";
 import useTimeout from "@hooks/useSetTimeout";
+import { useStorageContext } from "@contexts/StorageContext";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import ConfirmationProgress from "./TransactionConfirmationProgressBar";
 import useResponsive from "../hooks/useResponsive";
@@ -35,7 +35,7 @@ export default function TransactionStatus({
   const { isLg, isMd } = useResponsive();
 
   const [allocateDfcFund] = useAllocateDfcFundMutation();
-  const { setTxnHash } = useTransactionHashContext();
+  const { setStorage } = useStorageContext();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -81,8 +81,8 @@ export default function TransactionStatus({
         }).unwrap();
 
         if (fundData?.transactionHash !== undefined) {
-          setTxnHash("confirmed", txnHash);
-          setTxnHash("unsent-fund", null);
+          setStorage("confirmed", txnHash);
+          setStorage("unsent-fund", null);
         }
       } catch ({ data }) {
         if (data?.statusCode === HttpStatusCode.TooManyRequests) {
@@ -92,8 +92,8 @@ export default function TransactionStatus({
             "Retry limit has been reached, please wait for a minute and try again"
           );
         } else if (data?.error?.includes("Fund already allocated")) {
-          setTxnHash("confirmed", txnHash);
-          setTxnHash("unsent-fund", null);
+          setStorage("confirmed", txnHash);
+          setStorage("unsent-fund", null);
         }
       } finally {
         setIsRetrying(false);

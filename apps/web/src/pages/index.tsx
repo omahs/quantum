@@ -4,14 +4,14 @@ import WelcomeHeader from "@components/WelcomeHeader";
 import MobileBottomMenu from "@components/MobileBottomMenu";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
-import { useTransactionHashContext } from "@contexts/TransactionHashContext";
+import { useStorageContext } from "@contexts/StorageContext";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
 
 function Home() {
   const { ethTxnStatus, isApiSuccess } = useWatchEthTxn();
-  const { txnHash, setTxnHash } = useTransactionHashContext();
+  const { txnHash, setStorage } = useStorageContext();
   const { UNCONFIRMED_TXN_HASH_KEY, UNSENT_FUND_TXN_HASH_KEY } =
     useBridgeFormStorageKeys();
 
@@ -60,8 +60,8 @@ function Home() {
             txnHash.unsentFund) && (
             <TransactionStatus
               onClose={() => {
-                setTxnHash("confirmed", null);
-                setTxnHash("reverted", null);
+                setStorage("confirmed", null);
+                setStorage("reverted", null);
               }}
               txnHash={
                 txnHash.unsentFund ??

@@ -107,6 +107,10 @@ export default function WalletAddressInput({
   };
 
   const handleFocusWithCursor = () => {
+    if (disabled) {
+      return;
+    }
+
     setIsFocused(true);
     setTimeout(() => {
       // Only added timeout for ref's unexplained delay

@@ -4,15 +4,14 @@ import { useState, useEffect, useCallback } from "react";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
 import QRCode from "react-qr-code";
 import useCopyToClipboard from "@hooks/useCopyToClipboard";
-import { getStorageItem, setStorageItem } from "@utils/localStorage";
 import Tooltip from "@components/commons/Tooltip";
 import UtilityButton from "@components/commons/UtilityButton";
 import { useGenerateAddressMutation } from "@store/index";
 import { HttpStatusCode } from "axios";
-import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import { AddressDetails } from "types";
 import dayjs from "dayjs";
 import AddressError from "@components/commons/AddressError";
+import { useStorageContext } from "@contexts/StorageContext";
 import { DFC_TO_ERC_RESET_FORM_TIME_LIMIT } from "../../constants";
 import TimeLimitCounter from "./TimeLimitCounter";
 
@@ -108,13 +107,13 @@ export default function StepTwoSendConfirmation({
   const [showSuccessCopy, setShowSuccessCopy] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isAddressExpired, setIsAddressExpired] = useState(false);
-  const { DFC_ADDR_KEY } = useBridgeFormStorageKeys();
   const [createdBeforeInMSec, setCreatedBeforeInMSec] = useState(
     getTimeDifference(addressDetail?.createdAt)
   );
   const [addressGenerationError, setAddressGenerationError] = useState("");
   const [generateAddress] = useGenerateAddressMutation();
   const { copy } = useCopyToClipboard();
+  const { setStorage, dfcAddress } = useStorageContext();
 
   const handleConfirmClick = () => {
     goToNextStep();
@@ -128,9 +127,9 @@ export default function StepTwoSendConfirmation({
   const generateDfcUniqueAddress = useCallback(
     debounce(async () => {
       setIsLoading(true);
-      const localDfcAddress = getStorageItem<string>(DFC_ADDR_KEY);
-      if (localDfcAddress) {
-        setDfcUniqueAddress(localDfcAddress);
+
+      if (dfcAddress) {
+        setDfcUniqueAddress(dfcAddress);
         setIsLoading(false);
       } else {
         try {
@@ -138,7 +137,11 @@ export default function StepTwoSendConfirmation({
             refundAddress,
           }).unwrap();
           setCreatedBeforeInMSec(getTimeDifference(createdAt));
-          setStorageItem<string>(DFC_ADDR_KEY, address);
+          setStorage("dfc-address", address);
+          setStorage(
+            "dfc-address-details",
+            JSON.stringify({ address, createdAt, refundAddress })
+          );
           setAddressGenerationError("");
           setDfcUniqueAddress(address);
         } catch ({ data }) {
@@ -155,7 +158,7 @@ export default function StepTwoSendConfirmation({
         }
       }
     }, 200),
-    []
+    [dfcAddress]
   );
 
   useEffect(() => {
@@ -235,7 +238,7 @@ export default function StepTwoSendConfirmation({
                               <TimeLimitCounter
                                 time={createdBeforeInMSec}
                                 onTimeElapsed={() => {
-                                  setStorageItem(DFC_ADDR_KEY, null);
+                                  setStorage("dfc-address", null);
                                   setDfcUniqueAddress("");
                                   setIsAddressExpired(true);
                                 }}
