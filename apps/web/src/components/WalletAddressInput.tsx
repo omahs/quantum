@@ -155,7 +155,8 @@ export default function WalletAddressInput({
         isDeFiChain &&
         [
           EnvironmentNetwork.TestNet,
-          EnvironmentNetwork.LocalPlayground,
+          // Temp remove for Testnet environment
+          // EnvironmentNetwork.LocalPlayground,
         ].includes(networkEnv);
       message = isTestnet
         ? `Make sure to only use ${networkEnv} for testing`
