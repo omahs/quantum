@@ -20,7 +20,6 @@ import IconTooltip from "@components/commons/IconTooltip";
 import NumericFormat from "@components/commons/NumericFormat";
 import { QuickInputCard } from "@components/commons/QuickInputCard";
 import { useContractContext } from "@contexts/ContractContext";
-import useBridgeFormStorageKeys from "@hooks/useBridgeFormStorageKeys";
 import {
   useBalanceDfcMutation,
   useBalanceEvmMutation,
