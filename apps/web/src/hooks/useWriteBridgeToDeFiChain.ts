@@ -44,8 +44,7 @@ export default function useWriteBridgeToDeFiChain({
 
   const handlePrepContractError = (err) => {
     let customErrorDisplay: EventErrorI["customErrorDisplay"];
-    // ETH doesn't require approval
-    if (err.message.includes("insufficient allowance") && !sendingFromETH) {
+    if (err.message.includes("insufficient allowance")) {
       // Need to request approval from user - Insufficient allowance
       setRequiresApproval(true);
       customErrorDisplay = "InsufficientAllowanceError";
