@@ -15,6 +15,7 @@ enum EthereumTransactionStatus {
 
 enum BotStatus {
   COMPLETE
+  CANNOT_COMPLETE
   SENT
   ERROR
 }
