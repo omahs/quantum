@@ -2,7 +2,7 @@
 CREATE TYPE "EthereumTransactionStatus" AS ENUM ('NOT_CONFIRMED', 'CONFIRMED');
 
 -- CreateEnum
-CREATE TYPE "BotStatus" AS ENUM ('COMPLETE', 'CANNOT_COMPLETE', 'SENT', 'ERROR');
+CREATE TYPE "BotStatus" AS ENUM ('COMPLETE', 'CANNOT_COMPLETE', 'TOKEN_NOT_FOUND', 'NO_UTXO', 'SENT', 'ERROR');
 
 -- CreateTable
 CREATE TABLE "DeFiChainAddressIndex" (
