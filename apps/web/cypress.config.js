@@ -11,7 +11,7 @@ module.exports = defineConfig({
     runMode: 1,
     openMode: 0,
   },
-  chromeWebSecurity: false,
+  chromeWebSecurity: true,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
@@ -20,5 +20,6 @@ module.exports = defineConfig({
     },
     baseUrl: "http://localhost:3000",
     specPattern: "cypress/e2e/**/*.{js,jsx,ts,tsx}",
+    supportFile: "cypress/support/index.js",
   },
 });

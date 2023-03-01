@@ -23,3 +23,9 @@ module.exports = (
   require("@cypress/code-coverage/task")(on, config);
   return config;
 };
+
+import synpressPlugins from "@synthetixio/synpress/plugins";
+
+module.exports = (on, config) => {
+  synpressPlugins(on, config);
+};
