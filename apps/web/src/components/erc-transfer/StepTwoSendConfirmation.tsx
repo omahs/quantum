@@ -55,7 +55,7 @@ function VerifyButton({
 
 function WarningMessage(): JSX.Element {
   return (
-    <span>
+    <span className="text-left text-warning ml-3">
       {`Press verify transfer only after your funds have been sent over to the
       address. Make sure to send the `}
       <span className="font-bold">exact amount</span>
@@ -244,11 +244,9 @@ export default function StepTwoSendConfirmation({
         </div>
 
         {/* Mobile info message */}
-        <AlertInfoMessage
-          containerStyle="p-4 mt-6 order-last md:hidden"
-          textStyle="text-xs"
-          message={WarningMessage()}
-        />
+        <AlertInfoMessage containerStyle="p-4 mt-6 order-last md:hidden">
+          {WarningMessage()}
+        </AlertInfoMessage>
 
         {/* Mobile confirm button */}
         <div className={clsx("order-last", "md:hidden")}>
@@ -265,11 +263,9 @@ export default function StepTwoSendConfirmation({
 
       {/* Web info message */}
       <div className="hidden md:block">
-        <AlertInfoMessage
-          containerStyle="p-4 mt-6 order-last"
-          textStyle="text-xs"
-          message={WarningMessage()}
-        />
+        <AlertInfoMessage containerStyle="p-4 mt-6 order-last">
+          {WarningMessage()}
+        </AlertInfoMessage>
       </div>
     </div>
   );
