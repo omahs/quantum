@@ -62,7 +62,7 @@ const nextConfig = {
         headers: securityHeaders,
       },
       {
-        source: "/",
+        source: "/(.*)",
         headers: securityHeaders,
       },
     ];
