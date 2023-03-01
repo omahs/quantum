@@ -61,22 +61,12 @@ const nextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
-    ];
-  },
-  async redirects() {
-    return [
       {
-        source: "/options",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/liquidity",
-        destination: "/",
-        permanent: true,
+        source: "/",
+        headers: securityHeaders,
       },
     ];
-  },
+  }
 };
 
 module.exports = nextConfig;
