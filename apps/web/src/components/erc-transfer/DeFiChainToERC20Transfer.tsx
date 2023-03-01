@@ -39,12 +39,9 @@ export default function DeFiChainToERC20Transfer({
 
   const [signedClaim, setSignedClaim] = useState<SignedClaim>();
 
-  // TODO: check if transaction validated from api
-  const transactionValidated = true;
-
   const handleNextStep = () => {
     setActiveStep(activeStep + 1);
-    if (activeStep >= 3 && transactionValidated) {
+    if (activeStep >= 3) {
       setActiveStep(activeStep + 2);
     }
   };
@@ -53,7 +50,7 @@ export default function DeFiChainToERC20Transfer({
     <div
       className={clsx(
         "rounded-md mt-6 pt-4",
-        "md:mt-8 md:dark-bg-card-section md:pb-4 md:px-6"
+        "md:mt-8 md:dark-bg-card-section bg-opacity-100 md:pb-4 md:px-6"
       )}
     >
       <div className="md:h-[60px]">
@@ -84,6 +81,13 @@ export default function DeFiChainToERC20Transfer({
         <StepTwoSendConfirmation
           refundAddress={refundAddress}
           addressDetail={addressDetail}
+          sourceDetail={{
+            tokenIcon: data.from.tokenIcon,
+            tokenName: data.from.tokenName,
+          }}
+          destinationDetail={{
+            amount: data.to.amount,
+          }}
           goToNextStep={handleNextStep}
         />
       )}
