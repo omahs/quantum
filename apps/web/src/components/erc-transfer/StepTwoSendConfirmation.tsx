@@ -53,6 +53,18 @@ function VerifyButton({
   );
 }
 
+function WarningMessage(): JSX.Element {
+  return (
+    <span>
+      {`Press verify transfer only after your funds have been sent over to the
+      address. Make sure to send the `}
+      <span className="font-bold">exact amount</span>
+      {` or the transaction will
+      fail.`}
+    </span>
+  );
+}
+
 export default function StepTwoSendConfirmation({
   goToNextStep,
   refundAddress,
@@ -235,7 +247,7 @@ export default function StepTwoSendConfirmation({
         <AlertInfoMessage
           containerStyle="p-4 mt-6 order-last md:hidden"
           textStyle="text-xs"
-          message="Press verify transfer only after your funds have been sent over to the address. Make sure to send the exact amount or the transaction will fail."
+          message={WarningMessage()}
         />
 
         {/* Mobile confirm button */}
@@ -256,7 +268,7 @@ export default function StepTwoSendConfirmation({
         <AlertInfoMessage
           containerStyle="p-4 mt-6 order-last"
           textStyle="text-xs"
-          message="Press verify transfer only after your funds have been sent over to the address. Make sure to send the exact amount or the transaction will fail."
+          message={WarningMessage()}
         />
       </div>
     </div>

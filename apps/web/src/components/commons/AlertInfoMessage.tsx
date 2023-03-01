@@ -6,7 +6,7 @@ export default function AlertInfoMessage({
   containerStyle,
   textStyle,
 }: {
-  message: string;
+  message: string | JSX.Element;
   containerStyle?: string;
   textStyle?: string;
 }) {
