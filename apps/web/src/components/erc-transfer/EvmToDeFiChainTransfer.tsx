@@ -225,7 +225,7 @@ export default function EvmToDeFiChainTransfer({
           {DISCLAIMER_MESSAGE}
         </span>
       </AlertInfoMessage>
-      <div className={clsx("px-6 py-8", "md:px-[72px] md:pt-16")}>
+      <div className={clsx("px-6 py-8", "md:px-[128px] lg:px-[72px] md:pt-16")}>
         <ActionButton
           testId="confirm-transfer-btn"
           label={isMobile ? "Confirm transfer" : "Confirm transfer on wallet"}
