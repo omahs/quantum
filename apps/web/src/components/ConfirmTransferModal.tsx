@@ -146,7 +146,7 @@ export default function ConfirmTransferModal({
       tokenName: selectedTokensB.tokenA.name,
       tokenSymbol: selectedTokensB.tokenA.symbol,
       tokenIcon: selectedTokensB.tokenA.icon,
-      amount: new BigNumber(amount),
+      amount: new BigNumber(amount).minus(fee),
     },
   };
 
