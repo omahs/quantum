@@ -13,7 +13,7 @@
     "cypress:build": "CYPRESS=true next build",
     "cypress:run": "TZ=UTC cypress run --headless --browser chrome",
     "synpress:open": "env-cmd -f .env npx synpress open -cf cypress.config.js",
-    "synpress:run": "env-cmd -f .env npx synpress run -cf cypress.config.js --env SKIP_METAMASK_SETUP=true",
+    "synpress:run": "env-cmd -f .env npx synpress run -cf cypress.config.js --browser chrome",
     "typecheck": "tsc"
   },
   "dependencies": {
