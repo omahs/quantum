@@ -18,7 +18,11 @@ export class WhaleWalletProvider {
 
   createWallet(index: number = 2): WhaleWalletAccount {
     const mnemonic = this.configService.getOrThrow<string>(`defichain.key`);
-    const data = this.toData(mnemonic.split(' '), this.network);
+    const keys = mnemonic.split(' ');
+    if (keys.length < 24) {
+      throw new Error('Invalid DeFiChain private keys!');
+    }
+    const data = this.toData(keys, this.network);
     const provider = this.initProvider(data, this.network);
     return this.initJellyfishWallet(provider, this.network).get(index);
   }
