@@ -1,12 +1,14 @@
 // TODO: Mock wallet data
 
-describe("Bridge from Ethereum to DeFiChain", () => {
-  beforeEach(() => {
-    cy.visit("http://localhost:3000");
+beforeEach(() => {
+  cy.visit("http://localhost:3000/");
+  cy.intercept("GET", "**/bridge/status", {
+    body: { isUp: true },
   });
+});
 
+describe("Bridge from Ethereum to DeFiChain", () => {
   it("should be able to connect to metamask wallet", () => {
-    cy.visit("http://localhost:3000");
     cy.findByTestId("connect-button").should("be.visible");
     cy.connectMetaMaskWallet();
     cy.findByTestId("wallet-button").should("be.visible");
