@@ -230,7 +230,6 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 _fee,
         address _flushReceiveAddress
     ) external initializer {
-        __UUPSUpgradeable_init();
         __EIP712_init(NAME, '1');
         _grantRole(DEFAULT_ADMIN_ROLE, _timelockContract);
         _grantRole(WITHDRAW_ROLE, _initialWithdraw);
@@ -264,13 +263,13 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         bytes32 msg_hash = _hashTypedDataV4(struct_hash);
         if (ECDSAUpgradeable.recover(msg_hash, signature) != relayerAddress) revert FAKE_SIGNATURE();
         eoaAddressToNonce[_to]++;
+        emit CLAIM_FUND(_tokenAddress, _to, _amount);
         if (_tokenAddress == ETH) {
             (bool sent, ) = _to.call{value: _amount}('');
             if (!sent) revert ETH_TRANSFER_FAILED();
         } else {
             IERC20Upgradeable(_tokenAddress).safeTransfer(_to, _amount);
         }
-        emit CLAIM_FUND(_tokenAddress, _to, _amount);
     }
 
     /**
@@ -297,14 +296,14 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         if (requestedAmount == 0) revert REQUESTED_BRIDGE_AMOUNT_IS_ZERO();
         uint256 netAmountInWei = amountAfterFees(requestedAmount);
         uint256 netTxFee = requestedAmount - netAmountInWei;
+        emit BRIDGE_TO_DEFI_CHAIN(_defiAddress, _tokenAddress, netAmountInWei, block.timestamp);
         if (_tokenAddress == ETH) {
             (bool sent, ) = communityWallet.call{value: netTxFee}('');
             if (!sent) revert ETH_TRANSFER_FAILED();
         } else {
-            IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, address(this), netAmountInWei);
             IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, communityWallet, netTxFee);
+            IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, address(this), netAmountInWei);
         }
-        emit BRIDGE_TO_DEFI_CHAIN(_defiAddress, _tokenAddress, netAmountInWei, block.timestamp);
     }
 
     /**
