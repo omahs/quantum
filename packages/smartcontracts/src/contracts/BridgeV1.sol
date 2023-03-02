@@ -307,43 +307,6 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
     }
 
     /**
-     * @notice Used by addresses with Admin and Operational roles to add a new supported token and daily allowance
-     * @param _tokenAddress The token address to be added to supported list
-     * @param _tokenCap maximum balance of tokens the contract can hold per `_tokenAddress`
-     */
-    function addSupportedTokens(address _tokenAddress, uint256 _tokenCap) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (supportedTokens.contains(_tokenAddress)) revert TOKEN_ALREADY_SUPPORTED();
-        supportedTokens.add(_tokenAddress);
-        tokenCap[_tokenAddress] = _tokenCap;
-        emit ADD_SUPPORTED_TOKEN(_tokenAddress, _tokenCap);
-    }
-
-    /**
-     * @notice Used by addresses with Admin and Operational roles to remove an exisiting supported token
-     * @param _tokenAddress The token address to be removed from supported list
-     */
-    function removeSupportedTokens(address _tokenAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (!supportedTokens.contains(_tokenAddress)) revert TOKEN_NOT_SUPPORTED();
-        supportedTokens.remove(_tokenAddress);
-        tokenCap[_tokenAddress] = 0;
-        emit REMOVE_SUPPORTED_TOKEN(_tokenAddress);
-    }
-
-    /**
-     * @notice Used by Admin only. When called, the specified amount will be withdrawn
-     * @param _tokenAddress The token that will be withdraw
-     * @param _amount Requested amount to be withdraw. Amount would be in the denomination of ETH
-     */
-    function withdraw(address _tokenAddress, uint256 _amount) external onlyRole(WITHDRAW_ROLE) {
-        address _flushReceiveAddress = flushReceiveAddress;
-        if (_tokenAddress == ETH) {
-            (bool sent, ) = _flushReceiveAddress.call{value: _amount}('');
-            if (!sent) revert ETH_TRANSFER_FAILED();
-        } else IERC20Upgradeable(_tokenAddress).safeTransfer(_flushReceiveAddress, _amount);
-        emit WITHDRAWAL(msg.sender, _tokenAddress, _amount);
-    }
-
-    /**
      * @notice anyone can call this function. For example, calling flushMultipleTokenFunds(0,3),
      * only the tokens at index 0, 1 and 2 will be flushed.
      * @param _fromIndex Starting index for array `supportedTokens.values()` to flush from (inclusive)
@@ -389,6 +352,50 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
             }
         }
         emit FLUSH_FUND(_tokenAddress);
+    }
+
+    /**
+     * @notice to receive ether
+     */
+    receive() external payable {
+        emit ETH_RECEIVED_VIA_RECEIVE_FUNCTION(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Used by addresses with Admin and Operational roles to add a new supported token and daily allowance
+     * @param _tokenAddress The token address to be added to supported list
+     * @param _tokenCap maximum balance of tokens the contract can hold per `_tokenAddress`
+     */
+    function addSupportedTokens(address _tokenAddress, uint256 _tokenCap) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (supportedTokens.contains(_tokenAddress)) revert TOKEN_ALREADY_SUPPORTED();
+        supportedTokens.add(_tokenAddress);
+        tokenCap[_tokenAddress] = _tokenCap;
+        emit ADD_SUPPORTED_TOKEN(_tokenAddress, _tokenCap);
+    }
+
+    /**
+     * @notice Used by addresses with Admin and Operational roles to remove an exisiting supported token
+     * @param _tokenAddress The token address to be removed from supported list
+     */
+    function removeSupportedTokens(address _tokenAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (!supportedTokens.contains(_tokenAddress)) revert TOKEN_NOT_SUPPORTED();
+        supportedTokens.remove(_tokenAddress);
+        tokenCap[_tokenAddress] = 0;
+        emit REMOVE_SUPPORTED_TOKEN(_tokenAddress);
+    }
+
+    /**
+     * @notice Used by Admin only. When called, the specified amount will be withdrawn
+     * @param _tokenAddress The token that will be withdraw
+     * @param _amount Requested amount to be withdraw. Amount would be in the denomination of ETH
+     */
+    function withdraw(address _tokenAddress, uint256 _amount) external onlyRole(WITHDRAW_ROLE) {
+        address _flushReceiveAddress = flushReceiveAddress;
+        if (_tokenAddress == ETH) {
+            (bool sent, ) = _flushReceiveAddress.call{value: _amount}('');
+            if (!sent) revert ETH_TRANSFER_FAILED();
+        } else IERC20Upgradeable(_tokenAddress).safeTransfer(_flushReceiveAddress, _amount);
+        emit WITHDRAWAL(msg.sender, _tokenAddress, _amount);
     }
 
     /**
@@ -444,13 +451,6 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 oldTokenCap = tokenCap[_tokenAddress];
         tokenCap[_tokenAddress] = _newTokenCap;
         emit CHANGE_TOKEN_CAP(_tokenAddress, oldTokenCap, _newTokenCap);
-    }
-
-    /**
-     * @notice to receive ether
-     */
-    receive() external payable {
-        emit ETH_RECEIVED_VIA_RECEIVE_FUNCTION(msg.sender, msg.value);
     }
 
     /**
