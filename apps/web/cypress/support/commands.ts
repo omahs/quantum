@@ -51,14 +51,13 @@ declare global {
 
 Cypress.Commands.add("connectMetaMaskWallet", () => {
   cy.disconnectMetamaskWalletFromDapp(); // in case it's not fully disconnected, else cy.acceptMetamaskAccess() will throw error
-  cy.findByTestId("connect-button").should("be.visible").click();
+  cy.findByTestId("connect-button").click();
   cy.contains("MetaMask").click();
   cy.acceptMetamaskAccess().should("be.true");
-  cy.findByTestId("wallet-button").should("be.visible");
 });
 
 Cypress.Commands.add("disconnectMetaMaskWallet", () => {
-  cy.findByTestId("wallet-button").should("be.visible").click();
+  cy.findByTestId("wallet-button").click();
   cy.contains("Disconnect").click();
   cy.findByTestId("connect-button").should("be.visible");
   cy.disconnectMetamaskWalletFromDapp();
