@@ -26,6 +26,16 @@ export interface BridgeVersion {
   v: string;
 }
 
+interface Settings {
+  transferFee: `${number}` | number;
+  supportedTokens: string[];
+}
+
+export interface BridgeSettings {
+  defichain: Settings;
+  ethereum: Settings;
+}
+
 export enum SelectionType {
   "Network" = "Network",
   "Token" = "Token",

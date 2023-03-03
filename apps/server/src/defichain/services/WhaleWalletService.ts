@@ -43,6 +43,12 @@ export class WhaleWalletService {
       return { isValid: false, statusCode: CustomErrorCodes.AmountNotValid };
     }
 
+    // Verify if decimal places is maximum 6
+    const dp = new BigNumber(verify.amount).dp();
+    if (dp != null && dp > 6) {
+      return { isValid: false, statusCode: CustomErrorCodes.AmountNotValid };
+    }
+
     try {
       const pathIndex = await this.prisma.deFiChainAddressIndex.findFirst({
         where: {
