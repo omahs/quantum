@@ -251,6 +251,18 @@ describe('DeFiChain Verify fund Testing', () => {
     expect(response).toStrictEqual({ isValid: false, statusCode: CustomErrorCodes.AmountNotValid });
   });
 
+  it('should throw error if amount has more than 6 decimal place', async () => {
+    const response = await verify({
+      amount: '3.1234567',
+      symbol: 'BTC',
+      address: localAddress,
+      ethReceiverAddress: ethWalletAddress,
+      tokenAddress: mwbtcContract.address,
+    });
+
+    expect(response).toStrictEqual({ isValid: false, statusCode: CustomErrorCodes.AmountNotValid });
+  });
+
   it('should verify fund in the wallet address and top up UTXO', async () => {
     const hotWallet = whaleWalletProvider.getHotWallet();
     const hotWalletAddress = await hotWallet.getAddress();
