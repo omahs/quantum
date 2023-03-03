@@ -298,10 +298,12 @@ contract BridgeV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeabl
         uint256 netTxFee = requestedAmount - netAmountInWei;
         emit BRIDGE_TO_DEFI_CHAIN(_defiAddress, _tokenAddress, netAmountInWei, block.timestamp);
         if (_tokenAddress == ETH) {
-            (bool sent, ) = communityWallet.call{value: netTxFee}('');
-            if (!sent) revert ETH_TRANSFER_FAILED();
+            if (netTxFee > 0) {
+                (bool sent, ) = communityWallet.call{value: netTxFee}('');
+                if (!sent) revert ETH_TRANSFER_FAILED();
+            }
         } else {
-            IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, communityWallet, netTxFee);
+            if (netTxFee > 0) IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, communityWallet, netTxFee);
             IERC20Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, address(this), netAmountInWei);
         }
     }
