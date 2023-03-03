@@ -443,7 +443,7 @@ export default function BridgeForm({
         </span>
         <NumericFormat
           className="max-w-[70%] block break-words text-right text-dark-1000 text-sm leading-5 lg:text-lg lg:leading-6 font-bold"
-          value={new BigNumber(amount).minus(fee) || 0}
+          value={BigNumber.max(new BigNumber(amount).minus(fee), 0) || 0}
           thousandSeparator
           suffix={` ${selectedTokensB.tokenA.name}`}
           trimTrailingZeros
