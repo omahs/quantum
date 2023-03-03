@@ -499,7 +499,7 @@ export default function BridgeForm({
             />
           </div>
         )}
-        {isBalanceInsufficient && (
+        {isBalanceInsufficient && !hasPendingTxn && (
           <div className={clsx("pt-3", warningTextStyle)}>
             Unable to process transaction. <div>Please try again later</div>
           </div>
