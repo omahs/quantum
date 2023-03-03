@@ -92,11 +92,15 @@ export default function StepLastClaim({
     write?.();
   };
 
+  const clearUnconfirmedTxn = () => {
+    setStorage("txn-form", null);
+    setStorage("dfc-address", null);
+    setStorage("dfc-address-details", null);
+  };
+
   useEffect(() => {
     if (isSuccess) {
-      setStorage("txn-form", null);
-      setStorage("dfc-address", null);
-      setStorage("dfc-address-details", null);
+      clearUnconfirmedTxn();
     }
   }, [isSuccess]);
 
@@ -110,7 +114,8 @@ export default function StepLastClaim({
     let err = writeClaimTxnError?.message ?? claimTxnError?.message;
     if (claimTxnError && claimTxnError.name && !claimTxnError.message) {
       // Txn Error can sometimes occur but have empty message
-      if (isClaimExpired()) {
+      if (isClaimExpired() && claimFundData?.hash) {
+        clearUnconfirmedTxn();
         err = "Exceeded claim deadline";
       } else {
         err = "Transaction failed";
