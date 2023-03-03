@@ -100,8 +100,23 @@ export default function StepLastClaim({
     }
   }, [isSuccess]);
 
+  const isClaimExpired = () => {
+    const currentTs = Date.now();
+    const claimDeadlineTs = signedClaim.deadline * 1000; // deadline is in secs, multiplying to 1000 to get millisecs
+    return currentTs > claimDeadlineTs;
+  };
+
   useEffect(() => {
-    setError(writeClaimTxnError?.message ?? claimTxnError?.message);
+    let err = writeClaimTxnError?.message ?? claimTxnError?.message;
+    if (claimTxnError && claimTxnError.name && !claimTxnError.message) {
+      // Txn Error can sometimes occur but have empty message
+      if (isClaimExpired()) {
+        err = "Exceeded claim deadline";
+      } else {
+        err = "Transaction failed";
+      }
+    }
+    setError(err);
   }, [writeClaimTxnError, claimTxnError]);
 
   useEffect(() => {
