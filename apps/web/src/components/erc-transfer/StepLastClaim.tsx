@@ -21,6 +21,10 @@ import useTransferFee from "@hooks/useTransferFee";
 
 const CLAIM_INPUT_ERROR =
   "Check your connection and try again. If the error persists get in touch with us.";
+const CLAIM_EXPIRED_ERROR =
+  "Unfortunately, you are now unable to claim from this transaction. Closing this modal will reset the form for new transaction.";
+const INSUFFICIENT_BALANCE_ERROR =
+  "Quantum's servers are currently at capacity. We are unable to process transactions at this time, please try again in a few hours to claim your tokens.";
 
 export default function StepLastClaim({
   data,
@@ -116,9 +120,9 @@ export default function StepLastClaim({
       // Txn Error can sometimes occur but have empty message
       if (isClaimExpired() && claimFundData?.hash) {
         clearUnconfirmedTxn();
-        err = "Exceeded claim deadline";
+        err = CLAIM_EXPIRED_ERROR;
       } else {
-        err = "Transaction failed";
+        err = CLAIM_INPUT_ERROR;
       }
     }
     setError(err);
@@ -126,9 +130,7 @@ export default function StepLastClaim({
 
   useEffect(() => {
     if (error && isBalanceInsufficient) {
-      setError(
-        "Quantum's servers are currently at capacity. We are unable to process transactions at this time, please try again in a few hours to claim your tokens."
-      );
+      setError(INSUFFICIENT_BALANCE_ERROR);
     }
   }, [error, isBalanceInsufficient]);
 
