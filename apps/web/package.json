@@ -11,9 +11,9 @@
     "lint": "next lint",
     "cypress:open": "cypress open",
     "cypress:build": "CYPRESS=true next build",
-    "cypress:run": "env-cmd -f .env npx synpress run -cf cypress.config.js --browser chrome",
-    "synpress:open": "env-cmd -f .env npx synpress open -cf cypress.config.js",
-    "synpress:run": "env-cmd -f .env npx synpress run -cf cypress.config.js --browser chrome",
+    "cypress:run": "TZ=UTC cypress run --headless --browser chrome",
+    "synpress:open": "synpress open -cf cypress.config.js",
+    "synpress:run": "synpress run -cf cypress.config.js",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -29,7 +29,6 @@
     "clsx": "^1.2.1",
     "connectkit": "^1.2.0",
     "dayjs": "^1.11.7",
-    "env-cmd": "^10.1.0",
     "ethers": "^5.7.2",
     "react-circular-progressbar": "^2.1.0",
     "react-content-loader": "^6.2.0",
