@@ -19,10 +19,6 @@ Users can get the GoerliETH via Goerli Faucet(https://goerlifaucet.com/)
 
 The MUSDT and MUSDC contract have been deployed on Goerli for testing. Users will be able to mint tokens by calling the `mint()` function with the respective EOA (Externally Owned Account) or contract address and amount.
 
-### When bridging to DeFiChain, what is the event that devs need to listen to, and what is the payload of that event?
-
-On bridging to the DeFiChain, the event `BRIDGE_TO_DEFI_CHAIN(bytes defiAddress, address indexed tokenAddress, uint256 indexed amount , uint256 indexed timestamp);` will be emitted along with the user's defiAddress, the ERC20 token's address that is being bridged, the amount of the token being bridged, and the timestamp of the transaction.
-
 ### When bridging from DeFiChain, what is the expected signed message?
 
 Expected message should be similar to `0x9a2618a0503cf675a85e4519fc97890fba5b851d15e02b8bc8f351d22b46580059c03992465695e89fc29e528797972d05de0b34768d5d3d7f772f2422eb9af01b == relayerAddress._signTypedData(domainData, eip712Types, eip712Data)`. This data is singed by the relayer address. Data that hasn't signed by the relayer address will revert with the error `FAKE_SIGNATURE`.
