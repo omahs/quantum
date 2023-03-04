@@ -75,7 +75,11 @@ export default function StepLastClaim({
   });
 
   // Write contract for `claimFund` function
-  const { data: claimFundData, write } = useContractWrite(bridgeConfig);
+  const {
+    data: claimFundData,
+    error: writeClaimTxnError,
+    write,
+  } = useContractWrite(bridgeConfig);
 
   // Wait and get result from write contract for `claimFund` function
   const {
@@ -118,7 +122,7 @@ export default function StepLastClaim({
   }, [isSuccess, isClaimExpired]);
 
   useEffect(() => {
-    let err = claimTxnError?.message;
+    let err = writeClaimTxnError?.message ?? claimTxnError?.message;
     if (claimTxnError && claimTxnError.name && !claimTxnError.message) {
       // Txn Error can sometimes occur but have empty message
       if (isClaimExpired && claimFundData?.hash) {
@@ -129,7 +133,7 @@ export default function StepLastClaim({
       }
     }
     setError(err);
-  }, [claimTxnError]);
+  }, [writeClaimTxnError, claimTxnError]);
 
   useEffect(() => {
     if (error && isBalanceInsufficient) {
