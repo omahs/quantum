@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { FiAlertCircle } from "react-icons/fi";
+import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { utils } from "ethers";
 import {
   useContractWrite,
@@ -10,7 +10,6 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useRouter } from "next/router";
-import { FiCheck } from "react-icons/fi";
 import { useContractContext } from "@contexts/ContractContext";
 import { useStorageContext } from "@contexts/StorageContext";
 import ActionButton from "@components/commons/ActionButton";
