@@ -6,7 +6,7 @@ export const MAINNET_CONFIG: ContractContextI = {
   EthereumRpcUrl: "https://cloudflare-eth.com/", // TODO: Replace with MainNet RPC URL
   ExplorerURL: "https://etherscan.io",
   BridgeV1: {
-    address: "0x96E5E1d6377ffA08B9c08B066f430e33e3c4C9ef", // TODO: Replace with deployed contract address on mainnet
+    address: "0x54346d39976629b65ba54eac1c9ef0af3be1921b",
     abi: BridgeV1,
   },
   Erc20Tokens: {
