@@ -10,10 +10,10 @@ import {
 } from "@components/siteInfo";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { goerli, hardhat, localhost, mainnet } from "wagmi/chains";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
+import { infuraProvider } from "wagmi/providers/infura";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 import { NetworkEnvironmentProvider } from "@contexts/NetworkEnvironmentContext";
@@ -50,6 +50,7 @@ const { chains } = configureChains(
         };
       },
     }),
+    infuraProvider({ apiKey: "df267399d98e41e996d6588a76678d5e", priority: 0 }),
     publicProvider(),
   ]
 );
@@ -57,9 +58,9 @@ const { chains } = configureChains(
 const client = createClient(
   getDefaultClient({
     autoConnect: true,
-    chains: [localhost, hardhat, mainnet, goerli],
+    chains,
     appName,
-    connectors: [metamask, new InjectedConnector({ chains })],
+    connectors: [metamask],
   })
 );
 
