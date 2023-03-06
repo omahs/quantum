@@ -326,6 +326,7 @@ export default function BridgeForm({
   const warningTextStyle =
     "block text-xs text-warning text-center lg:px-6 lg:text-sm";
 
+  console.log("filteredNetwork", filteredNetwork);
   return (
     <div className="w-full md:w-[calc(100%+2px)] lg:w-full dark-card-bg-image p-6 md:pt-8 pb-16 lg:p-10 rounded-lg lg:rounded-xl border border-dark-200 backdrop-blur-[18px]">
       <div className="flex flex-row items-center" ref={reference}>

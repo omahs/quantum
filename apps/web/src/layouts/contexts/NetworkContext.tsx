@@ -22,6 +22,7 @@ interface NetworkContextI {
   evmFee: string | number;
   dfcFee: string | number;
   isFetchingSupportedToken: boolean;
+  filteredNetwork: [NetworkI<Erc20Token>, NetworkI<string>];
 }
 
 interface TokenDetailI<T> {
@@ -183,7 +184,8 @@ export function NetworkProvider({
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
   const [isFetchingSupportedToken, setIsFetchingSupportedToken] =
     useState<boolean>(true);
-  const [filteredNetwork, setFilteredNetwork] = useState(networks);
+  const [filteredNetwork, setFilteredNetwork] =
+    useState<[NetworkI<Erc20Token>, NetworkI<string>]>(networks);
   const [trigger] = useLazyBridgeSettingsQuery();
   const [defaultNetworkA, defaultNetworkB] = filteredNetwork;
   const [selectedNetworkA, setSelectedNetworkA] =
@@ -278,7 +280,12 @@ export function NetworkProvider({
       isFetchingSupportedToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedTokensA, selectedTokensB, isFetchingSupportedToken]
+    [
+      selectedTokensA,
+      selectedTokensB,
+      isFetchingSupportedToken,
+      filteredNetwork,
+    ]
   );
 
   return (
