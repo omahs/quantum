@@ -13,7 +13,6 @@ import { goerli, hardhat, localhost, mainnet } from "wagmi/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-import { infuraProvider } from "wagmi/providers/infura";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 import { NetworkEnvironmentProvider } from "@contexts/NetworkEnvironmentContext";
