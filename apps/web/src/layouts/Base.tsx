@@ -44,13 +44,11 @@ const { chains } = configureChains(
       rpc: (chain) => {
         const isMainNet = chain.id === ETHEREUM_MAINNET_ID;
         const config = isMainNet ? MAINNET_CONFIG : TESTNET_CONFIG;
-
         return {
           http: (config.EthereumRpcUrl || chain.rpcUrls.default) as string,
         };
       },
     }),
-    infuraProvider({ apiKey: "df267399d98e41e996d6588a76678d5e", priority: 0 }),
     publicProvider(),
   ]
 );
