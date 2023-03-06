@@ -130,13 +130,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
       <WagmiConfig client={client}>
         <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
           {mounted && (
-            // <NetworkProvider>
             <ApiProvider api={bridgeApi}>
               <NetworkEnvironmentProvider>
                 <NetworkProvider>
                   <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
                     <WhaleProvider>
-                      {/* <NetworkEnvironmentProvider> */}
                       <DeFiScanProvider>
                         <ContractProvider>
                           <ThemeProvider theme={initialTheme}>
@@ -146,13 +144,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                           </ThemeProvider>
                         </ContractProvider>
                       </DeFiScanProvider>
-                      {/* </NetworkEnvironmentProvider> */}
                     </WhaleProvider>
                   </WhaleNetworkProvider>
                 </NetworkProvider>
               </NetworkEnvironmentProvider>
             </ApiProvider>
-            // </NetworkProvider>
           )}
         </ConnectKitProvider>
       </WagmiConfig>

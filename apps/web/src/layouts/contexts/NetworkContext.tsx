@@ -196,6 +196,7 @@ export function NetworkProvider({
   const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
     defaultNetworkB.tokens[0]
   );
+
   useEffect(() => {
     const getBridgeSettings = async () => {
       const { data, isSuccess } = await trigger({});
@@ -227,6 +228,7 @@ export function NetworkProvider({
     };
     getBridgeSettings();
   }, [networks, isFetchingSupportedToken]);
+
   useEffect(() => {
     const networkB = filteredNetwork.find(
       (network) => network.name !== selectedNetworkA.name
@@ -241,6 +243,7 @@ export function NetworkProvider({
       }
     }
   }, [selectedNetworkA]);
+
   useEffect(() => {
     const tokens = selectedNetworkB.tokens.find(
       (item) => item.tokenA.name === selectedTokensA.tokenB.name
@@ -249,12 +252,14 @@ export function NetworkProvider({
       setSelectedTokensB(tokens);
     }
   }, [selectedTokensA]);
+
   const resetNetworkSelection = () => {
     setSelectedNetworkA(defaultNetworkA);
     setSelectedTokensA(defaultNetworkA.tokens[0]);
     setSelectedNetworkB(defaultNetworkB);
     setSelectedTokensB(defaultNetworkB.tokens[0]);
   };
+
   const context: NetworkContextI = useMemo(
     () => ({
       selectedNetworkA,
@@ -278,6 +283,7 @@ export function NetworkProvider({
       filteredNetwork,
     ]
   );
+
   return (
     <NetworkContext.Provider value={context}>
       {children}
