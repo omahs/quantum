@@ -50,6 +50,13 @@ export class WhaleWalletService {
     }
 
     try {
+      // Verify if token symbol is supported
+      const supportedDfcTokens = this.configService.getOrThrow('defichain.supportedTokens');
+      const supportedTokensArray = supportedDfcTokens.split(',') as Array<keyof typeof SupportedDFCTokenSymbols>;
+      if (!supportedTokensArray.includes(verify.symbol)) {
+        return { isValid: false, statusCode: CustomErrorCodes.TokenSymbolNotSupported };
+      }
+
       const pathIndex = await this.prisma.deFiChainAddressIndex.findFirst({
         where: {
           address: verify.address,
