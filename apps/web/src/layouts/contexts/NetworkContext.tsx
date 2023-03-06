@@ -278,12 +278,7 @@ export function NetworkProvider({
       isFetchingSupportedToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      selectedTokensA,
-      selectedTokensB,
-      isFetchingSupportedToken,
-      filteredNetwork,
-    ]
+    [selectedTokensA, selectedTokensB, isFetchingSupportedToken]
   );
 
   return (
