@@ -46,6 +46,7 @@ export function buildTestConfig({
     ethereum: {
       rpcUrl: startedHardhatContainer?.rpcUrl ?? '',
       transferFee: ethereum?.transferFee,
+      supportedTokens: ethereum?.supportedTokens,
       contracts: {
         bridgeProxy: {
           address: testnet?.bridgeContractAddress ?? '',
@@ -81,6 +82,7 @@ type OptionalBuildTestConfigParams = {
   };
   ethereum: {
     transferFee: string;
+    supportedTokens: string;
   };
   startedHardhatContainer: StartedHardhatNetworkContainer;
   testnet: {
