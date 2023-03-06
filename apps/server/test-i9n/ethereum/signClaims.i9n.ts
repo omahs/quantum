@@ -7,8 +7,8 @@ import {
   StartedHardhatNetworkContainer,
   TestToken,
 } from 'smartcontracts';
-import { TokenSymbol } from 'src/defichain/model/VerifyDto';
 
+import { TokenSymbol } from '../../src/defichain/model/VerifyDto';
 import { WhaleWalletService } from '../../src/defichain/services/WhaleWalletService';
 import { EVMTransactionConfirmerService } from '../../src/ethereum/services/EVMTransactionConfirmerService';
 import { PrismaService } from '../../src/PrismaService';
