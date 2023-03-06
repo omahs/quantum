@@ -68,6 +68,7 @@ describe('DeFiChain Verify fund Testing', () => {
             key: StartedDeFiChainStubContainer.LOCAL_MNEMONIC,
             transferFee: '0.003',
             dustUTXO: '0.001',
+            supportedTokens: 'BTC,ETH',
           },
           startedHardhatContainer,
           testnet: {
@@ -261,6 +262,18 @@ describe('DeFiChain Verify fund Testing', () => {
     });
 
     expect(response).toStrictEqual({ isValid: false, statusCode: CustomErrorCodes.AmountNotValid });
+  });
+
+  it('should throw error if token symbol is not supported', async () => {
+    const response = await verify({
+      amount: '3',
+      symbol: 'USDT',
+      address: localAddress,
+      ethReceiverAddress: ethWalletAddress,
+      tokenAddress: mwbtcContract.address,
+    });
+
+    expect(response).toStrictEqual({ isValid: false, statusCode: CustomErrorCodes.TokenSymbolNotSupported });
   });
 
   it('should verify fund in the wallet address and top up UTXO', async () => {
