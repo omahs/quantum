@@ -495,10 +495,10 @@ export default function BridgeForm({
           !hasPendingTxn &&
           !txnHash.confirmed && (
             <div className="text-xs lg:text-sm leading-4 lg:leading-5 text-dark-700 text-center mt-4">
-              Transaction interrupted?{" "}
+              Transaction interrupted?
               <button
                 type="button"
-                className="text-dark-1000 font-bold"
+                className="text-dark-1000 font-bold ml-1"
                 onClick={() => setShowErcToDfcRestoreModal(true)}
               >
                 Recover it here
