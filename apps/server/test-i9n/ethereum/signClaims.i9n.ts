@@ -7,6 +7,7 @@ import {
   StartedHardhatNetworkContainer,
   TestToken,
 } from 'smartcontracts';
+import { TokenSymbol } from 'src/defichain/model/VerifyDto';
 
 import { WhaleWalletService } from '../../src/defichain/services/WhaleWalletService';
 import { EVMTransactionConfirmerService } from '../../src/ethereum/services/EVMTransactionConfirmerService';
@@ -81,6 +82,7 @@ describe('Sign Claims Tests', () => {
     const claim = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '10',
       uniqueDfcAddress: address,
     });
@@ -96,6 +98,9 @@ describe('Sign Claims Tests', () => {
     expect(dbRecord?.claimSignature).toStrictEqual(claim.signature);
     expect(dbRecord?.claimDeadline).toStrictEqual(claim.deadline.toString());
     expect(dbRecord?.claimNonce).toStrictEqual(claim.nonce.toString());
+    expect(dbRecord?.claimAmount).toStrictEqual('10');
+    expect(dbRecord?.ethReceiverAddress).toStrictEqual(hardhatAccount.testWalletAddress);
+    expect(dbRecord?.tokenSymbol).toStrictEqual(TokenSymbol.BTC);
   });
 
   it('should not create a new claim if same dfc address is used', async () => {
@@ -107,6 +112,7 @@ describe('Sign Claims Tests', () => {
     const firstClaim = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '5',
       uniqueDfcAddress: address,
     });
@@ -117,6 +123,7 @@ describe('Sign Claims Tests', () => {
     const secondClaim = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '150',
       uniqueDfcAddress: address,
     });
@@ -139,6 +146,7 @@ describe('Sign Claims Tests', () => {
     const claim1 = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '3',
       uniqueDfcAddress: address1,
     });
@@ -154,6 +162,7 @@ describe('Sign Claims Tests', () => {
     const claim2 = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '1',
       uniqueDfcAddress: address2,
     });
@@ -175,6 +184,7 @@ describe('Sign Claims Tests', () => {
     const claim = await evmService.signClaim({
       receiverAddress: hardhatAccount.testWalletAddress,
       tokenAddress: musdcContract.address,
+      tokenSymbol: TokenSymbol.BTC,
       amount: '1.5',
       uniqueDfcAddress: address,
     });
