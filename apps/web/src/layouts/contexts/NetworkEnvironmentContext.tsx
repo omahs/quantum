@@ -7,7 +7,9 @@ import React, {
   PropsWithChildren,
 } from "react";
 import { useRouter } from "next/router";
+import { useNetwork } from "wagmi";
 import { EnvironmentNetwork, getEnvironment } from "@waveshq/walletkit-core";
+import { ETHEREUM_MAINNET_ID } from "../../constants";
 
 interface NetworkContextI {
   networkEnv: EnvironmentNetwork;
@@ -30,26 +32,25 @@ export function NetworkEnvironmentProvider({
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = router.query.network;
 
-  function getNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
-    if (env.networks.includes(n) && n !== EnvironmentNetwork.MainNet) {
-      return n;
-    }
-    return EnvironmentNetwork.TestNet;
-  }
+  const { chain } = useNetwork();
+  const isEthereumMainNet = chain?.id === ETHEREUM_MAINNET_ID;
 
-  // TODO: Use `getNetwork` fn below once MainNet is ready
-  /* function getNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
-    if (env.networks.includes(n)) {
+  function getNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
+    if (!isEthereumMainNet && env.networks.includes(n)) {
       return n;
     }
     return EnvironmentNetwork.MainNet;
-  } */
+  }
 
   const initialNetwork = getNetwork(networkQuery as EnvironmentNetwork);
   const [networkEnv, setNetworkEnv] =
     useState<EnvironmentNetwork>(initialNetwork);
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
+    if (isEthereumMainNet) {
+      // Network environment should never be updated
+      return;
+    }
     setNetworkEnv(value);
     if (value !== initialNetwork) {
       router.replace(

@@ -200,7 +200,6 @@ export default function BridgeForm({
       };
       setStorage("txn-form", JSON.stringify(newTxn));
     }
-    /* TODO: Handle token transfer here */
     setShowConfirmModal(true);
   };
 

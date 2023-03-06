@@ -4,6 +4,7 @@ import { ConnectKitButton } from "connectkit";
 import useResponsive from "@hooks/useResponsive";
 import truncateTextFromMiddle from "@utils/textHelper";
 import MetaMaskIcon from "./icons/MetaMaskIcon";
+import { ETHEREUM_MAINNET_ID } from "../constants";
 
 function PreConnectedButton({
   onClick,
@@ -48,7 +49,7 @@ function ConnectedButton({
       onClick={onClick}
       className={clsx(
         `hover:dark-btn-hover active:dark-btn-pressed dark-card-bg flex h-8 items-center rounded-[48px]
-        border-[0.5px] border-dark-card-stroke px-3 py-2 hover:border-transparent md:h-[52px] md:w-[156px] lg:h-12 lg:w-[165px] lg:px-2.5 lg:py-1.5`
+        border-[0.5px] border-dark-card-stroke px-3 py-2 hover:border-transparent md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`
       )}
     >
       <div className="hidden md:flex items-center">
@@ -71,6 +72,8 @@ function ConnectedButton({
 
 export default function ConnectButton() {
   const { chain } = useNetwork();
+  const displayedChainName =
+    chain?.id === ETHEREUM_MAINNET_ID ? "Ethereum MainNet" : chain?.name;
 
   return (
     <ConnectKitButton.Custom>
@@ -78,7 +81,7 @@ export default function ConnectButton() {
         isConnected ? (
           <ConnectedButton
             address={address as string}
-            chain={chain?.name as string}
+            chain={displayedChainName as string}
             onClick={show}
           />
         ) : (

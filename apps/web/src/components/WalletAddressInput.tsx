@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import * as ethers from "ethers";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { FiClipboard } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import { HiLockClosed } from "react-icons/hi";
@@ -16,6 +16,7 @@ import {
 import { Network } from "types";
 import Tooltip from "./commons/Tooltip";
 import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
+import { ETHEREUM_MAINNET_ID } from "../constants";
 
 interface Props {
   blockchain: Network;
@@ -82,6 +83,7 @@ export default function WalletAddressInput({
   const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
   const { isConnected } = useAccount();
+  const { chain } = useNetwork();
   const { networkEnv } = useNetworkEnvironmentContext();
   const { isMobile } = useResponsive();
   useAutoResizeTextArea(textAreaRef.current, [addressInput, placeholder]);
@@ -191,9 +193,14 @@ export default function WalletAddressInput({
           {label}
         </span>
         {/*  Network environment */}
-        {blockchain === Network.DeFiChain && isPrimary && (
-          <EnvironmentNetworkSwitch onChange={() => onAddressInputChange("")} />
-        )}
+
+        {chain?.id !== ETHEREUM_MAINNET_ID &&
+          blockchain === Network.DeFiChain &&
+          isPrimary && (
+            <EnvironmentNetworkSwitch
+              onChange={() => onAddressInputChange("")}
+            />
+          )}
         <div
           className={clsx(
             "absolute right-0 rounded bg-valid px-2 py-1 text-2xs text-dark-00  transition duration-300 lg:text-xs",
