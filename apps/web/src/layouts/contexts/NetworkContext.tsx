@@ -58,34 +58,6 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
       },
       {
         tokenA: {
-          name: "USDT",
-          symbol: "USDT",
-          icon: "/tokens/USDT.svg",
-          supply: "6503681021.125",
-        },
-        tokenB: {
-          name: "dUSDT",
-          symbol: "USDT",
-          icon: "/tokens/dUSDT.svg",
-          supply: "6503681021.125",
-        },
-      },
-      {
-        tokenA: {
-          name: "USDC",
-          symbol: "USDC",
-          icon: "/tokens/USDC.svg",
-          supply: "43666178314.768",
-        },
-        tokenB: {
-          name: "dUSDC",
-          symbol: "USDC",
-          icon: "/tokens/dUSDC.svg",
-          supply: "43666178314.768",
-        },
-      },
-      {
-        tokenA: {
           name: "ETH",
           symbol: "ETH",
           icon: "/tokens/ETH.svg",
@@ -116,34 +88,6 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           symbol: "WBTC",
           icon: "/tokens/wBTC.svg",
           supply: "1801245.4321",
-        },
-      },
-      {
-        tokenA: {
-          name: "dUSDT",
-          symbol: "USDT",
-          icon: "/tokens/dUSDT.svg",
-          supply: "5903681123.781",
-        },
-        tokenB: {
-          name: "USDT",
-          symbol: "USDT",
-          icon: "/tokens/USDT.svg",
-          supply: "5903681123.781",
-        },
-      },
-      {
-        tokenA: {
-          name: "dUSDC",
-          symbol: "USDC",
-          icon: "/tokens/dUSDC.svg",
-          supply: "33777178314.091",
-        },
-        tokenB: {
-          name: "USDC",
-          symbol: "USDC",
-          icon: "/tokens/USDC.svg",
-          supply: "33777178314.091",
         },
       },
       {
