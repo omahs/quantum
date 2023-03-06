@@ -1,6 +1,6 @@
 import QRCode from "react-qr-code";
 import clsx from "clsx";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import useCopyToClipboard from "@hooks/useCopyToClipboard";
 import Tooltip from "@components/commons/Tooltip";
 
@@ -42,6 +42,12 @@ export default function QrAddress({
     setShowSuccessCopy(true);
   };
 
+  useEffect(() => {
+    if (showSuccessCopy) {
+      setTimeout(() => setShowSuccessCopy(false), 2000);
+    }
+  }, [showSuccessCopy]);
+
   return (
     <div className="w-[164px]">
       <SuccessCopy
@@ -59,7 +65,7 @@ export default function QrAddress({
           <button
             type="button"
             className={clsx(
-              "text-dark-700 text-left break-all focus-visible:outline-none text-center mt-2",
+              "text-dark-700 break-all focus-visible:outline-none text-center mt-2",
               "text-xs cursor-pointer hover:underline"
             )}
             onClick={() => handleOnCopy(dfcUniqueAddress)}
