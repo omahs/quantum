@@ -1,10 +1,10 @@
 import React, {
   createContext,
+  PropsWithChildren,
   useContext,
+  useEffect,
   useMemo,
   useState,
-  PropsWithChildren,
-  useEffect,
 } from "react";
 import { Erc20Token, Network, NetworkOptionsI, TokensI } from "types";
 import { useLazyBridgeSettingsQuery } from "@store/index";
@@ -198,6 +198,10 @@ export function NetworkProvider({
   );
 
   useEffect(() => {
+    resetNetworkSelection();
+  }, [filteredNetwork]);
+
+  useEffect(() => {
     const getBridgeSettings = async () => {
       const { data, isSuccess } = await trigger({});
       if (isSuccess) {
@@ -213,11 +217,16 @@ export function NetworkProvider({
       const matchedNetworks = networks.map((network) => {
         const supportedToken =
           network.name === Network.DeFiChain
-            ? dfcSupportedToken
-            : evmSupportedToken;
-        const tokenMatcher = network.tokens.filter((token) =>
-          supportedToken.includes(token.tokenA.symbol)
-        );
+            ? data?.defichain.supportedTokens
+            : data?.ethereum.supportedTokens;
+
+        let tokenMatcher: TokensI[] = [];
+        if (supportedToken !== undefined) {
+          tokenMatcher = network.tokens.filter((token) =>
+            supportedToken.includes(token.tokenA.symbol)
+          );
+        }
+
         return {
           ...network,
           tokens: tokenMatcher,
@@ -279,6 +288,8 @@ export function NetworkProvider({
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      selectedNetworkA,
+      selectedNetworkB,
       selectedTokensA,
       selectedTokensB,
       isFetchingSupportedToken,
