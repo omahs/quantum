@@ -91,6 +91,7 @@ export class WhaleWalletService {
       const claim = await this.evmTransactionService.signClaim({
         receiverAddress: verify.ethReceiverAddress,
         tokenAddress: verify.tokenAddress,
+        tokenSymbol: verify.symbol,
         amount: amountLessFee,
         uniqueDfcAddress: verify.address,
       });
