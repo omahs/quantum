@@ -4,7 +4,7 @@
 
 import BigNumber from "bignumber.js";
 import { ethers, utils } from "ethers";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -40,13 +40,11 @@ export default function useWriteBridgeToDeFiChain({
 }: BridgeToDeFiChainI) {
   const { BridgeV1, Erc20Tokens } = useContractContext();
   const sendingFromETH = (tokenName as string) === ETHEREUM_SYMBOL;
-  const [requiresApproval, setRequiresApproval] = useState(false);
 
   const handlePrepContractError = (err) => {
     let customErrorDisplay: EventErrorI["customErrorDisplay"];
     if (err.message.includes("insufficient allowance")) {
       // Need to request approval from user - Insufficient allowance
-      setRequiresApproval(true);
       customErrorDisplay = "InsufficientAllowanceError";
     }
 
@@ -123,6 +121,5 @@ export default function useWriteBridgeToDeFiChain({
     refetchBridge,
     writeBridgeToDeFiChain,
     transactionHash: bridgeContract?.hash,
-    requiresApproval,
   };
 }
