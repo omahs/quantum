@@ -12,6 +12,7 @@ import {
 } from "wagmi";
 import { useContractContext } from "@contexts/ContractContext";
 import { Erc20Token } from "types";
+import Logging from "@api/logging";
 
 interface ApproveTokenI {
   tokenName: Erc20Token;
@@ -72,6 +73,16 @@ export default function useWriteApproveToken({
     isApproveTxnLoading,
     isApproveTxnSuccess,
     refetchedBridgeFn,
-    writeApprove,
+    writeApprove: () => {
+      // ETH doesn not require approval
+      if (
+        tokenConfig.address !== Erc20Tokens.ETH.address &&
+        tokenName !== "ETH"
+      ) {
+        writeApprove?.();
+      } else {
+        Logging.info(`Write approve: ${JSON.stringify(tokenConfig)}`);
+      }
+    },
   };
 }
