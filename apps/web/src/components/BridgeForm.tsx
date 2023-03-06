@@ -81,6 +81,7 @@ export default function BridgeForm({
     setSelectedNetworkB,
     setSelectedTokensB,
     resetNetworkSelection,
+    isFetchingSupportedToken,
   } = useNetworkContext();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
@@ -349,6 +350,7 @@ export default function BridgeForm({
             onSelect={(value: TokensI) => setSelectedTokensA(value)}
             value={selectedTokensA}
             disabled={hasUnconfirmedTxn}
+            isFetching={isFetchingSupportedToken}
           />
         </div>
       </div>

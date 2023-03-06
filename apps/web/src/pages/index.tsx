@@ -5,17 +5,11 @@ import MobileBottomMenu from "@components/MobileBottomMenu";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
 import { useStorageContext } from "@contexts/StorageContext";
-import { bridgeApi } from "@store/defichain";
-import { useBridgeSettingsQuery } from "@store/index";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
 
 function Home() {
-  bridgeApi.usePrefetch("bridgeSettings");
-  // const [data] = useBridgeSettingsQuery();
-  // console.log("data", data({}));
-
   const { ethTxnStatus, isApiSuccess } = useWatchEthTxn();
   const { txnHash, setStorage } = useStorageContext();
   const { UNCONFIRMED_TXN_HASH_KEY, UNSENT_FUND_TXN_HASH_KEY } =

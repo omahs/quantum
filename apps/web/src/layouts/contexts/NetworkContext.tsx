@@ -7,11 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import { Erc20Token, Network, NetworkOptionsI, TokensI } from "types";
-import {
-  useLazyBridgeSettingsQuery,
-  usePrefetch,
-  useBridgeSettingsQuery,
-} from "@store/index";
+import { useLazyBridgeSettingsQuery } from "@store/index";
 
 interface NetworkContextI {
   selectedNetworkA: NetworkOptionsI;
@@ -23,6 +19,9 @@ interface NetworkContextI {
   setSelectedNetworkB: (networkB: NetworkOptionsI) => void;
   setSelectedTokensB: (tokenB: TokensI) => void;
   resetNetworkSelection: () => void;
+  evmFee: string | number;
+  dfcFee: string | number;
+  isFetchingSupportedToken: boolean;
 }
 
 interface TokenDetailI<T> {
@@ -186,43 +185,6 @@ export function NetworkProvider({
     useState<boolean>(true);
   const [filteredNetwork, setFilteredNetwork] = useState(networks);
   const [trigger] = useLazyBridgeSettingsQuery();
-  async function getBridgeSettings() {
-    try {
-      const { data, isSuccess } = await trigger({});
-      if (isSuccess) {
-        if (data.defichain) {
-          setDfcFee(data.defichain.transferFee);
-          setDfcSupportedToken(data?.defichain.supportedTokens);
-        }
-        if (data.ethereum) {
-          setEvmFee(data.ethereum.transferFee);
-          setEvmSupportedToken(data.ethereum.supportedTokens);
-        }
-        console.log("evmSupportedToken", evmSupportedToken);
-        const matchedNetworks = networks.map((network) => {
-          const supportedToken =
-            network.name === Network.DeFiChain
-              ? dfcSupportedToken
-              : evmSupportedToken;
-          const tokenMatcher = network.tokens.filter((token) =>
-            supportedToken.includes(token.tokenA.symbol)
-          );
-          return {
-            ...network,
-            tokens: tokenMatcher,
-          };
-        });
-        setFilteredNetwork(matchedNetworks);
-      }
-    } finally {
-      setIsFetchingSupportedToken(false);
-    }
-  }
-  useEffect(() => {
-    getBridgeSettings();
-  }, []);
-  console.log("filteredNetwork", filteredNetwork);
-  console.log("network", networks);
   const [defaultNetworkA, defaultNetworkB] = filteredNetwork;
   const [selectedNetworkA, setSelectedNetworkA] =
     useState<NetworkOptionsI>(defaultNetworkA);
@@ -234,7 +196,37 @@ export function NetworkProvider({
   const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
     defaultNetworkB.tokens[0]
   );
-  console.log("selectedTokensA", selectedTokensA);
+  useEffect(() => {
+    const getBridgeSettings = async () => {
+      const { data, isSuccess } = await trigger({});
+      if (isSuccess) {
+        if (data.defichain) {
+          setDfcFee(data.defichain.transferFee);
+          setDfcSupportedToken(data?.defichain.supportedTokens);
+        }
+        if (data.ethereum) {
+          setEvmFee(data.ethereum.transferFee);
+          setEvmSupportedToken(data.ethereum.supportedTokens);
+        }
+      }
+      const matchedNetworks = networks.map((network) => {
+        const supportedToken =
+          network.name === Network.DeFiChain
+            ? dfcSupportedToken
+            : evmSupportedToken;
+        const tokenMatcher = network.tokens.filter((token) =>
+          supportedToken.includes(token.tokenA.symbol)
+        );
+        return {
+          ...network,
+          tokens: tokenMatcher,
+        };
+      });
+      setFilteredNetwork(matchedNetworks);
+      setIsFetchingSupportedToken(false);
+    };
+    getBridgeSettings();
+  }, [networks, isFetchingSupportedToken]);
   useEffect(() => {
     const networkB = filteredNetwork.find(
       (network) => network.name !== selectedNetworkA.name
@@ -248,7 +240,7 @@ export function NetworkProvider({
         setSelectedTokensA(tokens);
       }
     }
-  }, [selectedNetworkA, isFetchingSupportedToken]);
+  }, [selectedNetworkA]);
   useEffect(() => {
     const tokens = selectedNetworkB.tokens.find(
       (item) => item.tokenA.name === selectedTokensA.tokenB.name
@@ -256,7 +248,7 @@ export function NetworkProvider({
     if (tokens !== undefined) {
       setSelectedTokensB(tokens);
     }
-  }, [selectedTokensA, isFetchingSupportedToken]);
+  }, [selectedTokensA]);
   const resetNetworkSelection = () => {
     setSelectedNetworkA(defaultNetworkA);
     setSelectedTokensA(defaultNetworkA.tokens[0]);

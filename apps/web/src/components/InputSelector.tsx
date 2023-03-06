@@ -5,8 +5,44 @@ import { Listbox, Transition } from "@headlessui/react";
 import { MdCheckCircle } from "react-icons/md";
 import { FiArrowRight, FiChevronDown } from "react-icons/fi";
 import { Strategy } from "@floating-ui/react-dom";
+import ContentLoader from "react-content-loader";
 import { NetworkOptionsI, SelectionType, TokensI } from "types";
 
+function SkeletonLoader({ isDesktop }: { isDesktop: boolean }) {
+  const viewBoxWidth = isDesktop ? "190" : "65";
+  const x = isDesktop ? "5" : "0";
+  const width = isDesktop ? "160" : "60";
+  const height = isDesktop ? "20" : "16";
+  return (
+    <div className={clsx("flex items-center border-dark-300 text-dark-500")}>
+      <ContentLoader
+        speed={2}
+        height={24}
+        viewBox={`0 0 ${viewBoxWidth} 24`}
+        backgroundColor="#4A4A4A"
+        foregroundColor="#4A4A4A"
+        backgroundOpacity={0.4}
+        foregroundOpacity={1}
+      >
+        <rect x={x} y="2" rx="5" ry="5" width={width} height={height} />
+      </ContentLoader>
+      <div className="flex w-2/12 flex-row items-center justify-center">
+        <FiArrowRight size={15} className="h-4 w-4 text-dark-500" />
+      </div>
+      <ContentLoader
+        speed={2}
+        height={24}
+        viewBox={`0 0 ${viewBoxWidth} 24`}
+        backgroundColor="#4A4A4A"
+        foregroundColor="#4A4A4A"
+        backgroundOpacity={0.4}
+        foregroundOpacity={1}
+      >
+        <rect x={x} y="2" rx="5" ry="5" width={width} height={height} />
+      </ContentLoader>
+    </div>
+  );
+}
 interface SelectorI {
   disabled?: boolean;
   label: string;
@@ -20,12 +56,11 @@ interface SelectorI {
   options?: NetworkOptionsI[] | TokensI[];
   onSelect?: (value: any) => void;
   value: NetworkOptionsI | TokensI;
+  isFetching?: boolean;
 }
-
 function Divider() {
   return <div className="mx-5 border-t-[0.5px] border-[#42424280] lg:mx-6" />;
 }
-
 function NetworkOptions({ options }: { options: NetworkOptionsI[] }) {
   return (
     <>
@@ -70,8 +105,13 @@ function NetworkOptions({ options }: { options: NetworkOptionsI[] }) {
     </>
   );
 }
-
-function TokenOptions({ options }: { options: TokensI[] }) {
+function TokenOptions({
+  options,
+  isFetching,
+}: {
+  options: TokensI[];
+  isFetching: boolean;
+}) {
   return (
     <div>
       {options?.map((option) => (
@@ -89,42 +129,49 @@ function TokenOptions({ options }: { options: TokensI[] }) {
                   active && "bg-dark-gradient-1"
                 )}
               >
-                <div className="flex flex-row items-center justify-between">
-                  <div className="flex w-4/12 flex-row items-center">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="h-6 w-6"
-                      data-testid={option.tokenA.name}
-                      src={option.tokenA.icon}
-                      alt={option.tokenA.name}
-                    />
-                    <span className="ml-2 truncate text-base text-dark-1000">
-                      {option.tokenA.name}
-                    </span>
+                {isFetching ? (
+                  <SkeletonLoader isDesktop />
+                ) : (
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="flex w-4/12 flex-row items-center">
+                      <Image
+                        width={100}
+                        height={100}
+                        className="h-6 w-6"
+                        data-testid={option.tokenA.name}
+                        src={option.tokenA.icon}
+                        alt={option.tokenA.name}
+                      />
+                      <span className="ml-2 truncate text-base text-dark-1000">
+                        {option.tokenA.name}
+                      </span>
+                    </div>
+                    <div className="flex w-2/12 flex-row items-center justify-center">
+                      <FiArrowRight
+                        size={15}
+                        className="h-4 w-4 text-dark-500"
+                      />
+                    </div>
+                    <div className="flex w-4/12 flex-row items-center">
+                      <Image
+                        width={100}
+                        height={100}
+                        className="h-6 w-6"
+                        data-testid={option.tokenB.name}
+                        src={option.tokenB.icon}
+                        alt={option.tokenB.name}
+                      />
+                      <span className="ml-2 truncate text-base text-dark-900">
+                        {option.tokenB.name}
+                      </span>
+                    </div>
+                    <div className="flex w-2/12 flex-row items-center justify-end">
+                      {selected && (
+                        <MdCheckCircle className="h-6 w-6 text-[#00AD1D]" />
+                      )}
+                    </div>
                   </div>
-                  <div className="flex w-2/12 flex-row items-center justify-center">
-                    <FiArrowRight size={15} className="h-4 w-4 text-dark-500" />
-                  </div>
-                  <div className="flex w-4/12 flex-row items-center">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="h-6 w-6"
-                      data-testid={option.tokenB.name}
-                      src={option.tokenB.icon}
-                      alt={option.tokenB.name}
-                    />
-                    <span className="ml-2 truncate text-base text-dark-900">
-                      {option.tokenB.name}
-                    </span>
-                  </div>
-                  <div className="flex w-2/12 flex-row items-center justify-end">
-                    {selected && (
-                      <MdCheckCircle className="h-6 w-6 text-[#00AD1D]" />
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
             </>
           )}
@@ -133,7 +180,6 @@ function TokenOptions({ options }: { options: TokensI[] }) {
     </div>
   );
 }
-
 export default function InputSelector({
   options,
   label,
@@ -143,6 +189,7 @@ export default function InputSelector({
   floatingObj,
   type,
   disabled = false,
+  isFetching = false,
 }: SelectorI) {
   const { floating, y, strategy } = floatingObj;
   const roundedBorderStyle =
@@ -151,8 +198,6 @@ export default function InputSelector({
     type === SelectionType.Network
       ? (value as NetworkOptionsI)
       : (value as TokensI).tokenA;
-
-  // console.log("options", options);
   return (
     <div>
       <span className="text-dark-900 pl-4 lg:pl-5 text-xs font-semibold lg:text-sm xl:tracking-wider">
@@ -238,7 +283,10 @@ export default function InputSelector({
                           options={options as NetworkOptionsI[]}
                         />
                       ) : (
-                        <TokenOptions options={options as TokensI[]} />
+                        <TokenOptions
+                          options={options as TokensI[]}
+                          isFetching={isFetching}
+                        />
                       )}
                     </div>
                   </div>

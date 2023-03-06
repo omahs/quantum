@@ -1,6 +1,5 @@
 import useWrappedMutation from "@hooks/useWrappedMutation";
 import useWrappedLazyQuery from "@hooks/useWrappedLazyQuery";
-import useWrappedQuery from "@hooks/useWrappedPrefetchQuery";
 
 import { bridgeApi } from "./defichain";
 
@@ -24,8 +23,6 @@ const useLazyBridgeVersionQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeVersionQuery);
 const useLazyBridgeSettingsQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeSettingsQuery);
-const useBridgeSettingsQuery = () =>
-  useWrappedQuery(bridgeApi.useBridgeSettingsQuery);
 
 export {
   useGenerateAddressMutation,
@@ -38,6 +35,5 @@ export {
   useLazyBridgeStatusQuery,
   useLazyBridgeVersionQuery,
   useLazyBridgeSettingsQuery,
-  useBridgeSettingsQuery,
   bridgeApi,
 };
