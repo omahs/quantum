@@ -180,39 +180,50 @@ export function NetworkProvider({
 }: PropsWithChildren<{}>): JSX.Element | null {
   const [dfcSupportedToken, setDfcSupportedToken] = useState<string[]>([]);
   const [evmSupportedToken, setEvmSupportedToken] = useState<string[]>([]);
-
+  const [dfcFee, setDfcFee] = useState<`${number}` | number>(0);
+  const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
+  const [isFetchingSupportedToken, setIsFetchingSupportedToken] =
+    useState<boolean>(true);
+  const [filteredNetwork, setFilteredNetwork] = useState(networks);
   const [trigger] = useLazyBridgeSettingsQuery();
-  useEffect(() => {
-    async function getBridgeSettings() {
-      const { data } = await trigger({});
-      if (data?.defichain.supportedTokens)
-        setDfcSupportedToken(data?.defichain.supportedTokens);
-      if (data?.ethereum.supportedTokens)
-        setEvmSupportedToken(data?.ethereum.supportedTokens);
+  async function getBridgeSettings() {
+    try {
+      const { data, isSuccess } = await trigger({});
+      if (isSuccess) {
+        if (data.defichain) {
+          setDfcFee(data.defichain.transferFee);
+          setDfcSupportedToken(data?.defichain.supportedTokens);
+        }
+        if (data.ethereum) {
+          setEvmFee(data.ethereum.transferFee);
+          setEvmSupportedToken(data.ethereum.supportedTokens);
+        }
+        console.log("evmSupportedToken", evmSupportedToken);
+        const matchedNetworks = networks.map((network) => {
+          const supportedToken =
+            network.name === Network.DeFiChain
+              ? dfcSupportedToken
+              : evmSupportedToken;
+          const tokenMatcher = network.tokens.filter((token) =>
+            supportedToken.includes(token.tokenA.symbol)
+          );
+          return {
+            ...network,
+            tokens: tokenMatcher,
+          };
+        });
+        setFilteredNetwork(matchedNetworks);
+      }
+    } finally {
+      setIsFetchingSupportedToken(false);
     }
+  }
+  useEffect(() => {
     getBridgeSettings();
   }, []);
-
-  const matchedNetworks = networks.map((network) => {
-    const supportedToken =
-      network.name === Network.DeFiChain
-        ? dfcSupportedToken
-        : evmSupportedToken;
-
-    const tokenMatcher = network.tokens.filter((token) =>
-      supportedToken.includes(token.tokenA.symbol)
-    );
-
-    return {
-      ...network,
-      tokens: tokenMatcher,
-    };
-  });
-
-  console.log("matchedNetworks", matchedNetworks);
-  console.log("networks", networks);
-
-  const [defaultNetworkA, defaultNetworkB] = networks;
+  console.log("filteredNetwork", filteredNetwork);
+  console.log("network", networks);
+  const [defaultNetworkA, defaultNetworkB] = filteredNetwork;
   const [selectedNetworkA, setSelectedNetworkA] =
     useState<NetworkOptionsI>(defaultNetworkA);
   const [selectedTokensA, setSelectedTokensA] = useState<TokensI>(
@@ -223,9 +234,9 @@ export function NetworkProvider({
   const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
     defaultNetworkB.tokens[0]
   );
-
+  console.log("selectedTokensA", selectedTokensA);
   useEffect(() => {
-    const networkB = networks.find(
+    const networkB = filteredNetwork.find(
       (network) => network.name !== selectedNetworkA.name
     );
     if (networkB !== undefined) {
@@ -237,8 +248,7 @@ export function NetworkProvider({
         setSelectedTokensA(tokens);
       }
     }
-  }, [selectedNetworkA]);
-
+  }, [selectedNetworkA, isFetchingSupportedToken]);
   useEffect(() => {
     const tokens = selectedNetworkB.tokens.find(
       (item) => item.tokenA.name === selectedTokensA.tokenB.name
@@ -246,15 +256,13 @@ export function NetworkProvider({
     if (tokens !== undefined) {
       setSelectedTokensB(tokens);
     }
-  }, [selectedTokensA]);
-
+  }, [selectedTokensA, isFetchingSupportedToken]);
   const resetNetworkSelection = () => {
     setSelectedNetworkA(defaultNetworkA);
     setSelectedTokensA(defaultNetworkA.tokens[0]);
     setSelectedNetworkB(defaultNetworkB);
     setSelectedTokensB(defaultNetworkB.tokens[0]);
   };
-
   const context: NetworkContextI = useMemo(
     () => ({
       selectedNetworkA,
@@ -266,11 +274,18 @@ export function NetworkProvider({
       setSelectedNetworkB,
       setSelectedTokensB,
       resetNetworkSelection,
+      evmFee,
+      dfcFee,
+      isFetchingSupportedToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedTokensA, selectedTokensB]
+    [
+      selectedTokensA,
+      selectedTokensB,
+      isFetchingSupportedToken,
+      filteredNetwork,
+    ]
   );
-
   return (
     <NetworkContext.Provider value={context}>
       {children}
