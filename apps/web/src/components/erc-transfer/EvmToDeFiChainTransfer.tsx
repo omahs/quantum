@@ -58,6 +58,7 @@ export default function EvmToDeFiChainTransfer({
         functionName: "decimals",
       },
     ],
+    cacheOnBlock: true,
     enabled: !sendingFromETH,
     watch: true,
   });

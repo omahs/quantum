@@ -105,6 +105,7 @@ export default function useWriteBridgeToDeFiChain({
     isSuccess: isBridgeTxnCreated,
     isLoading: isBridgeTxnLoading,
   } = useWaitForTransaction({
+    cacheTime: 10_000,
     hash: bridgeContract?.hash,
     onSettled: onBridgeTxnSettled,
   });

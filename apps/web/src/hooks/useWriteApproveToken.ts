@@ -54,6 +54,7 @@ export default function useWriteApproveToken({
     isLoading: isApproveTxnLoading,
   } = useWaitForTransaction({
     hash: tokenContract?.hash,
+    cacheTime: 10_000,
     onSuccess: () => refetchBridge?.().then(() => setRefetchedBridgeFn(true)),
   });
 

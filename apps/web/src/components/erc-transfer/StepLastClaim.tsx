@@ -87,6 +87,7 @@ export default function StepLastClaim({
     isLoading: isClaimInProgress,
     isSuccess,
   } = useWaitForTransaction({
+    cacheTime: 10_000,
     hash: claimFundData?.hash,
     onSettled: () => setShowLoader(false),
   });

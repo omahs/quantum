@@ -49,7 +49,10 @@ const { chains } = configureChains(
       },
     }),
     publicProvider(),
-  ]
+  ],
+  {
+    pollingInterval: 10_000,
+  }
 );
 
 const client = createClient(

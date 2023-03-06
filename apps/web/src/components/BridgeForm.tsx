@@ -110,6 +110,7 @@ export default function BridgeForm({
   const { data } = useBalance({
     address,
     watch: true,
+    cacheTime: 10_000,
     ...(isSendingErcToken && {
       token: Erc20Tokens[selectedTokensA.tokenA.name].address,
     }),
