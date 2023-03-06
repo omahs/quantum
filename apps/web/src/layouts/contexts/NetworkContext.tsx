@@ -24,14 +24,12 @@ interface NetworkContextI {
   isFetchingSupportedToken: boolean;
   filteredNetwork: [NetworkI<Erc20Token>, NetworkI<string>];
 }
-
 interface TokenDetailI<T> {
   name: T;
   symbol: string;
   icon: string;
   supply: string;
 }
-
 interface NetworkI<T> {
   name: Network;
   icon: string;
@@ -40,7 +38,6 @@ interface NetworkI<T> {
     tokenB: TokenDetailI<string>;
   }[];
 }
-
 export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
   {
     name: Network.Ethereum,
@@ -168,18 +165,13 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
     ],
   },
 ];
-
 const NetworkContext = createContext<NetworkContextI>(undefined as any);
-
 export function useNetworkContext(): NetworkContextI {
   return useContext(NetworkContext);
 }
-
 export function NetworkProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
-  const [dfcSupportedToken, setDfcSupportedToken] = useState<string[]>([]);
-  const [evmSupportedToken, setEvmSupportedToken] = useState<string[]>([]);
   const [dfcFee, setDfcFee] = useState<`${number}` | number>(0);
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
   const [isFetchingSupportedToken, setIsFetchingSupportedToken] =
@@ -198,41 +190,41 @@ export function NetworkProvider({
   const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
     defaultNetworkB.tokens[0]
   );
-
   useEffect(() => {
     const getBridgeSettings = async () => {
       const { data, isSuccess } = await trigger({});
       if (isSuccess) {
         if (data.defichain) {
           setDfcFee(data.defichain.transferFee);
-          setDfcSupportedToken(data?.defichain.supportedTokens);
         }
         if (data.ethereum) {
           setEvmFee(data.ethereum.transferFee);
-          setEvmSupportedToken(data.ethereum.supportedTokens);
         }
       }
       const matchedNetworks = networks.map((network) => {
         const supportedToken =
           network.name === Network.DeFiChain
-            ? dfcSupportedToken
-            : evmSupportedToken;
-        const tokenMatcher = network.tokens.filter((token) =>
-          supportedToken.includes(token.tokenA.symbol)
-        );
+            ? data?.defichain.supportedTokens
+            : data?.ethereum.supportedTokens;
+        let tokenMatcher: TokensI[] = [];
+        if (supportedToken !== undefined) {
+          tokenMatcher = network.tokens.filter((token) =>
+            supportedToken.includes(token.tokenA.symbol)
+          );
+        }
         return {
           ...network,
           tokens: tokenMatcher,
         };
       });
-      setFilteredNetwork(matchedNetworks);
+      setFilteredNetwork(
+        matchedNetworks as [NetworkI<Erc20Token>, NetworkI<string>]
+      );
       setIsFetchingSupportedToken(false);
     };
     getBridgeSettings();
   }, [networks, isFetchingSupportedToken]);
-
   useEffect(() => {
-    console.log("filteredNetwork", filteredNetwork);
     const networkB = filteredNetwork.find(
       (network) => network.name !== selectedNetworkA.name
     );
@@ -246,7 +238,6 @@ export function NetworkProvider({
       }
     }
   }, [selectedNetworkA]);
-
   useEffect(() => {
     const tokens = selectedNetworkB.tokens.find(
       (item) => item.tokenA.name === selectedTokensA.tokenB.name
@@ -255,14 +246,15 @@ export function NetworkProvider({
       setSelectedTokensB(tokens);
     }
   }, [selectedTokensA]);
-
   const resetNetworkSelection = () => {
     setSelectedNetworkA(defaultNetworkA);
     setSelectedTokensA(defaultNetworkA.tokens[0]);
     setSelectedNetworkB(defaultNetworkB);
     setSelectedTokensB(defaultNetworkB.tokens[0]);
   };
-
+  useEffect(() => {
+    resetNetworkSelection();
+  }, [filteredNetwork]);
   const context: NetworkContextI = useMemo(
     () => ({
       selectedNetworkA,
@@ -287,7 +279,6 @@ export function NetworkProvider({
       filteredNetwork,
     ]
   );
-
   return (
     <NetworkContext.Provider value={context}>
       {children}

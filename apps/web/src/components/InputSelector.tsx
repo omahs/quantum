@@ -191,7 +191,6 @@ export default function InputSelector({
   disabled = false,
   isFetching = false,
 }: SelectorI) {
-  console.log("options", options);
   const { floating, y, strategy } = floatingObj;
   const roundedBorderStyle =
     type === SelectionType.Network ? "rounded-l-lg" : "rounded-r-lg";
