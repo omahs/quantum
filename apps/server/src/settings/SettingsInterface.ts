@@ -3,6 +3,7 @@ import { SupportedDFCTokenSymbols, SupportedEVMTokenSymbols } from 'src/AppConfi
 interface Settings {
   transferFee: `${number}` | number;
   supportedTokens: Array<keyof typeof SupportedEVMTokenSymbols | keyof typeof SupportedDFCTokenSymbols>;
+  network?: string;
 }
 
 export interface SettingsModel {

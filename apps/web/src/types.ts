@@ -29,6 +29,7 @@ export interface BridgeVersion {
 interface Settings {
   transferFee: `${number}` | number;
   supportedTokens: string[];
+  network?: string;
 }
 
 export interface BridgeSettings {
