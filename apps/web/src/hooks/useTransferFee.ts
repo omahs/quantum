@@ -10,7 +10,7 @@ import { Network } from "types";
  */
 export default function useTransferFee(transferAmount: string | number) {
   const { selectedNetworkA, selectedTokensA } = useNetworkContext();
-
+  // console.log("selectedTokensA", selectedTokensA);;
   const [trigger] = useLazyBridgeSettingsQuery();
   const [dfcFee, setDfcFee] = useState<`${number}` | number>(0);
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
@@ -18,6 +18,7 @@ export default function useTransferFee(transferAmount: string | number) {
   useEffect(() => {
     async function getBridgeSettings() {
       const { data } = await trigger({});
+      console.log("this call", data);
       if (data?.defichain.transferFee) setDfcFee(data?.defichain.transferFee);
       if (data?.ethereum.transferFee) setEvmFee(data?.ethereum.transferFee);
     }

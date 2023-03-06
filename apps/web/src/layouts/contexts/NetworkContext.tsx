@@ -7,6 +7,11 @@ import React, {
   useEffect,
 } from "react";
 import { Erc20Token, Network, NetworkOptionsI, TokensI } from "types";
+import {
+  useLazyBridgeSettingsQuery,
+  usePrefetch,
+  useBridgeSettingsQuery,
+} from "@store/index";
 
 interface NetworkContextI {
   selectedNetworkA: NetworkOptionsI;
@@ -173,6 +178,40 @@ export function useNetworkContext(): NetworkContextI {
 export function NetworkProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
+  const [dfcSupportedToken, setDfcSupportedToken] = useState<string[]>([]);
+  const [evmSupportedToken, setEvmSupportedToken] = useState<string[]>([]);
+
+  const [trigger] = useLazyBridgeSettingsQuery();
+  useEffect(() => {
+    async function getBridgeSettings() {
+      const { data } = await trigger({});
+      if (data?.defichain.supportedTokens)
+        setDfcSupportedToken(data?.defichain.supportedTokens);
+      if (data?.ethereum.supportedTokens)
+        setEvmSupportedToken(data?.ethereum.supportedTokens);
+    }
+    getBridgeSettings();
+  }, []);
+
+  const matchedNetworks = networks.map((network) => {
+    const supportedToken =
+      network.name === Network.DeFiChain
+        ? dfcSupportedToken
+        : evmSupportedToken;
+
+    const tokenMatcher = network.tokens.filter((token) =>
+      supportedToken.includes(token.tokenA.symbol)
+    );
+
+    return {
+      ...network,
+      tokens: tokenMatcher,
+    };
+  });
+
+  console.log("matchedNetworks", matchedNetworks);
+  console.log("networks", networks);
+
   const [defaultNetworkA, defaultNetworkB] = networks;
   const [selectedNetworkA, setSelectedNetworkA] =
     useState<NetworkOptionsI>(defaultNetworkA);

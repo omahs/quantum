@@ -151,6 +151,8 @@ export default function InputSelector({
     type === SelectionType.Network
       ? (value as NetworkOptionsI)
       : (value as TokensI).tokenA;
+
+  // console.log("options", options);
   return (
     <div>
       <span className="text-dark-900 pl-4 lg:pl-5 text-xs font-semibold lg:text-sm xl:tracking-wider">
