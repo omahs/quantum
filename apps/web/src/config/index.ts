@@ -3,7 +3,8 @@ import BridgeV1 from "./ABIs/mainnet/BridgeV1.json";
 import BridgeV1Testnet from "./ABIs/testnet/BridgeV1.json";
 
 export const MAINNET_CONFIG: ContractContextI = {
-  EthereumRpcUrl: "https://cloudflare-eth.com/", // TODO: Replace with MainNet RPC URL
+  EthereumRpcUrl:
+    "https://mainnet.infura.io/v3/df267399d98e41e996d6588a76678d5e",
   ExplorerURL: "https://etherscan.io",
   BridgeV1: {
     address: "0x54346d39976629b65ba54eac1c9ef0af3be1921b",
