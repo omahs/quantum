@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
-import { networks, useNetworkContext } from "@contexts/NetworkContext";
+import { useNetworkContext } from "@contexts/NetworkContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import { Network, NetworkOptionsI, SelectionType, TokensI } from "types";
 import SwitchIcon from "@components/icons/SwitchIcon";
@@ -82,6 +82,7 @@ export default function BridgeForm({
     setSelectedTokensB,
     resetNetworkSelection,
     isFetchingSupportedToken,
+    filteredNetwork,
   } = useNetworkContext();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
@@ -332,7 +333,7 @@ export default function BridgeForm({
           <InputSelector
             label="Source Network"
             popUpLabel="Select source"
-            options={networks}
+            options={filteredNetwork}
             floatingObj={floatingObj}
             type={SelectionType.Network}
             onSelect={(value: NetworkOptionsI) => setSelectedNetworkA(value)}

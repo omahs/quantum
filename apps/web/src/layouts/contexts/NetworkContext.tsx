@@ -230,6 +230,7 @@ export function NetworkProvider({
   }, [networks, isFetchingSupportedToken]);
 
   useEffect(() => {
+    console.log("filteredNetwork", filteredNetwork);
     const networkB = filteredNetwork.find(
       (network) => network.name !== selectedNetworkA.name
     );
@@ -273,6 +274,7 @@ export function NetworkProvider({
       resetNetworkSelection,
       evmFee,
       dfcFee,
+      filteredNetwork,
       isFetchingSupportedToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
