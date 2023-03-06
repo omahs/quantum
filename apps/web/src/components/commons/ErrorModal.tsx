@@ -1,5 +1,7 @@
+import { ConnectKitButton } from "connectkit";
 import { useRouter } from "next/router";
 import { FiAlertCircle } from "react-icons/fi";
+import { useAccount } from "wagmi";
 import ActionButton from "./ActionButton";
 import Modal from "./Modal";
 
@@ -17,6 +19,8 @@ export default function ErrorModal({
   onClose: () => void;
 }): JSX.Element {
   const router = useRouter();
+  const { isConnected } = useAccount();
+
   return (
     <Modal isOpen onClose={onClose}>
       <div className="flex flex-col items-center mt-6 mb-14">
@@ -26,11 +30,15 @@ export default function ErrorModal({
           {message}
         </div>
         <span className="pt-12">
-          <ActionButton
-            label={primaryButtonLabel}
-            customStyle="md:px-6 text-xg lg:leading-8 lg:py-2 lg:px-8 xl:px-14"
-            onClick={onPrimaryButtonClick}
-          />
+          <ConnectKitButton.Custom>
+            {({ show }) => (
+              <ActionButton
+                label={primaryButtonLabel}
+                customStyle="md:px-6 text-xg lg:leading-8 lg:py-2 lg:px-8 xl:px-14"
+                onClick={!isConnected ? show : onPrimaryButtonClick}
+              />
+            )}
+          </ConnectKitButton.Custom>
           <ActionButton
             label="Close"
             variant="secondary"

@@ -4,7 +4,9 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { utils } from "ethers";
+import { ConnectKitButton } from "connectkit";
 import {
+  useAccount,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -43,6 +45,7 @@ export default function StepLastClaim({
   const router = useRouter();
   const [showLoader, setShowLoader] = useState(false);
   const [error, setError] = useState<string>();
+  const { isConnected } = useAccount();
 
   const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
@@ -237,10 +240,16 @@ export default function StepLastClaim({
         <span className="block text-center text-sm text-dark-900 antialiased mt-1 pb-6">
           {StatusMessage[claimStatus].message}
         </span>
-        <ActionButton
-          label={StatusMessage[claimStatus].btnLabel}
-          onClick={StatusMessage[claimStatus].btnAction}
-        />
+        <ConnectKitButton.Custom>
+          {({ show }) => (
+            <ActionButton
+              label={StatusMessage[claimStatus].btnLabel}
+              onClick={
+                !isConnected ? show : StatusMessage[claimStatus].btnAction
+              }
+            />
+          )}
+        </ConnectKitButton.Custom>
         {claimStatus === "READY" && (
           <div
             className={clsx(
