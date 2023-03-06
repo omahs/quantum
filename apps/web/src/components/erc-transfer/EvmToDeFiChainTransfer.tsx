@@ -108,8 +108,9 @@ export default function EvmToDeFiChainTransfer({
   useEffect(() => {
     const hasInsufficientAllowance = data.to.amount.gt(tokenAllowance);
     if (
-      eventError?.customErrorDisplay === "InsufficientAllowanceError" ||
-      (hasInsufficientAllowance && data.from.tokenSymbol !== ETHEREUM_SYMBOL) // ETH doesn't require approval
+      data.from.tokenSymbol !== ETHEREUM_SYMBOL && // ETH doesn't require approval
+      (eventError?.customErrorDisplay === "InsufficientAllowanceError" ||
+        hasInsufficientAllowance)
     ) {
       setRequiresApproval(true);
     }
