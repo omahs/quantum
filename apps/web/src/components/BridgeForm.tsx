@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
 import useCheckBalance from "@hooks/useCheckBalance";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
+import debounce from "@utils/debounce";
 import InputSelector from "./InputSelector";
 import WalletAddressInput from "./WalletAddressInput";
 import ConfirmTransferModal from "./ConfirmTransferModal";
@@ -122,7 +123,33 @@ export default function BridgeForm({
 
   const [getAddressDetail] = useGetAddressDetailMutation();
 
-  const { balanceAmount } = useCheckBalance(selectedTokensA.tokenB.symbol);
+  const { getBalance } = useCheckBalance();
+  const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
+  const [tokenBalances, setTokenBalances] = useState({});
+
+  const checkBalance = debounce(async () => {
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = await getBalance(selectedTokensA.tokenB.symbol);
+    setTokenBalances({
+      ...tokenBalances,
+      [key]: balance,
+    });
+  }, 200);
+
+  useEffect(() => {
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = tokenBalances[key];
+    if (balance) {
+      const isSufficientBalance = new BigNumber(balance).isGreaterThan(
+        amount !== "" ? amount : 0
+      );
+      setIsBalanceSufficient(isSufficientBalance);
+    }
+  }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
+
+  useEffect(() => {
+    checkBalance();
+  }, [selectedNetworkA, selectedTokensA, networkEnv]);
 
   const isFormValid =
     amount && new BigNumber(amount).gt(0) && !amountErr && !hasAddressInputErr;
@@ -175,7 +202,6 @@ export default function BridgeForm({
       };
       setStorage("txn-form", JSON.stringify(newTxn));
     }
-    /* TODO: Handle token transfer here */
     setShowConfirmModal(true);
   };
 
@@ -262,10 +288,6 @@ export default function BridgeForm({
       setFromAddress(address as string);
     }
   }, [networkEnv, txnForm]);
-
-  const isBalanceInsufficient = new BigNumber(amount).isGreaterThan(
-    new BigNumber(balanceAmount)
-  );
 
   const fetchAddressDetail = async (
     localDfcAddress: string | undefined
@@ -462,7 +484,7 @@ export default function BridgeForm({
               disabled={
                 (isConnected && !isFormValid) ||
                 hasPendingTxn ||
-                isBalanceInsufficient
+                !isBalanceSufficient
               }
               onClick={!isConnected ? show : () => onTransferTokens()}
             />
@@ -475,10 +497,10 @@ export default function BridgeForm({
           !hasPendingTxn &&
           !txnHash.confirmed && (
             <div className="text-xs lg:text-sm leading-4 lg:leading-5 text-dark-700 text-center mt-4">
-              Transaction interrupted?{" "}
+              Transaction interrupted?
               <button
                 type="button"
-                className="text-dark-1000 font-bold"
+                className="text-dark-1000 font-bold ml-1"
                 onClick={() => setShowErcToDfcRestoreModal(true)}
               >
                 Recover it here
@@ -502,7 +524,8 @@ export default function BridgeForm({
             />
           </div>
         )}
-        {isBalanceInsufficient && (
+
+        {!isBalanceSufficient && !hasPendingTxn && (
           <div className={clsx("pt-3", warningTextStyle)}>
             Unable to process transaction. <div>Please try again later</div>
           </div>

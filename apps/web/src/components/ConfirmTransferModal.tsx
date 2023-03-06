@@ -146,7 +146,7 @@ export default function ConfirmTransferModal({
       tokenName: selectedTokensB.tokenA.name,
       tokenSymbol: selectedTokensB.tokenA.symbol,
       tokenIcon: selectedTokensB.tokenA.icon,
-      amount: BigNumber.max(new BigNumber(amount).minus(fee), 0),
+      amount: new BigNumber(amount),
     },
   };
 
@@ -162,7 +162,14 @@ export default function ConfirmTransferModal({
         networkLabel="Source"
         isSendingToDFC={isSendingToDFC}
       />
-      <RowData data={data.to} label="TO" networkLabel="Destination" />
+      <RowData
+        data={{
+          ...data.to,
+          amount: BigNumber.max(new BigNumber(data.to.amount).minus(fee), 0),
+        }}
+        label="TO"
+        networkLabel="Destination"
+      />
       <div className="w-full border-t border-t-dark-200 md:mt-3" />
 
       {/* Fees */}

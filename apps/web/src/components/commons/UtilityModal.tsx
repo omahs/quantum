@@ -30,13 +30,13 @@ export default function UtilityModal({
         <span className="mt-[76px]">
           <ActionButton
             label={primaryButtonLabel}
-            customStyle="bg-error md:px-6 text-xg lg:leading-8 lg:py-2 lg:px-8 xl:px-14"
+            customStyle="bg-error md:px-6 text-xg lg:!py-3 lg:px-8 xl:px-14"
             onClick={onPrimaryButtonClick}
           />
           <ActionButton
             label={secondaryButtonLabel}
             variant="secondary"
-            customStyle="mt-2 md:px-2.5 lg:text-xl lg:leading-8 lg:py-2 lg:px-8 xl:px-14 border-[0.5px] border-dark-500"
+            customStyle="mt-2 md:px-2.5 lg:!py-3 lg:px-8 xl:px-14 border-[0.5px] border-dark-500"
             onClick={onSecondaryButtonClick}
           />
         </span>

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 
-enum TokenSymbol {
+export enum TokenSymbol {
   'BTC' = 'BTC',
   'USDT' = 'USDT',
   'USDC' = 'USDC',

@@ -626,8 +626,22 @@
         "name": "_initialWithdraw",
         "type": "address"
       },
+      {
+        "internalType": "address",
+        "name": "_relayerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_communityWallet",
+        "type": "address"
+      },
       { "internalType": "uint256", "name": "_fee", "type": "uint256" },
-      { "internalType": "uint8", "name": "_version", "type": "uint8" }
+      {
+        "internalType": "address",
+        "name": "_flushReceiveAddress",
+        "type": "address"
+      }
     ],
     "name": "initialize",
     "outputs": [],

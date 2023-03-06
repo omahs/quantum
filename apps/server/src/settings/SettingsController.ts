@@ -16,6 +16,7 @@ export class SettingsController {
       defichain: {
         transferFee: this.configService.getOrThrow('defichain.transferFee') as `${number}`,
         supportedTokens: supportedDfcTokens.split(',') as Array<keyof typeof SupportedDFCTokenSymbols>,
+        network: this.configService.getOrThrow('defichain.network'),
       },
       ethereum: {
         transferFee: this.configService.getOrThrow('ethereum.transferFee') as `${number}`,
