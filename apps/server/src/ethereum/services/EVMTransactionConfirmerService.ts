@@ -6,9 +6,9 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { TokenSymbol } from 'src/defichain/model/VerifyDto';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
+import { TokenSymbol } from '../../defichain/model/VerifyDto';
 import { WhaleApiClientProvider } from '../../defichain/providers/WhaleApiClientProvider';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
