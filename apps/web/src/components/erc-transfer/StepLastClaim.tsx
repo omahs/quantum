@@ -93,12 +93,12 @@ export default function StepLastClaim({
 
   const { getBalance } = useCheckBalance();
   const isSufficientBalance = (balance): boolean =>
-    new BigNumber(balance).isGreaterThan(data.to.amount);
+    new BigNumber(balance).isGreaterThanOrEqualTo(data.to.amount);
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(false);
 
   async function checkBalance() {
     const balance = await getBalance(data.to.tokenSymbol);
-    const isSufficient = isSufficientBalance(balance);
+    const isSufficient = balance !== null && isSufficientBalance(balance);
     if (!isSufficient) {
       setError(INSUFFICIENT_FUND_ERROR);
     }
