@@ -9,6 +9,7 @@ import useWriteApproveToken from "@hooks/useWriteApproveToken";
 import useWriteBridgeToDeFiChain, {
   EventErrorI,
 } from "@hooks/useWriteBridgeToDeFiChain";
+import useCustomWagmiRefetch from "@hooks/useCustomWagmiRefetch";
 import AlertInfoMessage from "@components/commons/AlertInfoMessage";
 import ActionButton from "@components/commons/ActionButton";
 import ErrorModal from "@components/commons/ErrorModal";
@@ -46,7 +47,8 @@ export default function EvmToDeFiChainTransfer({
     address: Erc20Tokens[data.from.tokenName].address,
     abi: erc20ABI,
   };
-  const { data: readTokenData } = useContractReads({
+  const shouldFetchTokenData = !sendingFromETH;
+  const { data: readTokenData, refetch: refetchTokenData } = useContractReads({
     contracts: [
       {
         ...erc20TokenContract,
@@ -58,8 +60,11 @@ export default function EvmToDeFiChainTransfer({
         functionName: "decimals",
       },
     ],
-    enabled: !sendingFromETH,
-    watch: true,
+    enabled: shouldFetchTokenData,
+  });
+  useCustomWagmiRefetch(refetchTokenData, {
+    enabled: shouldFetchTokenData,
+    interval: 5000, // 5 secs
   });
 
   const tokenDecimals = readTokenData?.[1] ?? "gwei";

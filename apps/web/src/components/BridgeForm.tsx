@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
@@ -22,7 +22,7 @@ import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
 import useCheckBalance from "@hooks/useCheckBalance";
-import useCustomWagmiBalance from "@hooks/useCustomWagmiBalance";
+import useCustomWagmiRefetch from "@hooks/useCustomWagmiRefetch";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
 import debounce from "@utils/debounce";
 import InputSelector from "./InputSelector";
@@ -85,6 +85,8 @@ export default function BridgeForm({
     resetNetworkSelection,
   } = useNetworkContext();
 
+  const isEvmToDfcFlow = selectedNetworkA.name === Network.Ethereum;
+
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
   const { Erc20Tokens } = useContractContext();
@@ -106,16 +108,18 @@ export default function BridgeForm({
 
   const { address, isConnected } = useAccount();
   const isSendingErcToken =
-    selectedNetworkA.name === Network.Ethereum &&
-    selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
-  const userBalance = useCustomWagmiBalance({
+    isEvmToDfcFlow && selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
+  const shouldFetchBalance = isEvmToDfcFlow && !showConfirmModal;
+  const { data, refetch: refetchEvmBalance } = useBalance({
     address,
-    tokenAddress: isSendingErcToken
-      ? Erc20Tokens[selectedTokensA.tokenA.name].address
-      : undefined, // `undefined` checks for ETH balance
+    enabled: shouldFetchBalance,
+    ...(isSendingErcToken && {
+      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
+    }),
   });
+  useCustomWagmiRefetch(refetchEvmBalance, { enabled: shouldFetchBalance });
 
-  const maxAmount = new BigNumber(userBalance);
+  const maxAmount = new BigNumber(data?.formatted ?? 0);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
   const [hasUnconfirmedTxn, setHasUnconfirmedTxn] = useState(false);
 
@@ -386,14 +390,14 @@ export default function BridgeForm({
           onChange={onInputChange}
           value={amount}
           error={amountErr}
-          showAmountsBtn={selectedNetworkA.name === Network.Ethereum}
+          showAmountsBtn={isEvmToDfcFlow}
           disabled={hasUnconfirmedTxn}
         />
         <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2">
           {amountErr ? (
             <span className="text-xs lg:text-sm text-error">{amountErr}</span>
           ) : (
-            selectedNetworkA.name === Network.Ethereum && (
+            isEvmToDfcFlow && (
               <>
                 <span className="text-xs lg:text-sm text-dark-700">
                   Available:
@@ -491,7 +495,7 @@ export default function BridgeForm({
           )}
         </ConnectKitButton.Custom>
         {isConnected &&
-          selectedNetworkA.name === Network.Ethereum &&
+          isEvmToDfcFlow &&
           !amount &&
           !addressInput &&
           !hasPendingTxn &&
