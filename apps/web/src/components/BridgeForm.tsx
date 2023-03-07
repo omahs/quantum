@@ -46,6 +46,7 @@ function SwitchButton({
       <div className="mt-5 flex w-full flex-1 justify-between border-t border-dark-300 border-opacity-50" />
       <Tooltip content="Switch source" containerClass="py-0">
         <button
+          title="switch-source-button"
           type="button"
           onClick={onClick}
           disabled={disabled}

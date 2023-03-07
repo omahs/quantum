@@ -16,6 +16,7 @@ export default function Socials(props: SocialsProps): JSX.Element {
           rel="noreferrer"
           className=""
           data-testid={`${testId}`}
+          aria-label={`${testId} Icon`}
         >
           <Icon size={18} />
         </a>
