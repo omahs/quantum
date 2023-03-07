@@ -42,7 +42,7 @@ export default function ScreenContainer({
       : "bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]";
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen flex flex-col">
       <Header />
       <div className="relative z-[1] flex-grow md:pb-12 lg:pb-20">
         {isLoaded ? (
