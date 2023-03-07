@@ -136,13 +136,11 @@ export default function BridgeForm({
 
   useEffect(() => {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = tokenBalances[key];
-    if (balance) {
-      const isSufficientBalance = new BigNumber(balance).isGreaterThan(
-        amount !== "" ? amount : 0
-      );
-      setIsBalanceSufficient(isSufficientBalance);
-    }
+    const balance = tokenBalances[key] ?? 0;
+    const isSufficientBalance = new BigNumber(balance).isGreaterThan(
+      amount !== "" ? amount : 0
+    );
+    setIsBalanceSufficient(isSufficientBalance);
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
