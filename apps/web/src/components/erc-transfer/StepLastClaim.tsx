@@ -52,7 +52,7 @@ export default function StepLastClaim({
   const { setStorage } = useStorageContext();
 
   const isTokenETH = data.to.tokenSymbol === ETHEREUM_SYMBOL;
-  const { data: tokenDecimals, isSuccess: isReadSuccess } = useContractRead({
+  const { data: tokenDecimals } = useContractRead({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: "decimals",
@@ -71,7 +71,7 @@ export default function StepLastClaim({
   const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0).toFixed();
   const parsedAmount = isTokenETH
     ? utils.parseEther(amountLessFee)
-    : utils.parseUnits(amountLessFee);
+    : utils.parseUnits(amountLessFee, tokenDecimals);
   const { config: bridgeConfig } = usePrepareContractWrite({
     address: BridgeV1.address,
     abi: BridgeV1.abi,
