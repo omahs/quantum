@@ -80,7 +80,7 @@ export const getDTokenDetailsByWToken = (
           id: '1',
           symbol: 'ETH',
         },
-        wBTC: {
+        WBTC: {
           id: '2',
           symbol: 'BTC',
         },
