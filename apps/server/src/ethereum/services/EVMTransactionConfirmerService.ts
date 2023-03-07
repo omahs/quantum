@@ -161,9 +161,21 @@ export class EVMTransactionConfirmerService {
           { name: 'tokenAddress', type: 'address' },
         ],
       };
+
+      // Parse amount based on token symbol
+      let parsedAmount: EthBigNumber;
+      if (tokenSymbol === TokenSymbol.ETH) {
+        parsedAmount = ethers.utils.parseEther(amount);
+      } else {
+        // ERC20 token
+        const tokenContract = new ethers.Contract(tokenAddress, ERC20__factory.abi, this.ethersRpcProvider);
+        const tokenDecimalPlaces = await tokenContract.decimals();
+        parsedAmount = ethers.utils.parseUnits(amount, tokenDecimalPlaces);
+      }
+
       const data = {
         to: receiverAddress,
-        amount: ethers.utils.parseEther(amount),
+        amount: parsedAmount,
         nonce,
         deadline,
         tokenAddress,

@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { utils } from "ethers";
 import {
+  erc20ABI,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -21,6 +23,7 @@ import useCheckBalance from "@hooks/useCheckBalance";
 import useTransferFee from "@hooks/useTransferFee";
 import useTimeCounter from "@hooks/useTimeCounter";
 import { getDuration } from "@utils/durationHelper";
+import { ETHEREUM_SYMBOL } from "../../constants";
 
 const CLAIM_INPUT_ERROR =
   "Check your connection and try again. If the error persists get in touch with us.";
@@ -48,6 +51,16 @@ export default function StepLastClaim({
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
   const { setStorage } = useStorageContext();
 
+  const isTokenETH = data.to.tokenSymbol === ETHEREUM_SYMBOL;
+  const { data: tokenDecimals, isSuccess: isReadSuccess } = useContractRead({
+    address: tokenAddress,
+    abi: erc20ABI,
+    functionName: "decimals",
+    cacheOnBlock: true,
+    enabled: !isTokenETH, // skip native ETH
+  });
+  console.log("HALUU:: ", { tokenDecimals, isReadSuccess });
+
   const [isClaimExpired, setIsClaimExpired] = useState(false);
   const { timeRemaining } = useTimeCounter(
     dayjs(new Date(signedClaim.deadline * 1000)).diff(dayjs()),
@@ -56,14 +69,17 @@ export default function StepLastClaim({
 
   // Prepare write contract for `claimFund` function
   const [fee] = useTransferFee(data.to.amount.toString());
-  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0);
+  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0).toFixed();
+  const parsedAmount = isTokenETH
+    ? utils.parseEther(amountLessFee)
+    : utils.parseUnits(amountLessFee);
   const { config: bridgeConfig } = usePrepareContractWrite({
     address: BridgeV1.address,
     abi: BridgeV1.abi,
     functionName: "claimFund",
     args: [
       data.to.address,
-      utils.parseEther(amountLessFee.toFixed()),
+      parsedAmount,
       signedClaim.nonce,
       signedClaim.deadline,
       tokenAddress,
