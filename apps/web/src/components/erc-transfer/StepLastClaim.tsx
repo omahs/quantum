@@ -59,7 +59,6 @@ export default function StepLastClaim({
     cacheOnBlock: true,
     enabled: !isTokenETH, // skip native ETH
   });
-  console.log("HALUU:: ", { tokenDecimals, isReadSuccess });
 
   const [isClaimExpired, setIsClaimExpired] = useState(false);
   const { timeRemaining } = useTimeCounter(
