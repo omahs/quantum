@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
@@ -22,6 +22,7 @@ import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
 import useCheckBalance from "@hooks/useCheckBalance";
+import useCustomWagmiBalance from "@hooks/useCustomWagmiBalance";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
 import debounce from "@utils/debounce";
 import InputSelector from "./InputSelector";
@@ -107,15 +108,14 @@ export default function BridgeForm({
   const isSendingErcToken =
     selectedNetworkA.name === Network.Ethereum &&
     selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
-  const { data } = useBalance({
+  const userBalance = useCustomWagmiBalance({
     address,
-    watch: true,
-    ...(isSendingErcToken && {
-      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
-    }),
+    tokenAddress: isSendingErcToken
+      ? Erc20Tokens[selectedTokensA.tokenA.name].address
+      : undefined, // `undefined` checks for ETH balance
   });
 
-  const maxAmount = new BigNumber(data?.formatted ?? 0);
+  const maxAmount = new BigNumber(userBalance);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
   const [hasUnconfirmedTxn, setHasUnconfirmedTxn] = useState(false);
 
