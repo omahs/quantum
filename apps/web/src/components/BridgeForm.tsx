@@ -106,9 +106,7 @@ export default function BridgeForm({
   const [fee, feeSymbol] = useTransferFee(amount);
 
   const { address, isConnected } = useAccount();
-  const isSendingErcToken =
-    selectedNetworkA.name === Network.Ethereum &&
-    selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
+  const isSendingErcToken = selectedNetworkA.name === Network.Ethereum;
   const {
     data: evmBalance,
     refetch: refetchEvmBalance,
@@ -117,9 +115,10 @@ export default function BridgeForm({
     address,
     enabled: isSendingErcToken,
     watch: false,
-    ...(isSendingErcToken && {
-      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
-    }),
+    ...(isSendingErcToken &&
+      selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL && {
+        token: Erc20Tokens[selectedTokensA.tokenA.name].address,
+      }),
   });
 
   const maxAmount = new BigNumber(evmBalance?.formatted ?? 0);
