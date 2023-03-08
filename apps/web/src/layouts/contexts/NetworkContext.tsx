@@ -6,19 +6,10 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
-import { Erc20Token, Network, NetworkOptionsI, TokensI } from "types";
+import { Erc20Token, Network, TokensI } from "types";
 import { useLazyBridgeSettingsQuery } from "@store/index";
 
 interface NetworkContextI {
-  selectedNetworkA: NetworkOptionsI;
-  selectedTokensA: TokensI;
-  selectedNetworkB: NetworkOptionsI;
-  selectedTokensB: TokensI;
-  setSelectedNetworkA: (networkA: NetworkOptionsI) => void;
-  setSelectedTokensA: (tokenA: TokensI) => void;
-  setSelectedNetworkB: (networkB: NetworkOptionsI) => void;
-  setSelectedTokensB: (tokenB: TokensI) => void;
-  resetNetworkSelection: () => void;
   evmFee: string | number;
   dfcFee: string | number;
   isFetchingSupportedToken: boolean;
@@ -60,6 +51,34 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
       },
       {
         tokenA: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+          supply: "6503681021.125",
+        },
+        tokenB: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+          supply: "6503681021.125",
+        },
+      },
+      {
+        tokenA: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+          supply: "43666178314.768",
+        },
+        tokenB: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+          supply: "43666178314.768",
+        },
+      },
+      {
+        tokenA: {
           name: "ETH",
           symbol: "ETH",
           icon: "/tokens/ETH.svg",
@@ -94,6 +113,34 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
       },
       {
         tokenA: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+          supply: "5903681123.781",
+        },
+        tokenB: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+          supply: "5903681123.781",
+        },
+      },
+      {
+        tokenA: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+          supply: "33777178314.091",
+        },
+        tokenB: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+          supply: "33777178314.091",
+        },
+      },
+      {
+        tokenA: {
           name: "dETH",
           symbol: "ETH",
           icon: "/tokens/dETH.svg",
@@ -113,6 +160,7 @@ const NetworkContext = createContext<NetworkContextI>(undefined as any);
 export function useNetworkContext(): NetworkContextI {
   return useContext(NetworkContext);
 }
+
 export function NetworkProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
@@ -123,17 +171,8 @@ export function NetworkProvider({
   const [filteredNetwork, setFilteredNetwork] =
     useState<[NetworkI<Erc20Token>, NetworkI<string>]>(networks);
   const [trigger] = useLazyBridgeSettingsQuery();
-  const [defaultNetworkA, defaultNetworkB] = filteredNetwork;
-  const [selectedNetworkA, setSelectedNetworkA] =
-    useState<NetworkOptionsI>(defaultNetworkA);
-  const [selectedTokensA, setSelectedTokensA] = useState<TokensI>(
-    defaultNetworkA.tokens[0]
-  );
-  const [selectedNetworkB, setSelectedNetworkB] =
-    useState<NetworkOptionsI>(defaultNetworkB);
-  const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
-    defaultNetworkB.tokens[0]
-  );
+
+  // fetch bridge settings
   useEffect(() => {
     const getBridgeSettings = async () => {
       const { data, isSuccess } = await trigger({});
@@ -150,6 +189,7 @@ export function NetworkProvider({
           network.name === Network.DeFiChain
             ? data?.defichain.supportedTokens
             : data?.ethereum.supportedTokens;
+
         let tokenMatcher: TokensI[] = [];
         if (supportedToken !== undefined) {
           tokenMatcher = network.tokens.filter((token) =>
@@ -168,60 +208,16 @@ export function NetworkProvider({
     };
     getBridgeSettings();
   }, [networks, isFetchingSupportedToken]);
-  useEffect(() => {
-    const networkB = filteredNetwork.find(
-      (network) => network.name !== selectedNetworkA.name
-    );
-    if (networkB !== undefined) {
-      setSelectedNetworkB(networkB);
-      const tokens = selectedNetworkA.tokens.find(
-        (item) => item.tokenA.name === selectedTokensB.tokenA.name
-      );
-      if (tokens !== undefined) {
-        setSelectedTokensA(tokens);
-      }
-    }
-  }, [selectedNetworkA]);
-  useEffect(() => {
-    const tokens = selectedNetworkB.tokens.find(
-      (item) => item.tokenA.name === selectedTokensA.tokenB.name
-    );
-    if (tokens !== undefined) {
-      setSelectedTokensB(tokens);
-    }
-  }, [selectedTokensA]);
-  const resetNetworkSelection = () => {
-    setSelectedNetworkA(defaultNetworkA);
-    setSelectedTokensA(defaultNetworkA.tokens[0]);
-    setSelectedNetworkB(defaultNetworkB);
-    setSelectedTokensB(defaultNetworkB.tokens[0]);
-  };
-  useEffect(() => {
-    resetNetworkSelection();
-  }, [filteredNetwork]);
+
   const context: NetworkContextI = useMemo(
     () => ({
-      selectedNetworkA,
-      selectedTokensA,
-      selectedNetworkB,
-      selectedTokensB,
-      setSelectedNetworkA,
-      setSelectedTokensA,
-      setSelectedNetworkB,
-      setSelectedTokensB,
-      resetNetworkSelection,
       evmFee,
       dfcFee,
       filteredNetwork,
       isFetchingSupportedToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      selectedTokensA,
-      selectedTokensB,
-      isFetchingSupportedToken,
-      filteredNetwork,
-    ]
+    [filteredNetwork]
   );
   return (
     <NetworkContext.Provider value={context}>

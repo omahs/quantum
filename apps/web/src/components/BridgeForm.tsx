@@ -21,6 +21,7 @@ import { useStorageContext } from "@contexts/StorageContext";
 import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
+import { useTokensContext } from "@contexts/TokensContext";
 import useCheckBalance from "@hooks/useCheckBalance";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
 import debounce from "@utils/debounce";
@@ -46,6 +47,7 @@ function SwitchButton({
       <div className="mt-5 flex w-full flex-1 justify-between border-t border-dark-300 border-opacity-50" />
       <Tooltip content="Switch source" containerClass="py-0">
         <button
+          title="switch-source-button"
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -72,6 +74,7 @@ export default function BridgeForm({
 }: {
   hasPendingTxn: boolean;
 }) {
+  const { filteredNetwork } = useNetworkContext();
   const {
     selectedNetworkA,
     selectedTokensA,
@@ -82,9 +85,7 @@ export default function BridgeForm({
     setSelectedNetworkB,
     setSelectedTokensB,
     resetNetworkSelection,
-    isFetchingSupportedToken,
-    filteredNetwork,
-  } = useNetworkContext();
+  } = useTokensContext();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
@@ -139,8 +140,11 @@ export default function BridgeForm({
   useEffect(() => {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = tokenBalances[key];
+    if (balance === null) {
+      setIsBalanceSufficient(false);
+    }
     if (balance) {
-      const isSufficientBalance = new BigNumber(balance).isGreaterThan(
+      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
         amount !== "" ? amount : 0
       );
       setIsBalanceSufficient(isSufficientBalance);
@@ -373,7 +377,6 @@ export default function BridgeForm({
             onSelect={(value: TokensI) => setSelectedTokensA(value)}
             value={selectedTokensA}
             disabled={hasUnconfirmedTxn}
-            isFetching={isFetchingSupportedToken}
           />
         </div>
       </div>

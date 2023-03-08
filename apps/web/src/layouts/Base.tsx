@@ -16,6 +16,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import { getInitialTheme, ThemeProvider } from "@contexts/ThemeProvider";
 import { NetworkEnvironmentProvider } from "@contexts/NetworkEnvironmentContext";
+import { TokensProvider } from "@contexts/TokensContext";
 import { NetworkProvider } from "@contexts/NetworkContext";
 import { DeFiScanProvider } from "@contexts/DeFiScanContext";
 import { ContractProvider } from "@contexts/ContractContext";
@@ -131,19 +132,24 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
             <ApiProvider api={bridgeApi}>
               <NetworkEnvironmentProvider>
                 <NetworkProvider>
-                  <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-                    <WhaleProvider>
-                      <DeFiScanProvider>
-                        <ContractProvider>
-                          <ThemeProvider theme={initialTheme}>
-                            <StorageProvider>
-                              <ScreenContainer>{children}</ScreenContainer>
-                            </StorageProvider>
-                          </ThemeProvider>
-                        </ContractProvider>
-                      </DeFiScanProvider>
-                    </WhaleProvider>
-                  </WhaleNetworkProvider>
+                  <TokensProvider>
+                    <WhaleNetworkProvider
+                      api={SecuredStoreAPI}
+                      logger={Logging}
+                    >
+                      <WhaleProvider>
+                        <DeFiScanProvider>
+                          <ContractProvider>
+                            <ThemeProvider theme={initialTheme}>
+                              <StorageProvider>
+                                <ScreenContainer>{children}</ScreenContainer>
+                              </StorageProvider>
+                            </ThemeProvider>
+                          </ContractProvider>
+                        </DeFiScanProvider>
+                      </WhaleProvider>
+                    </WhaleNetworkProvider>
+                  </TokensProvider>
                 </NetworkProvider>
               </NetworkEnvironmentProvider>
             </ApiProvider>
