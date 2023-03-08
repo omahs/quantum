@@ -1,4 +1,5 @@
 import { JellyfishJSON } from '@defichain/jellyfish-json';
+import compression from '@fastify/compress';
 import helmet from '@fastify/helmet';
 import { NestApplicationOptions, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -50,6 +51,7 @@ export class BridgeServerApp<App extends NestFastifyApplication = NestFastifyApp
       maxAge: 60 * 24 * 7,
     });
     await app.register(helmet);
+    await app.register(compression, { encodings: ['gzip', 'deflate'] });
   }
 
   /**
