@@ -12,7 +12,9 @@ import { LoggerModule } from 'nestjs-pino';
 @Global()
 @Module({
   imports: [
-    LoggerModule.forRoot(),
+    LoggerModule.forRoot({
+      exclude: ['/health'],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
