@@ -156,7 +156,7 @@ export default function StepThreeVerification({
           address: dfcAddress,
           ethReceiverAddress: txn.toAddress,
           tokenAddress: Erc20Tokens[txn.selectedTokensB.tokenA.name].address,
-          // ROUND_FLOOR is used to prevent the amount from being rounded up and exceeding the max amount
+          // ROUND_FLOOR is used to prevent the amount from being rounded up and exceeding the original amount
           amount: new BigNumber(txn.amount).toFixed(5, BigNumber.ROUND_FLOOR),
           symbol: txn.selectedTokensA.tokenA.symbol,
         }).unwrap();
