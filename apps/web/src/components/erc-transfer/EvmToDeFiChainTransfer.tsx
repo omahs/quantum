@@ -38,7 +38,7 @@ export default function EvmToDeFiChainTransfer({
   const { isMobile } = useResponsive();
   const { networkEnv } = useNetworkEnvironmentContext();
   const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
-  const sendingFromETH = data.from.tokenName === ETHEREUM_SYMBOL;
+  const bridgingETH = data.from.tokenSymbol === ETHEREUM_SYMBOL;
   const { setStorage } = useStorageContext();
 
   // Read details from token contract
@@ -58,7 +58,7 @@ export default function EvmToDeFiChainTransfer({
         functionName: "decimals",
       },
     ],
-    enabled: !sendingFromETH,
+    enabled: !bridgingETH,
   });
 
   const tokenDecimals = readTokenData?.[1] ?? "gwei";
@@ -92,6 +92,7 @@ export default function EvmToDeFiChainTransfer({
     tokenName: data.from.tokenName as Erc20Token,
     setErrorMessage,
     refetchBridge,
+    refetchTokenData,
   });
 
   useEffect(() => {
@@ -108,7 +109,7 @@ export default function EvmToDeFiChainTransfer({
   // Requires approval for more allowance
   useEffect(() => {
     if (
-      data.from.tokenSymbol !== ETHEREUM_SYMBOL && // ETH doesn't require approval
+      !bridgingETH && // ETH doesn't require approval
       (eventError?.customErrorDisplay === "InsufficientAllowanceError" ||
         !hasEnoughAllowance)
     ) {
@@ -167,13 +168,20 @@ export default function EvmToDeFiChainTransfer({
     setEventError(undefined);
     setHasPendingTx(true);
 
-    // Refetch token allowance
-    await refetchTokenData();
-
-    if (requiresApproval) {
-      writeApprove?.();
-      return;
+    if (!bridgingETH) {
+      // Refetch token allowance
+      const { data: refetchedData } = await refetchTokenData();
+      const latestTokenAllowance = utils.formatEther(
+        refetchedData?.[0] ?? ethers.BigNumber.from(0)
+      );
+      const hasInsufficientAllowance = data.to.amount.gt(latestTokenAllowance);
+      if (hasInsufficientAllowance) {
+        setRequiresApproval(true);
+        writeApprove?.();
+        return;
+      }
     }
+
     // If no approval required, perform bridge function directly
     writeBridgeToDeFiChain?.();
   };
