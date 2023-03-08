@@ -129,6 +129,7 @@ function Base({
         />
         {process.env.NODE_ENV !== "development" && (
           <script
+            nonce="raygun"
             async
             defer
             type="text/javascript"

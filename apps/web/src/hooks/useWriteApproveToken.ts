@@ -18,11 +18,13 @@ interface ApproveTokenI {
   tokenName: Erc20Token;
   setErrorMessage: any;
   refetchBridge?: () => Promise<any>;
+  refetchTokenData?: () => Promise<any>;
 }
 
 export default function useWriteApproveToken({
   tokenName,
   refetchBridge,
+  refetchTokenData,
   setErrorMessage,
 }: ApproveTokenI) {
   const [refetchedBridgeFn, setRefetchedBridgeFn] = useState(false);
@@ -54,7 +56,10 @@ export default function useWriteApproveToken({
     isLoading: isApproveTxnLoading,
   } = useWaitForTransaction({
     hash: tokenContract?.hash,
-    onSuccess: () => refetchBridge?.().then(() => setRefetchedBridgeFn(true)),
+    onSuccess: () => {
+      refetchTokenData?.();
+      refetchBridge?.().then(() => setRefetchedBridgeFn(true));
+    },
   });
 
   useEffect(() => {
