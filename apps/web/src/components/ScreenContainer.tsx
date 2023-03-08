@@ -6,11 +6,9 @@ import Maintenance from "./Maintenance";
 
 export default function ScreenContainer({
   children,
-  isLoaded,
   isBridgeUp,
 }: {
   children: JSX.Element;
-  isLoaded: boolean;
   isBridgeUp: boolean;
 }): JSX.Element {
   const router = useRouter();
@@ -25,20 +23,14 @@ export default function ScreenContainer({
     <div className="relative min-h-screen flex flex-col">
       <Header />
       <div className="relative z-[1] flex-grow md:pb-12 lg:pb-20">
-        {isLoaded ? (
-          <div>{isBridgeUp ? <main>{children}</main> : <Maintenance />}</div>
-        ) : (
-          <div className="min-h-[60vh] lg:min-h-[50vh]" />
-        )}
+        <div>{isBridgeUp ? <main>{children}</main> : <Maintenance />}</div>
       </div>
-      {isLoaded && (
-        <div
-          className={clsx(
-            "absolute top-0 left-0 z-auto h-full w-full bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen lg:bg-center",
-            bgPicture
-          )}
-        />
-      )}
+      <div
+        className={clsx(
+          "absolute top-0 left-0 z-auto h-full w-full bg-cover bg-local bg-clip-padding bg-top bg-no-repeat bg-origin-padding mix-blend-screen lg:bg-center",
+          bgPicture
+        )}
+      />
       <Footer />
     </div>
   );

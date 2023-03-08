@@ -9,7 +9,7 @@ import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
 
-function Home({ isLoaded }) {
+function Home() {
   const { ethTxnStatus, isApiSuccess } = useWatchEthTxn();
   const { txnHash, setStorage } = useStorageContext();
   const { UNCONFIRMED_TXN_HASH_KEY, UNSENT_FUND_TXN_HASH_KEY } =
@@ -75,14 +75,12 @@ function Home({ isLoaded }) {
               isApiSuccess={isApiSuccess || txnHash.reverted !== undefined}
             />
           )}
-          {isLoaded && (
-            <BridgeForm
-              hasPendingTxn={
-                txnHash.unconfirmed !== undefined ||
-                txnHash.unsentFund !== undefined
-              }
-            />
-          )}
+          <BridgeForm
+            hasPendingTxn={
+              txnHash.unconfirmed !== undefined ||
+              txnHash.unsentFund !== undefined
+            }
+          />
         </div>
       </div>
       <div className="md:hidden mt-6 mb-12 mx-6">
@@ -95,16 +93,14 @@ function Home({ isLoaded }) {
 export async function getServerSideProps() {
   const res = await fetch(`https://wallet.defichain.com/api/v0/bridge/status`);
   const data = await res.json();
-  let isLoaded = false;
   let isBridgeUp = true;
   if (data) {
     if (data?.isUp === true) {
       isBridgeUp = true;
     }
-    isLoaded = true;
   }
   return {
-    props: { isLoaded, isBridgeUp }, // will be passed to the page component as props
+    props: { isBridgeUp }, // will be passed to the page component as props
   };
 }
 

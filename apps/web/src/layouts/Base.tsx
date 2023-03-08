@@ -63,7 +63,6 @@ const client = createClient(
 
 function Base({
   children,
-  isLoaded,
   isBridgeUp,
 }: PropsWithChildren<any>): JSX.Element | null {
   const initialTheme = getInitialTheme();
@@ -160,10 +159,7 @@ function Base({
                         <ContractProvider>
                           <ThemeProvider theme={initialTheme}>
                             <StorageProvider>
-                              <ScreenContainer
-                                isLoaded={isLoaded}
-                                isBridgeUp={isBridgeUp}
-                              >
+                              <ScreenContainer isBridgeUp={isBridgeUp}>
                                 {children}
                               </ScreenContainer>
                             </StorageProvider>
