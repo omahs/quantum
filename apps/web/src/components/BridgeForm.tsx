@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
+import { FiRefreshCw } from "react-icons/fi";
 import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
@@ -33,7 +34,6 @@ import {
   FEES_INFO,
 } from "../constants";
 import Tooltip from "./commons/Tooltip";
-import { FiRefreshCw } from "react-icons/fi";
 
 function SwitchButton({
   onClick,
