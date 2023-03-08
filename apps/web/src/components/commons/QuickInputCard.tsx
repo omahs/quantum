@@ -42,7 +42,7 @@ function SetAmountButton({
 }: SetAmountButtonProps): JSX.Element {
   const decimalPlace = 5;
 
-  // ROUND_FLOOR is used to prevent the amount from being rounded up and exceeding the max amount
+  // ROUND_FLOOR is used to prevent the amount from being rounded up and exceeding the original amount
   let value = amount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
   switch (type) {
     case AmountButtonTypes.TwentyFive:
