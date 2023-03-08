@@ -1,13 +1,15 @@
+import clsx from "clsx";
 import { IconType } from "react-icons";
 
 interface SocialsProps {
   items: { icon: IconType; testId: string; label: string; href: string }[];
+  containerStyle?: string;
 }
 
 export default function Socials(props: SocialsProps): JSX.Element {
-  const { items } = props;
+  const { items, containerStyle } = props;
   return (
-    <div className="flex flex-row space-x-3.5">
+    <div className={clsx("flex flex-row space-x-3.5", containerStyle)}>
       {items.map(({ href, testId, icon: Icon }) => (
         <a
           href={href}
