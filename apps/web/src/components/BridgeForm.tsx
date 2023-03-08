@@ -283,8 +283,15 @@ export default function BridgeForm({
     },
   };
 
-  function confirmationModalonClose(noCloseWarning: boolean) {
+  async function confirmationModalonClose(noCloseWarning: boolean) {
     if (noCloseWarning) {
+      if (isSendingErcToken) {
+        // Wait 15 seconds to give some time for txn to be confirmed
+        setTimeout(async () => {
+          await refetchEvmBalance();
+        }, 15000);
+      }
+
       setShowConfirmModal(false);
     } else setUtilityModalData(UtilityModalMessage.leaveTransaction);
   }
