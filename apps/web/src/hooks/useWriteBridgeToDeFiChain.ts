@@ -4,7 +4,7 @@
 
 import BigNumber from "bignumber.js";
 import { ethers, utils } from "ethers";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -26,6 +26,7 @@ interface BridgeToDeFiChainI {
   transferAmount: BigNumber;
   tokenName: Erc20Token;
   tokenDecimals: number | "gwei";
+  hasEnoughAllowance: boolean;
   onBridgeTxnSettled: () => void;
   setEventError: (error: EventErrorI | undefined) => void;
 }
@@ -35,18 +36,23 @@ export default function useWriteBridgeToDeFiChain({
   transferAmount,
   tokenName,
   tokenDecimals,
+  hasEnoughAllowance,
   onBridgeTxnSettled,
   setEventError,
 }: BridgeToDeFiChainI) {
   const { BridgeV1, Erc20Tokens } = useContractContext();
   const sendingFromETH = (tokenName as string) === ETHEREUM_SYMBOL;
-  const [requiresApproval, setRequiresApproval] = useState(false);
 
   const handlePrepContractError = (err) => {
     let customErrorDisplay: EventErrorI["customErrorDisplay"];
-    if (err.message.includes("insufficient allowance")) {
+    const errorMsg = err.message?.toLowerCase() ?? "";
+    const testnetAllowanceErr = errorMsg.includes("insufficient allowance");
+    const mainnetAllowanceErr =
+      errorMsg.includes("safeerc20: low-level call failed") &&
+      !hasEnoughAllowance &&
+      !sendingFromETH;
+    if (testnetAllowanceErr || mainnetAllowanceErr) {
       // Need to request approval from user - Insufficient allowance
-      setRequiresApproval(true);
       customErrorDisplay = "InsufficientAllowanceError";
     }
 
@@ -123,6 +129,5 @@ export default function useWriteBridgeToDeFiChain({
     refetchBridge,
     writeBridgeToDeFiChain,
     transactionHash: bridgeContract?.hash,
-    requiresApproval,
   };
 }

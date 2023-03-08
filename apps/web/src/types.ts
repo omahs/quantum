@@ -26,6 +26,17 @@ export interface BridgeVersion {
   v: string;
 }
 
+interface Settings {
+  transferFee: `${number}` | number;
+  supportedTokens: string[];
+  network?: string;
+}
+
+export interface BridgeSettings {
+  defichain: Settings;
+  ethereum: Settings;
+}
+
 export enum SelectionType {
   "Network" = "Network",
   "Token" = "Token",
@@ -73,7 +84,7 @@ export interface TransferData {
   to: RowDataI;
 }
 
-export type Erc20Token = "wBTC" | "USDT" | "USDC" | "ETH";
+export type Erc20Token = "WBTC" | "USDT" | "USDC" | "ETH";
 
 interface ContractConfigI {
   address: `0x${string}`;

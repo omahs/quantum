@@ -10,7 +10,6 @@ import {
 } from "@components/siteInfo";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { goerli, hardhat, localhost, mainnet } from "wagmi/chains";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
@@ -34,17 +33,16 @@ import { ETHEREUM_MAINNET_ID } from "../constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "../config";
 
 const metamask = new MetaMaskConnector({
-  chains: [goerli, localhost, hardhat], // TODO: Add `mainnet` here once MainNet is ready
+  chains: [mainnet, goerli, localhost, hardhat],
 });
 
 const { chains } = configureChains(
-  [localhost, hardhat, goerli], // TODO: Add `mainnet` here once MainNet is ready
+  [localhost, hardhat, goerli, mainnet],
   [
     jsonRpcProvider({
       rpc: (chain) => {
         const isMainNet = chain.id === ETHEREUM_MAINNET_ID;
         const config = isMainNet ? MAINNET_CONFIG : TESTNET_CONFIG;
-
         return {
           http: (config.EthereumRpcUrl || chain.rpcUrls.default) as string,
         };
@@ -57,9 +55,9 @@ const { chains } = configureChains(
 const client = createClient(
   getDefaultClient({
     autoConnect: true,
-    chains: [localhost, hardhat, mainnet, goerli],
+    chains,
     appName,
-    connectors: [metamask, new InjectedConnector({ chains })],
+    connectors: [metamask],
   })
 );
 

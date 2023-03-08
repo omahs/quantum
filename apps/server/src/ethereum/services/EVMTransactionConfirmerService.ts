@@ -8,6 +8,7 @@ import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
+import { TokenSymbol } from '../../defichain/model/VerifyDto';
 import { WhaleApiClientProvider } from '../../defichain/providers/WhaleApiClientProvider';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
@@ -114,6 +115,7 @@ export class EVMTransactionConfirmerService {
   async signClaim({
     receiverAddress,
     tokenAddress,
+    tokenSymbol,
     amount,
     uniqueDfcAddress,
   }: SignClaim): Promise<{ signature: string; nonce: number; deadline: number }> {
@@ -159,9 +161,21 @@ export class EVMTransactionConfirmerService {
           { name: 'tokenAddress', type: 'address' },
         ],
       };
+
+      // Parse amount based on token symbol
+      let parsedAmount: EthBigNumber;
+      if (tokenSymbol === TokenSymbol.ETH) {
+        parsedAmount = ethers.utils.parseEther(amount);
+      } else {
+        // ERC20 token
+        const tokenContract = new ethers.Contract(tokenAddress, ERC20__factory.abi, this.ethersRpcProvider);
+        const tokenDecimalPlaces = await tokenContract.decimals();
+        parsedAmount = ethers.utils.parseUnits(amount, tokenDecimalPlaces);
+      }
+
       const data = {
         to: receiverAddress,
-        amount: ethers.utils.parseEther(amount),
+        amount: parsedAmount,
         nonce,
         deadline,
         tokenAddress,
@@ -179,6 +193,8 @@ export class EVMTransactionConfirmerService {
           claimNonce: nonce.toString(),
           claimDeadline: deadline.toString(),
           claimSignature: signature,
+          claimAmount: amount,
+          tokenSymbol,
           ethReceiverAddress: receiverAddress,
         },
       });
@@ -353,6 +369,7 @@ const decodeTxnData = (txDetail: ethers.providers.TransactionResponse) => {
 interface SignClaim {
   receiverAddress: string;
   tokenAddress: string;
+  tokenSymbol: TokenSymbol;
   amount: string;
   uniqueDfcAddress: string;
 }

@@ -184,7 +184,7 @@ export default function RestoreTransactionModal({
         <div className="mt-8 lg:px-[31px]">
           <ActionButton
             label="Restore transaction"
-            customStyle="bg-dark-1000 md:px-6 text-lg lg:leading-8 lg:py-2 lg:px-8 xl:px-14"
+            customStyle="bg-dark-1000 md:px-6 text-lg lg:!py-3 lg:px-8 xl:px-14"
             disabled={txnAddress === ""}
             onClick={checkTXnHash}
           />

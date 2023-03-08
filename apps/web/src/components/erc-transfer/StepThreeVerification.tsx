@@ -156,7 +156,8 @@ export default function StepThreeVerification({
           address: dfcAddress,
           ethReceiverAddress: txn.toAddress,
           tokenAddress: Erc20Tokens[txn.selectedTokensB.tokenA.name].address,
-          amount: new BigNumber(txn.amount).toFixed(8),
+          // ROUND_FLOOR is used to prevent the amount from being rounded up and exceeding the original amount
+          amount: new BigNumber(txn.amount).toFixed(5, BigNumber.ROUND_FLOOR),
           symbol: txn.selectedTokensA.tokenA.symbol,
         }).unwrap();
 
@@ -213,7 +214,7 @@ export default function StepThreeVerification({
       {dfcAddress && (
         <div
           className={clsx(
-            "max-w-max mx-auto flex flex-row order-1 mt-6 justify-start border-[0.5px] border-dark-200 rounded",
+            "relative max-w-max mx-auto flex flex-row order-1 mt-6 justify-start border-[0.5px] border-dark-200 rounded",
             "md:w-2/5 md:flex-col md:shrink-0 md:order-none px-6 pt-6 pb-3 md:mt-0"
           )}
         >

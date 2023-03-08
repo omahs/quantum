@@ -1,14 +1,17 @@
 import BigNumber from "bignumber.js";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { utils } from "ethers";
 import {
+  erc20ABI,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
 import { useRouter } from "next/router";
-import { FiCheck } from "react-icons/fi";
 import { useContractContext } from "@contexts/ContractContext";
 import { useStorageContext } from "@contexts/StorageContext";
 import ActionButton from "@components/commons/ActionButton";
@@ -18,9 +21,18 @@ import { SignedClaim, TransferData } from "types";
 import UtilityButton from "@components/commons/UtilityButton";
 import useCheckBalance from "@hooks/useCheckBalance";
 import useTransferFee from "@hooks/useTransferFee";
+import useTimeCounter from "@hooks/useTimeCounter";
+import { getDuration } from "@utils/durationHelper";
+import { ETHEREUM_SYMBOL } from "../../constants";
 
 const CLAIM_INPUT_ERROR =
   "Check your connection and try again. If the error persists get in touch with us.";
+const CLAIM_EXPIRED_ERROR =
+  "Unfortunately, you are now unable to claim from this transaction. Closing this modal will reset the form for new transaction.";
+const INSUFFICIENT_FUND_ERROR =
+  "Quantum's servers are currently at capacity. We are unable to process transactions at this time, please try again in a few hours to claim your tokens.";
+
+const ONE_HOUR = 60 * 60 * 1000; // ms
 
 export default function StepLastClaim({
   data,
@@ -39,22 +51,42 @@ export default function StepLastClaim({
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
   const { setStorage } = useStorageContext();
 
+  const isTokenETH = data.to.tokenSymbol === ETHEREUM_SYMBOL;
+  const { data: tokenDecimals } = useContractRead({
+    address: tokenAddress,
+    abi: erc20ABI,
+    functionName: "decimals",
+    cacheOnBlock: true,
+    enabled: !isTokenETH, // skip native ETH
+  });
+
+  const [isClaimExpired, setIsClaimExpired] = useState(false);
+  const { timeRemaining } = useTimeCounter(
+    dayjs(new Date(signedClaim.deadline * 1000)).diff(dayjs()),
+    () => setIsClaimExpired(true)
+  );
+
   // Prepare write contract for `claimFund` function
   const [fee] = useTransferFee(data.to.amount.toString());
-  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0);
+  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0).toFixed();
+  const parsedAmount = isTokenETH
+    ? utils.parseEther(amountLessFee)
+    : utils.parseUnits(amountLessFee, tokenDecimals);
   const { config: bridgeConfig } = usePrepareContractWrite({
     address: BridgeV1.address,
     abi: BridgeV1.abi,
     functionName: "claimFund",
     args: [
       data.to.address,
-      utils.parseEther(amountLessFee.toFixed()),
+      parsedAmount,
       signedClaim.nonce,
       signedClaim.deadline,
       tokenAddress,
       signedClaim.signature,
     ],
-    onError: () => setError(CLAIM_INPUT_ERROR),
+    onError: () => {
+      if (!isClaimExpired) setError(CLAIM_INPUT_ERROR);
+    },
   });
 
   // Write contract for `claimFund` function
@@ -74,17 +106,33 @@ export default function StepLastClaim({
     onSettled: () => setShowLoader(false),
   });
 
-  const { balanceAmount } = useCheckBalance(data.to.tokenSymbol);
-  const isBalanceInsufficient = data.to.amount.isGreaterThan(
-    new BigNumber(balanceAmount)
-  );
+  const { getBalance } = useCheckBalance();
+  const isSufficientBalance = (balance): boolean =>
+    new BigNumber(balance).isGreaterThanOrEqualTo(data.to.amount);
+  const [isBalanceSufficient, setIsBalanceSufficient] = useState(false);
+
+  async function checkBalance() {
+    const balance = await getBalance(data.to.tokenSymbol);
+    const isSufficient = balance !== null && isSufficientBalance(balance);
+    if (!isSufficient) {
+      setError(INSUFFICIENT_FUND_ERROR);
+    }
+    setIsBalanceSufficient(isSufficient);
+  }
+
+  useEffect(() => {
+    checkBalance();
+  }, []);
 
   const handleOnClaim = async () => {
     setError(undefined);
     setShowLoader(true);
     if (!write) {
-      setTimeout(() => {
-        setError(CLAIM_INPUT_ERROR);
+      checkBalance();
+      setTimeout(async () => {
+        if (isBalanceSufficient) {
+          setError(CLAIM_INPUT_ERROR);
+        }
         setShowLoader(false);
       }, 500);
       return;
@@ -92,25 +140,31 @@ export default function StepLastClaim({
     write?.();
   };
 
-  useEffect(() => {
-    if (isSuccess) {
-      setStorage("txn-form", null);
-      setStorage("dfc-address", null);
-      setStorage("dfc-address-details", null);
-    }
-  }, [isSuccess]);
+  const clearUnconfirmedTxn = () => {
+    setStorage("txn-form", null);
+    setStorage("dfc-address", null);
+    setStorage("dfc-address-details", null);
+  };
 
   useEffect(() => {
-    setError(writeClaimTxnError?.message ?? claimTxnError?.message);
+    if (isSuccess || isClaimExpired) {
+      clearUnconfirmedTxn();
+    }
+  }, [isSuccess, isClaimExpired]);
+
+  useEffect(() => {
+    let err = writeClaimTxnError?.message ?? claimTxnError?.message;
+    if (claimTxnError && claimTxnError.name && !claimTxnError.message) {
+      // Txn Error can sometimes occur but have empty message
+      if (isClaimExpired && claimFundData?.hash) {
+        clearUnconfirmedTxn();
+        err = CLAIM_EXPIRED_ERROR;
+      } else {
+        err = CLAIM_INPUT_ERROR;
+      }
+    }
+    setError(err);
   }, [writeClaimTxnError, claimTxnError]);
-
-  useEffect(() => {
-    if (error && isBalanceInsufficient) {
-      setError(
-        "Quantum's servers are currently at capacity. We are unable to process transactions at this time, please try again in a few hours to claim your tokens."
-      );
-    }
-  }, [error, isBalanceInsufficient]);
 
   const statusMessage = {
     title: isClaimInProgress ? "Processing" : "Waiting for confirmation",
@@ -118,6 +172,29 @@ export default function StepLastClaim({
       ? "Do not close or refresh the browser while processing. This will only take a few seconds."
       : "Confirm this transaction in your Wallet.",
   };
+
+  const claimDurationLeft = getDuration(
+    timeRemaining.dividedBy(1000).toNumber(),
+    { hrs: "hrs" }
+  );
+
+  const StatusMessage = {
+    READY: {
+      title: "Ready for claiming",
+      message:
+        "Your transaction has been verified and is now ready to be transferred to destination chain (ERC-20). You will be redirected to your wallet to claim your tokens.",
+      btnLabel: "Claim tokens",
+      btnAction: () => handleOnClaim(),
+    },
+    EXPIRED: {
+      title: "Claim period has expired",
+      message:
+        "Unfortunately you are now unable to claim any tokens from this transaction. Closing this modal will reset the form and allow you to start a new transaction.",
+      btnLabel: "Close",
+      btnAction: () => onClose(),
+    },
+  };
+  const claimStatus = isClaimExpired ? "EXPIRED" : "READY";
 
   return (
     <>
@@ -174,15 +251,34 @@ export default function StepLastClaim({
         />
       )}
       <div className={clsx("pt-4 px-6", "md:px-[73px] md:pt-4 md:pb-6")}>
-        <span className="font-semibold block text-center text-dark-900 tracking-[0.01em] md:tracking-wider text-2xl">
-          Ready for claiming
+        {claimStatus === "EXPIRED" && (
+          <div className="flex flex-col items-center mb-6 md:mb-4">
+            <FiAlertCircle size={64} className="text-error" />
+          </div>
+        )}
+        <span className="font-bold block text-center text-dark-900 tracking-[0.01em] md:tracking-wider text-lg">
+          {StatusMessage[claimStatus].title}
         </span>
-        <span className="block text-center text-sm text-dark-900 mt-3 pb-6">
-          Your transaction has been verified and is now ready to be transferred
-          to destination chain (ERC-20). You will be redirected to your wallet
-          to claim your tokens.
+        <span className="block text-center text-sm text-dark-900 antialiased mt-1 pb-6">
+          {StatusMessage[claimStatus].message}
         </span>
-        <ActionButton label="Claim tokens" onClick={() => handleOnClaim()} />
+        <ActionButton
+          label={StatusMessage[claimStatus].btnLabel}
+          onClick={StatusMessage[claimStatus].btnAction}
+        />
+        {claimStatus === "READY" && (
+          <div
+            className={clsx(
+              "text-sm text-center lowercase mt-2",
+              timeRemaining.lt(ONE_HOUR) ? "text-error" : "text-warning"
+            )}
+          >
+            <span className="font-semibold">{claimDurationLeft}</span>
+            <span className="antialiased">
+              {claimDurationLeft ? " until expiry" : ""}
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

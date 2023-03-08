@@ -13,7 +13,7 @@ export default function WelcomeHeader() {
   return (
     <div>
       <h1 className={clsx(headerStyle)}>Building a</h1>
-      <h1 className={clsx(headerStyle)}>decentralised</h1>
+      <h1 className={clsx(headerStyle)}>decentralized</h1>
       <h1 className={clsx(headerStyle)}>tomorrow</h1>
       <div className="mt-2 lg:mt-3">
         <h2 className={clsx(bylineStyle)}>connecting one</h2>

@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
 import useCheckBalance from "@hooks/useCheckBalance";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
+import debounce from "@utils/debounce";
 import InputSelector from "./InputSelector";
 import WalletAddressInput from "./WalletAddressInput";
 import ConfirmTransferModal from "./ConfirmTransferModal";
@@ -45,6 +46,7 @@ function SwitchButton({
       <div className="mt-5 flex w-full flex-1 justify-between border-t border-dark-300 border-opacity-50" />
       <Tooltip content="Switch source" containerClass="py-0">
         <button
+          title="switch-source-button"
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -120,7 +122,36 @@ export default function BridgeForm({
 
   const [getAddressDetail] = useGetAddressDetailMutation();
 
-  const { balanceAmount } = useCheckBalance(selectedTokensA.tokenB.symbol);
+  const { getBalance } = useCheckBalance();
+  const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
+  const [tokenBalances, setTokenBalances] = useState({});
+
+  const checkBalance = debounce(async () => {
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = await getBalance(selectedTokensA.tokenB.symbol);
+    setTokenBalances({
+      ...tokenBalances,
+      [key]: balance,
+    });
+  }, 200);
+
+  useEffect(() => {
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = tokenBalances[key];
+    if (balance === null) {
+      setIsBalanceSufficient(false);
+    }
+    if (balance) {
+      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
+        amount !== "" ? amount : 0
+      );
+      setIsBalanceSufficient(isSufficientBalance);
+    }
+  }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
+
+  useEffect(() => {
+    checkBalance();
+  }, [selectedNetworkA, selectedTokensA, networkEnv]);
 
   const isFormValid =
     amount && new BigNumber(amount).gt(0) && !amountErr && !hasAddressInputErr;
@@ -148,7 +179,7 @@ export default function BridgeForm({
 
   const onInputChange = (value: string): void => {
     const numberOnlyRegex = /^\d*\.?\d*$/; // regex to allow only number
-    const maxDpRegex = /^\d*(\.\d{0,6})?$/; // regex to allow only max of 6 dp
+    const maxDpRegex = /^\d*(\.\d{0,5})?$/; // regex to allow only max of 5 dp
 
     if (
       value === "" ||
@@ -173,7 +204,6 @@ export default function BridgeForm({
       };
       setStorage("txn-form", JSON.stringify(newTxn));
     }
-    /* TODO: Handle token transfer here */
     setShowConfirmModal(true);
   };
 
@@ -260,10 +290,6 @@ export default function BridgeForm({
       setFromAddress(address as string);
     }
   }, [networkEnv, txnForm]);
-
-  const isBalanceInsufficient = new BigNumber(amount).isGreaterThan(
-    new BigNumber(balanceAmount)
-  );
 
   const fetchAddressDetail = async (
     localDfcAddress: string | undefined
@@ -375,8 +401,8 @@ export default function BridgeForm({
                 </span>
                 <NumericFormat
                   className="text-xs lg:text-sm text-dark-900 ml-1"
-                  value={maxAmount}
-                  decimalScale={8}
+                  value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
+                  decimalScale={5}
                   thousandSeparator
                   suffix={` ${selectedTokensA.tokenA.name}`}
                 />
@@ -420,19 +446,7 @@ export default function BridgeForm({
           readOnly={hasUnconfirmedTxn}
         />
       </div>
-      <div className="flex flex-row justify-between items-center mt-6 lg:mt-0 px-3 lg:px-5">
-        <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
-          To receive
-        </span>
-        <NumericFormat
-          className="max-w-[70%] block break-words text-right text-xs text-dark-1000 lg:text-base"
-          value={amount || 0}
-          thousandSeparator
-          suffix={` ${selectedTokensB.tokenA.name}`}
-          trimTrailingZeros
-        />
-      </div>
-      <div className="flex flex-row justify-between items-center px-3 lg:px-5 mt-4 lg:mt-[18px]">
+      <div className="flex flex-row justify-between items-center px-3 lg:px-5 mt-6 lg:mt-0">
         <div className="flex flex-row items-center">
           <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
             Fees
@@ -449,6 +463,18 @@ export default function BridgeForm({
           trimTrailingZeros
         />
       </div>
+      <div className="flex flex-row justify-between items-center px-3 lg:px-5 mt-4 lg:mt-[18px]">
+        <span className="text-dark-700 text-xs lg:text-base font-semibold md:font-normal">
+          To receive
+        </span>
+        <NumericFormat
+          className="max-w-[70%] block break-words text-right text-dark-1000 text-sm leading-5 lg:text-lg lg:leading-6 font-bold"
+          value={BigNumber(new BigNumber(amount || 0).minus(fee))}
+          thousandSeparator
+          suffix={` ${selectedTokensB.tokenA.name}`}
+          trimTrailingZeros
+        />
+      </div>
       <div className="mt-8 px-6 md:px-4 lg:mt-12 lg:mb-0 lg:px-0 xl:px-20">
         <ConnectKitButton.Custom>
           {({ show }) => (
@@ -459,7 +485,7 @@ export default function BridgeForm({
               disabled={
                 (isConnected && !isFormValid) ||
                 hasPendingTxn ||
-                isBalanceInsufficient
+                !isBalanceSufficient
               }
               onClick={!isConnected ? show : () => onTransferTokens()}
             />
@@ -472,10 +498,10 @@ export default function BridgeForm({
           !hasPendingTxn &&
           !txnHash.confirmed && (
             <div className="text-xs lg:text-sm leading-4 lg:leading-5 text-dark-700 text-center mt-4">
-              Transaction interrupted?{" "}
+              Transaction interrupted?
               <button
                 type="button"
-                className="text-dark-1000 font-bold"
+                className="text-dark-1000 font-bold ml-1"
                 onClick={() => setShowErcToDfcRestoreModal(true)}
               >
                 Recover it here
@@ -499,7 +525,8 @@ export default function BridgeForm({
             />
           </div>
         )}
-        {isBalanceInsufficient && (
+
+        {!isBalanceSufficient && !hasPendingTxn && (
           <div className={clsx("pt-3", warningTextStyle)}>
             Unable to process transaction. <div>Please try again later</div>
           </div>

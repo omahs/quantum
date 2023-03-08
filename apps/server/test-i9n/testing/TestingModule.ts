@@ -41,10 +41,12 @@ export function buildTestConfig({
       whaleURL: defichain?.whaleURL ?? '',
       network: defichain?.network ?? EnvironmentNetwork.LocalPlayground,
       transferFee: defichain?.transferFee,
+      supportedTokens: defichain?.supportedTokens,
     },
     ethereum: {
       rpcUrl: startedHardhatContainer?.rpcUrl ?? '',
       transferFee: ethereum?.transferFee,
+      supportedTokens: ethereum?.supportedTokens,
       contracts: {
         bridgeProxy: {
           address: testnet?.bridgeContractAddress ?? '',
@@ -76,9 +78,11 @@ type OptionalBuildTestConfigParams = {
     network: string;
     transferFee: string;
     dustUTXO: string;
+    supportedTokens: string;
   };
   ethereum: {
     transferFee: string;
+    supportedTokens: string;
   };
   startedHardhatContainer: StartedHardhatNetworkContainer;
   testnet: {

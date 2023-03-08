@@ -43,7 +43,20 @@ export class WhaleWalletService {
       return { isValid: false, statusCode: CustomErrorCodes.AmountNotValid };
     }
 
+    // Verify if decimal places is maximum 5
+    const dp = new BigNumber(verify.amount).dp();
+    if (dp != null && dp > 5) {
+      return { isValid: false, statusCode: CustomErrorCodes.AmountNotValid };
+    }
+
     try {
+      // Verify if token symbol is supported
+      const supportedDfcTokens = this.configService.getOrThrow('defichain.supportedTokens');
+      const supportedTokensArray = supportedDfcTokens.split(',') as Array<keyof typeof SupportedDFCTokenSymbols>;
+      if (!supportedTokensArray.includes(verify.symbol)) {
+        return { isValid: false, statusCode: CustomErrorCodes.TokenSymbolNotSupported };
+      }
+
       const pathIndex = await this.prisma.deFiChainAddressIndex.findFirst({
         where: {
           address: verify.address,
@@ -85,6 +98,7 @@ export class WhaleWalletService {
       const claim = await this.evmTransactionService.signClaim({
         receiverAddress: verify.ethReceiverAddress,
         tokenAddress: verify.tokenAddress,
+        tokenSymbol: verify.symbol,
         amount: amountLessFee,
         uniqueDfcAddress: verify.address,
       });
