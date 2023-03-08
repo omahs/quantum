@@ -125,6 +125,7 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         />
         {process.env.NODE_ENV !== "development" && (
           <script
+            nonce="raygun"
             async
             defer
             type="text/javascript"
