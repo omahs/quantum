@@ -1,4 +1,4 @@
-import { useTokensContext } from "@contexts/TokensContext";
+import useTokens from "@hooks/useTokens";
 import { useBalanceDfcMutation, useBalanceEvmMutation } from "@store/index";
 import { Network } from "types";
 
@@ -6,7 +6,7 @@ export default function useCheckBalance() {
   const [balanceEvm] = useBalanceEvmMutation();
   const [balanceDfc] = useBalanceDfcMutation();
 
-  const { selectedNetworkA } = useTokensContext();
+  const { selectedNetworkA } = useTokens();
   /**
    * When sending from EVM -> DFC, check that DFC wallet has enough balance;
    * When sending from DFC -> EVM, check that EVM wallet has enough balance;

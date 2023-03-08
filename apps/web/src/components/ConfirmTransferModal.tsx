@@ -2,7 +2,7 @@ import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import Image from "next/image";
 import { AddressDetails, Network, RowDataI, TransferData } from "types";
-import { useTokensContext } from "@contexts/TokensContext";
+import useTokens from "@hooks/useTokens";
 import useDisableEscapeKey from "@hooks/useDisableEscapeKey";
 import useTransferFee from "@hooks/useTransferFee";
 import IconTooltip from "@components/commons/IconTooltip";
@@ -121,7 +121,8 @@ export default function ConfirmTransferModal({
     selectedTokensA,
     selectedNetworkB,
     selectedTokensB,
-  } = useTokensContext();
+  } = useTokens();
+
   useDisableEscapeKey(show);
 
   const [fee, feeSymbol] = useTransferFee(amount);

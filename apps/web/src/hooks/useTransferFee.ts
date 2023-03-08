@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { useNetworkContext } from "@contexts/NetworkContext";
-import { useTokensContext } from "@contexts/TokensContext";
+import useTokens from "@hooks/useTokens";
 import { Network } from "types";
 /**
  * Computes transfer fee
@@ -8,8 +8,10 @@ import { Network } from "types";
  */
 export default function useTransferFee(transferAmount: string | number) {
   const { evmFee, dfcFee } = useNetworkContext();
-  const { selectedNetworkA, selectedTokensA } = useTokensContext();
+  const { selectedNetworkA, selectedTokensA } = useTokens();
+  console.log("selectedNetworkA", selectedNetworkA);
   const isSendingFromEvm = selectedNetworkA.name === Network.Ethereum;
+  console.log("isSendingFromEvm", isSendingFromEvm);
   const feeSymbol = selectedTokensA.tokenA.name;
   const fee = new BigNumber(transferAmount || 0).multipliedBy(
     isSendingFromEvm ? evmFee : dfcFee

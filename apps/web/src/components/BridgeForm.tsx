@@ -5,6 +5,7 @@ import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { useNetworkContext } from "@contexts/NetworkContext";
+import useTokens from "@hooks/useTokens";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import { Network, NetworkOptionsI, SelectionType, TokensI } from "types";
 import SwitchIcon from "@components/icons/SwitchIcon";
@@ -21,7 +22,6 @@ import { useStorageContext } from "@contexts/StorageContext";
 import { useGetAddressDetailMutation } from "@store/index";
 import dayjs from "dayjs";
 import useTransferFee from "@hooks/useTransferFee";
-import { useTokensContext } from "@contexts/TokensContext";
 import useCheckBalance from "@hooks/useCheckBalance";
 import RestoreTransactionModal from "@components/erc-transfer/RestoreTransactionModal";
 import debounce from "@utils/debounce";
@@ -85,7 +85,7 @@ export default function BridgeForm({
     setSelectedNetworkB,
     setSelectedTokensB,
     resetNetworkSelection,
-  } = useTokensContext();
+  } = useTokens();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
