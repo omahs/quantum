@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
@@ -105,17 +105,28 @@ export default function BridgeForm({
   const [fee, feeSymbol] = useTransferFee(amount);
 
   const { address, isConnected } = useAccount();
+  const isSendingFromEvm = selectedNetworkA.name === Network.Ethereum;
   const isSendingErcToken =
-    selectedNetworkA.name === Network.Ethereum &&
-    selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
-  const { data } = useBalance({
+    isSendingFromEvm && selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
+  const { data, refetch } = useBalance({
     address,
-    watch: true,
+    watch: isSendingFromEvm,
+    enabled: false,
     cacheTime: 10_000,
     ...(isSendingErcToken && {
-      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
+      token: Erc20Tokens[selectedTokensA.tokenA.name]?.address,
     }),
   });
+  const intervalRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (isSendingFromEvm) {
+      intervalRef.current = setInterval(() => {
+        refetch();
+      }, 10_000);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [refetch, isSendingFromEvm]);
 
   const maxAmount = new BigNumber(data?.formatted ?? 0);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
@@ -388,14 +399,14 @@ export default function BridgeForm({
           onChange={onInputChange}
           value={amount}
           error={amountErr}
-          showAmountsBtn={selectedNetworkA.name === Network.Ethereum}
+          showAmountsBtn={isSendingFromEvm}
           disabled={hasUnconfirmedTxn}
         />
         <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2">
           {amountErr ? (
             <span className="text-xs lg:text-sm text-error">{amountErr}</span>
           ) : (
-            selectedNetworkA.name === Network.Ethereum && (
+            isSendingFromEvm && (
               <>
                 <span className="text-xs lg:text-sm text-dark-700">
                   Available:
@@ -493,7 +504,7 @@ export default function BridgeForm({
           )}
         </ConnectKitButton.Custom>
         {isConnected &&
-          selectedNetworkA.name === Network.Ethereum &&
+          isSendingFromEvm &&
           !amount &&
           !addressInput &&
           !hasPendingTxn &&
