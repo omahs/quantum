@@ -254,7 +254,7 @@ describe('DeFiChain Verify fund Testing', () => {
 
   it('should throw error if amount has more than 6 decimal place', async () => {
     const response = await verify({
-      amount: '3.1234567',
+      amount: '3.123456',
       symbol: 'BTC',
       address: localAddress,
       ethReceiverAddress: ethWalletAddress,

@@ -156,7 +156,7 @@ export default function StepThreeVerification({
           address: dfcAddress,
           ethReceiverAddress: txn.toAddress,
           tokenAddress: Erc20Tokens[txn.selectedTokensB.tokenA.name].address,
-          amount: new BigNumber(txn.amount).toFixed(8),
+          amount: new BigNumber(txn.amount).toFixed(5),
           symbol: txn.selectedTokensA.tokenA.symbol,
         }).unwrap();
 

@@ -179,7 +179,7 @@ export default function BridgeForm({
 
   const onInputChange = (value: string): void => {
     const numberOnlyRegex = /^\d*\.?\d*$/; // regex to allow only number
-    const maxDpRegex = /^\d*(\.\d{0,6})?$/; // regex to allow only max of 6 dp
+    const maxDpRegex = /^\d*(\.\d{0,5})?$/; // regex to allow only max of 5 dp
 
     if (
       value === "" ||
