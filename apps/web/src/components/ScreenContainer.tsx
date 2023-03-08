@@ -2,38 +2,18 @@ import Footer from "@components/Footer";
 import Header from "@components/Header";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import Maintenance from "./Maintenance";
-import { useLazyBridgeStatusQuery } from "../store";
 
 export default function ScreenContainer({
   children,
+  isLoaded,
+  isBridgeUp,
 }: {
   children: JSX.Element;
+  isLoaded: boolean;
+  isBridgeUp: boolean;
 }): JSX.Element {
   const router = useRouter();
-
-  // if isMaintenanceEnabled is true, this condition will supersede /404 page display
-  const [trigger] = useLazyBridgeStatusQuery();
-
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isBridgeUp, setIsBridgeUp] = useState(true);
-
-  async function checkBridgeStatus() {
-    try {
-      const { data, isSuccess } = await trigger({});
-      // Assumes that the bridge is up unless the api explicitly returns isUp !== true
-      if (isSuccess) {
-        setIsBridgeUp(data?.isUp === true);
-      }
-    } finally {
-      setIsLoaded(true);
-    }
-  }
-
-  useEffect(() => {
-    checkBridgeStatus();
-  }, []);
 
   // background picture has 2 conditions/designs: connected wallet bg design vs preconnected wallet bg design
   const bgPicture =

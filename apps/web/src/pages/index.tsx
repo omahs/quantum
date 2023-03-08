@@ -90,4 +90,20 @@ function Home() {
   );
 }
 
+export async function getServerSideProps() {
+  const res = await fetch(`https://wallet.defichain.com/api/v0/bridge/status`);
+  const data = await res.json();
+  let isLoaded = false;
+  let isBridgeUp = true;
+  if (data) {
+    if (data?.isUp === true) {
+      isBridgeUp = true;
+    }
+    isLoaded = true;
+  }
+  return {
+    props: { isLoaded, isBridgeUp }, // will be passed to the page component as props
+  };
+}
+
 export default Home;
