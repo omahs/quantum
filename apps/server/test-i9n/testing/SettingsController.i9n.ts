@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { BridgeServerTestingApp } from './BridgeServerTestingApp';
 import { buildTestConfig, TestingModule } from './TestingModule';
 
-describe.only('Settings Controller Test', () => {
+describe('Settings Controller Test', () => {
   let testing: BridgeServerTestingApp;
   let startedPostgresContainer: StartedPostgreSqlContainer;
   let config: ConfigService;
@@ -15,8 +15,8 @@ describe.only('Settings Controller Test', () => {
     testing = new BridgeServerTestingApp(
       TestingModule.register(
         buildTestConfig({
-          defichain: { transferFee: '0.003', supportedTokens: 'BTC,ETH' },
-          ethereum: { transferFee: '0', supportedTokens: 'WBTC,ETH' },
+          defichain: { transferFee: '0.003', supportedTokens: 'BTC,ETH,USDT,USDC' },
+          ethereum: { transferFee: '0', supportedTokens: 'WBTC,ETH,USDT,USDC' },
           startedPostgresContainer,
         }),
       ),
