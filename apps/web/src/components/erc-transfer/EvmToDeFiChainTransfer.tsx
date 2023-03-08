@@ -46,7 +46,7 @@ export default function EvmToDeFiChainTransfer({
     address: Erc20Tokens[data.from.tokenName].address,
     abi: erc20ABI,
   };
-  const { data: readTokenData } = useContractReads({
+  const { data: readTokenData, refetch: refetchTokenData } = useContractReads({
     contracts: [
       {
         ...erc20TokenContract,
@@ -59,7 +59,6 @@ export default function EvmToDeFiChainTransfer({
       },
     ],
     enabled: !sendingFromETH,
-    watch: true,
   });
 
   const tokenDecimals = readTokenData?.[1] ?? "gwei";
@@ -163,10 +162,14 @@ export default function EvmToDeFiChainTransfer({
     }
   }, [isApproveTxnSuccess, hasEnoughAllowance, refetchedBridgeFn]);
 
-  const handleInitiateTransfer = () => {
+  const handleInitiateTransfer = async () => {
     setErrorMessage(undefined);
     setEventError(undefined);
     setHasPendingTx(true);
+
+    // Refetch token allowance
+    await refetchTokenData();
+
     if (requiresApproval) {
       writeApprove?.();
       return;
