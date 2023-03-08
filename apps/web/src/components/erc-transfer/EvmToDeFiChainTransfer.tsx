@@ -62,10 +62,11 @@ export default function EvmToDeFiChainTransfer({
   });
 
   const tokenDecimals = readTokenData?.[1] ?? "gwei";
-  const tokenAllowance = utils.formatEther(
-    readTokenData?.[0] ?? ethers.BigNumber.from(0)
+  const tokenAllowance = readTokenData?.[0] ?? ethers.BigNumber.from(0);
+
+  const hasEnoughAllowance = tokenAllowance.gte(
+    utils.parseUnits(data.to.amount.toFixed(), tokenDecimals)
   );
-  const hasEnoughAllowance = data.to.amount.lte(tokenAllowance);
 
   const {
     isBridgeTxnLoading,
@@ -171,10 +172,11 @@ export default function EvmToDeFiChainTransfer({
     if (!bridgingETH) {
       // Refetch token allowance
       const { data: refetchedData } = await refetchTokenData();
-      const latestTokenAllowance = utils.formatEther(
-        refetchedData?.[0] ?? ethers.BigNumber.from(0)
+      const latestTokenAllowance = refetchedData?.[0];
+      const latestTokenDecimals = refetchedData?.[1];
+      const hasInsufficientAllowance = latestTokenAllowance?.lt(
+        utils.parseUnits(data.to.amount.toFixed(), latestTokenDecimals)
       );
-      const hasInsufficientAllowance = data.to.amount.gt(latestTokenAllowance);
       if (hasInsufficientAllowance) {
         setRequiresApproval(true);
         writeApprove?.();
