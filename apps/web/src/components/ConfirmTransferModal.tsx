@@ -135,7 +135,7 @@ export default function ConfirmTransferModal({
       networkName: Network[selectedNetworkA.name],
       networkIcon: selectedNetworkA.icon,
       tokenName: selectedTokensA.tokenA.name,
-      tokenSymbol: selectedTokensA.tokenA.name,
+      tokenSymbol: selectedTokensA.tokenA.symbol,
       tokenIcon: selectedTokensA.tokenA.icon,
       amount: new BigNumber(amount).negated(),
     },
