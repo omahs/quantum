@@ -123,12 +123,13 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-        <script
-          async
-          defer
-          type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `
+        {process.env.NODE_ENV !== "development" && (
+          <script
+            async
+            defer
+            type="text/javascript"
+            dangerouslySetInnerHTML={{
+              __html: `
               !function(a,b,c,d,e,f,g,h){a.RaygunObject=e,a[e]=a[e]||function(){
               (a[e].o=a[e].o||[]).push(arguments)},f=b.createElement(c),g=b.getElementsByTagName(c)[0],
               f.async=1,f.src=d,g.parentNode.insertBefore(f,g),h=a.onerror,a.onerror=function(b,c,d,f,g){
@@ -137,8 +138,9 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
 
               rg4js('apiKey', 'xgLWC9Tpzmeo88rziVxnHA');
               rg4js('enableCrashReporting', true);`,
-          }}
-        />
+            }}
+          />
+        )}
       </Head>
 
       <WagmiConfig client={client}>
