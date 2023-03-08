@@ -422,33 +422,35 @@ export default function BridgeForm({
           showAmountsBtn={selectedNetworkA.name === Network.Ethereum}
           disabled={hasUnconfirmedTxn}
         />
-        <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2 items-center">
-          {amountErr ? (
-            <span className="text-xs lg:text-sm text-error">{amountErr}</span>
-          ) : (
-            selectedNetworkA.name === Network.Ethereum && (
-              <>
-                <span className="text-xs lg:text-sm text-dark-700">
-                  Available:
-                </span>
-                <NumericFormat
-                  className="text-xs lg:text-sm text-dark-900 ml-1"
-                  value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
-                  decimalScale={5}
-                  thousandSeparator
-                  suffix={` ${selectedTokensA.tokenA.name}`}
-                />
-                <FiRefreshCw
-                  onClick={onRefreshEvmBalance}
-                  size={12}
-                  className={clsx("text-dark-900 ml-2 cursor-pointer", {
-                    "animate-spin": isEvmBalanceFetching,
-                  })}
-                />
-              </>
-            )
-          )}
-        </div>
+        {isConnected && (
+          <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2 items-center">
+            {amountErr ? (
+              <span className="text-xs lg:text-sm text-error">{amountErr}</span>
+            ) : (
+              selectedNetworkA.name === Network.Ethereum && (
+                <>
+                  <span className="text-xs lg:text-sm text-dark-700">
+                    Available:
+                  </span>
+                  <NumericFormat
+                    className="text-xs lg:text-sm text-dark-900 ml-1"
+                    value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
+                    decimalScale={5}
+                    thousandSeparator
+                    suffix={` ${selectedTokensA.tokenA.name}`}
+                  />
+                  <FiRefreshCw
+                    onClick={onRefreshEvmBalance}
+                    size={12}
+                    className={clsx("text-dark-900 ml-2 cursor-pointer", {
+                      "animate-spin": isEvmBalanceFetching,
+                    })}
+                  />
+                </>
+              )
+            )}
+          </div>
+        )}
       </div>
       <SwitchButton onClick={switchNetwork} disabled={hasUnconfirmedTxn} />
 
