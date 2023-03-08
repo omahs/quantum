@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
 import { SupportedDFCTokenSymbols, SupportedEVMTokenSymbols } from 'src/AppConfig';
 
 import { SettingsModel } from './SettingsInterface';
@@ -8,6 +9,7 @@ import { SettingsModel } from './SettingsInterface';
 export class SettingsController {
   constructor(private configService: ConfigService) {}
 
+  @SkipThrottle()
   @Get()
   public getSettings(): SettingsModel {
     const supportedDfcTokens = this.configService.getOrThrow('defichain.supportedTokens');
