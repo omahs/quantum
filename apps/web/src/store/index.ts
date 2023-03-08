@@ -20,8 +20,8 @@ const useBalanceDfcMutation = () =>
   useWrappedMutation(bridgeApi.useBalanceDfcMutation);
 const useLazyBridgeStatusQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeStatusQuery, true);
-const useBridgeVersionQuery = () =>
-  useWrappedQuery(bridgeApi.useBridgeVersionQuery);
+const useBridgeVersionQuery = (args?: Parameters<typeof useWrappedQuery>[1]) =>
+  useWrappedQuery(bridgeApi.useBridgeVersionQuery, args);
 const useLazyBridgeSettingsQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeSettingsQuery);
 
