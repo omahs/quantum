@@ -401,8 +401,8 @@ export default function BridgeForm({
                 </span>
                 <NumericFormat
                   className="text-xs lg:text-sm text-dark-900 ml-1"
-                  value={maxAmount}
-                  decimalScale={8}
+                  value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
+                  decimalScale={5}
                   thousandSeparator
                   suffix={` ${selectedTokensA.tokenA.name}`}
                 />
