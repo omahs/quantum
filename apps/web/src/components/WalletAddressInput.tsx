@@ -17,6 +17,7 @@ import { Network } from "types";
 import Tooltip from "./commons/Tooltip";
 import EnvironmentNetworkSwitch from "./EnvironmentNetworkSwitch";
 import { ETHEREUM_MAINNET_ID } from "../constants";
+import MetaMaskIconSmall from "./icons/MetaMaskIconSmall";
 
 interface Props {
   blockchain: Network;
@@ -82,7 +83,7 @@ export default function WalletAddressInput({
   const [error, setError] = useState({ message: "", isError: false });
   const [copiedFromClipboard, setCopiedFromClipboard] = useState(false);
 
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const { networkEnv } = useNetworkEnvironmentContext();
   const { isMobile } = useResponsive();
@@ -262,7 +263,7 @@ export default function WalletAddressInput({
           data-testid="receiver-address"
           ref={textAreaRef}
           className={clsx(
-            `w-full max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 focus:outline-none py-0.5`,
+            `max-h-36 grow resize-none bg-transparent text-sm tracking-[0.01em] text-dark-1000 focus:outline-none py-0.5`,
             { hidden: showVerifiedBadge },
             isFocused
               ? "placeholder:text-dark-300"
@@ -293,6 +294,27 @@ export default function WalletAddressInput({
               handleFocusWithCursor();
             }}
           />
+        )}
+
+        {!showVerifiedBadge && blockchain === Network.Ethereum && (
+          <button
+            type="button"
+            onClick={() => {
+              if (address) onAddressInputChange(address);
+            }}
+            className={clsx(
+              "flex items-center lg:min-w-[130px] font-bold text-dark-800 text-2xs rounded-md h-[28px] px-3 border-[0.5px]",
+              "border-dark-200",
+              "active:border-dark-500 active:opacity-70",
+              "hover:border-dark-500"
+            )}
+          >
+            <MetaMaskIconSmall />
+            <span className="ml-1.5">
+              <span className="hidden lg:block">USE ADDRESS</span>
+              <span className="block lg:hidden">USE</span>
+            </span>
+          </button>
         )}
 
         {readOnly && (
