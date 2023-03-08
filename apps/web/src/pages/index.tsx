@@ -9,7 +9,7 @@ import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
 
-function Home() {
+function Home({ isLoaded }) {
   const { ethTxnStatus, isApiSuccess } = useWatchEthTxn();
   const { txnHash, setStorage } = useStorageContext();
   const { UNCONFIRMED_TXN_HASH_KEY, UNSENT_FUND_TXN_HASH_KEY } =
@@ -75,12 +75,14 @@ function Home() {
               isApiSuccess={isApiSuccess || txnHash.reverted !== undefined}
             />
           )}
-          <BridgeForm
-            hasPendingTxn={
-              txnHash.unconfirmed !== undefined ||
-              txnHash.unsentFund !== undefined
-            }
-          />
+          {isLoaded && (
+            <BridgeForm
+              hasPendingTxn={
+                txnHash.unconfirmed !== undefined ||
+                txnHash.unsentFund !== undefined
+              }
+            />
+          )}
         </div>
       </div>
       <div className="md:hidden mt-6 mb-12 mx-6">
