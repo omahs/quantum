@@ -74,25 +74,26 @@ export default function StepLastClaim({
   const parsedAmount = isTokenETH
     ? utils.parseEther(amountLessFee)
     : utils.parseUnits(amountLessFee, tokenDecimals);
-  const { config: bridgeConfig } = usePrepareContractWrite({
-    address: BridgeV1.address,
-    abi: BridgeV1.abi,
-    functionName: "claimFund",
-    args: [
-      data.to.address,
-      parsedAmount,
-      signedClaim.nonce,
-      signedClaim.deadline,
-      tokenAddress,
-      signedClaim.signature,
-    ],
-    onError: () => {
-      if (!isClaimExpired && isContractFetched) {
-        setError(CLAIM_INPUT_ERROR);
-      }
-    },
-    enabled: !isContractFetched,
-  });
+  const { config: bridgeConfig, refetch: refetchClaimConfig } =
+    usePrepareContractWrite({
+      address: BridgeV1.address,
+      abi: BridgeV1.abi,
+      functionName: "claimFund",
+      args: [
+        data.to.address,
+        parsedAmount,
+        signedClaim.nonce,
+        signedClaim.deadline,
+        tokenAddress,
+        signedClaim.signature,
+      ],
+      onError: () => {
+        if (!isClaimExpired && isContractFetched) {
+          setError(CLAIM_INPUT_ERROR);
+        }
+      },
+      enabled: !isContractFetched,
+    });
 
   // Write contract for `claimFund` function
   const {
@@ -127,12 +128,18 @@ export default function StepLastClaim({
 
   useEffect(() => {
     checkBalance();
+    refetchClaimConfig();
   }, []);
+
+  useEffect(() => {
+    refetchClaimConfig();
+  }, [isContractFetched]);
 
   const handleOnClaim = async () => {
     setError(undefined);
     setShowLoader(true);
     if (!write) {
+      refetchClaimConfig();
       checkBalance();
       setTimeout(async () => {
         if (isBalanceSufficient) {
