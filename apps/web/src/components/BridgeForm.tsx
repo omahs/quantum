@@ -46,6 +46,7 @@ function SwitchButton({
       <div className="mt-5 flex w-full flex-1 justify-between border-t border-dark-300 border-opacity-50" />
       <Tooltip content="Switch source" containerClass="py-0">
         <button
+          title="switch-source-button"
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -138,8 +139,11 @@ export default function BridgeForm({
   useEffect(() => {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = tokenBalances[key];
+    if (balance === null) {
+      setIsBalanceSufficient(false);
+    }
     if (balance) {
-      const isSufficientBalance = new BigNumber(balance).isGreaterThan(
+      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
         amount !== "" ? amount : 0
       );
       setIsBalanceSufficient(isSufficientBalance);
@@ -176,7 +180,7 @@ export default function BridgeForm({
 
   const onInputChange = (value: string): void => {
     const numberOnlyRegex = /^\d*\.?\d*$/; // regex to allow only number
-    const maxDpRegex = /^\d*(\.\d{0,6})?$/; // regex to allow only max of 6 dp
+    const maxDpRegex = /^\d*(\.\d{0,5})?$/; // regex to allow only max of 5 dp
 
     if (
       value === "" ||
@@ -398,8 +402,8 @@ export default function BridgeForm({
                 </span>
                 <NumericFormat
                   className="text-xs lg:text-sm text-dark-900 ml-1"
-                  value={maxAmount}
-                  decimalScale={8}
+                  value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
+                  decimalScale={5}
                   thousandSeparator
                   suffix={` ${selectedTokensA.tokenA.name}`}
                 />

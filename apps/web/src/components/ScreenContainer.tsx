@@ -39,10 +39,10 @@ export default function ScreenContainer({
   const bgPicture =
     !isBridgeUp || router.pathname === "/404"
       ? "bg-[url('/background/error_mobile.png')] md:bg-[url('/background/error_tablet.png')] lg:bg-[url('/background/error_desktop.png')]"
-      : "bg-[url('/background/mobile.png')] md:bg-[url('/background/tablet.png')] lg:bg-[url('/background/desktop.png')]";
+      : "bg-[url('/background/mobile.webp')] md:bg-[url('/background/tablet.webp')] lg:bg-[url('/background/desktop.webp')]";
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen flex flex-col">
       <Header />
       <div className="relative z-[1] flex-grow md:pb-12 lg:pb-20">
         {isLoaded ? (

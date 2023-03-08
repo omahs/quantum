@@ -87,15 +87,25 @@ export default function Footer() {
           </div>
           <div className="flex flex-row justify-between pt-[19px] md:pt-[26px] lg:pt-2">
             <div className="flex flex-col md:flex-row md:items-end">
-              <div className="pb-2 md:pb-0 pr-2">
+              <a
+                href="https://birthday.dev"
+                target="_blank"
+                rel="noreferrer"
+                className="pb-2 md:pb-0 pr-2"
+              >
                 &copy; {new Date().getFullYear()} Birthday Research
-              </div>
+              </a>
               <Socials items={BirthdayResearchSocialItems} />
             </div>
             <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0">
-              <div className="pb-2 md:pl-2 md:pb-0 lg:relative lg:bottom-[28px] lg:h-0">
+              <a
+                href="https://defichain.com"
+                target="_blank"
+                rel="noreferrer"
+                className="pb-2 md:pl-2 md:pb-0 lg:relative lg:bottom-[28px] lg:h-0"
+              >
                 &copy; DeFiChain
-              </div>
+              </a>
               <Socials items={DeFiChainSocialItems} />
             </div>
           </div>

@@ -30,6 +30,7 @@ export default function Tooltip({
   return (
     <div
       role="button"
+      aria-label="tooltip-button"
       className={clsx(
         "relative inline-block rounded-full p-1 focus-visible:outline-none",
         containerClass

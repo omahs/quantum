@@ -67,6 +67,7 @@ export default function EvmToDeFiChainTransfer({
   const tokenAllowance = utils.formatEther(
     readTokenData?.[0] ?? ethers.BigNumber.from(0)
   );
+  const hasEnoughAllowance = data.to.amount.lte(tokenAllowance);
 
   const {
     isBridgeTxnLoading,
@@ -79,6 +80,7 @@ export default function EvmToDeFiChainTransfer({
     transferAmount: data.to.amount,
     tokenName: data.from.tokenName as Erc20Token,
     tokenDecimals,
+    hasEnoughAllowance,
     onBridgeTxnSettled: () => setHasPendingTx(false),
     setEventError,
   });
@@ -107,15 +109,14 @@ export default function EvmToDeFiChainTransfer({
 
   // Requires approval for more allowance
   useEffect(() => {
-    const hasInsufficientAllowance = data.to.amount.gt(tokenAllowance);
     if (
       data.from.tokenSymbol !== ETHEREUM_SYMBOL && // ETH doesn't require approval
       (eventError?.customErrorDisplay === "InsufficientAllowanceError" ||
-        hasInsufficientAllowance)
+        !hasEnoughAllowance)
     ) {
       setRequiresApproval(true);
     }
-  }, [eventError?.customErrorDisplay, tokenAllowance]);
+  }, [eventError?.customErrorDisplay, hasEnoughAllowance]);
 
   // Consolidate all the possible status of the txn before its tx hash is created
   useEffect(() => {
@@ -151,7 +152,6 @@ export default function EvmToDeFiChainTransfer({
   ]);
 
   useEffect(() => {
-    const hasEnoughAllowance = data.to.amount.lte(tokenAllowance);
     const successfulApproval = isApproveTxnSuccess && refetchedBridgeFn;
 
     if (successfulApproval && hasEnoughAllowance) {
@@ -162,7 +162,7 @@ export default function EvmToDeFiChainTransfer({
     } else if (hasEnoughAllowance) {
       setRequiresApproval(false);
     }
-  }, [isApproveTxnSuccess, tokenAllowance, refetchedBridgeFn]);
+  }, [isApproveTxnSuccess, hasEnoughAllowance, refetchedBridgeFn]);
 
   const handleInitiateTransfer = () => {
     setErrorMessage(undefined);
