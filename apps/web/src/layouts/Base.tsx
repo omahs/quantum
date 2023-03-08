@@ -124,8 +124,8 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
           href="/favicon-16x16.png"
         />
         <script
-          async={true}
-          defer={true}
+          async
+          defer
           type="text/javascript"
           dangerouslySetInnerHTML={{
             __html: `
