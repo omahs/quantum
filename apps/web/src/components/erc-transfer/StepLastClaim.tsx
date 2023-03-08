@@ -52,13 +52,15 @@ export default function StepLastClaim({
   const { setStorage } = useStorageContext();
 
   const isTokenETH = data.to.tokenSymbol === ETHEREUM_SYMBOL;
-  const { data: tokenDecimals } = useContractRead({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: "decimals",
-    cacheOnBlock: true,
-    enabled: !isTokenETH, // skip native ETH
-  });
+  const { data: tokenDecimals, isFetched: isContractFetched } = useContractRead(
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: "decimals",
+      cacheOnBlock: true,
+      enabled: !isTokenETH, // skip native ETH
+    }
+  );
 
   const [isClaimExpired, setIsClaimExpired] = useState(false);
   const { timeRemaining } = useTimeCounter(
@@ -85,8 +87,11 @@ export default function StepLastClaim({
       signedClaim.signature,
     ],
     onError: () => {
-      if (!isClaimExpired) setError(CLAIM_INPUT_ERROR);
+      if (!isClaimExpired && isContractFetched) {
+        setError(CLAIM_INPUT_ERROR);
+      }
     },
+    enabled: !isContractFetched,
   });
 
   // Write contract for `claimFund` function
