@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
 import { BsMedium } from "react-icons/bs";
 import Image from "next/image";
-import { useLazyBridgeVersionQuery } from "store";
+import { useBridgeVersionQuery } from "store";
 import Socials from "./commons/Socials";
 
 const DeFiChainSocialItems = [
@@ -47,18 +46,7 @@ const BirthdayResearchSocialItems = [
 ];
 
 export default function Footer() {
-  const [version, setVersion] = useState("0.0.0");
-
-  const [trigger] = useLazyBridgeVersionQuery();
-
-  useEffect(() => {
-    async function getBridgeVersion() {
-      const { data } = await trigger({});
-      if (data?.v) setVersion(data.v);
-    }
-
-    getBridgeVersion();
-  }, []);
+  const { data } = useBridgeVersionQuery();
 
   return (
     <footer
@@ -80,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="pl-1 flex-row justify-between">
-          <div className="font-semibold">Version {version}</div>
+          <div className="font-semibold">Version {data?.v ?? "0.0.0"}</div>
           <div>
             Quantum is a proud development of Birthday Research — the blockchain
             R&D arm of Cake DeFi.
