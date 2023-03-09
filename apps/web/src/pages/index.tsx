@@ -90,4 +90,27 @@ function Home() {
   );
 }
 
+export async function getServerSideProps() {
+  let isBridgeUp = true;
+
+  return fetch(`https://wallet.defichain.com/api/v0/bridge/status`)
+    .then((res) => Promise.all([res.json(), res.status]))
+    .then(([data, statusCode]) => {
+      if (statusCode === 200) {
+        isBridgeUp = data?.isUp === false;
+      } else {
+        console.error("Get bridge status API error.");
+      }
+      return {
+        props: { isBridgeUp }, // will be passed to the page component as props
+      };
+    })
+    .catch((e) => {
+      console.error(`${e}`);
+      return {
+        props: { isBridgeUp }, // will be passed to the page component as props
+      };
+    });
+}
+
 export default Home;

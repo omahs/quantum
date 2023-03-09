@@ -61,7 +61,10 @@ const client = createClient(
   })
 );
 
-function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
+function Base({
+  children,
+  isBridgeUp,
+}: PropsWithChildren<any>): JSX.Element | null {
   const initialTheme = getInitialTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -159,7 +162,9 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                         <ContractProvider>
                           <ThemeProvider theme={initialTheme}>
                             <StorageProvider>
-                              <ScreenContainer>{children}</ScreenContainer>
+                              <ScreenContainer isBridgeUp={isBridgeUp}>
+                                {children}
+                              </ScreenContainer>
                             </StorageProvider>
                           </ThemeProvider>
                         </ContractProvider>
