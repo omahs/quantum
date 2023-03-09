@@ -143,7 +143,6 @@ function Base({
               f.async=1,f.src=d,g.parentNode.insertBefore(f,g),h=a.onerror,a.onerror=function(b,c,d,f,g){
               h&&h(b,c,d,f,g),g||(g=new Error(b)),a[e].q=a[e].q||[],a[e].q.push({
               e:g})}}(window,document,"script","//cdn.raygun.io/raygun4js/raygun.min.js","rg4js");
-
               rg4js('apiKey', 'xgLWC9Tpzmeo88rziVxnHA');
               rg4js('enableCrashReporting', true);`,
             }}
@@ -155,10 +154,10 @@ function Base({
         <WagmiConfig client={client}>
           <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
             {mounted && (
-              <NetworkProvider>
-                <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-                  <WhaleProvider>
-                    <NetworkEnvironmentProvider>
+              <NetworkEnvironmentProvider>
+                <NetworkProvider>
+                  <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+                    <WhaleProvider>
                       <TokensProvider>
                         <DeFiScanProvider>
                           <ContractProvider>
@@ -172,10 +171,10 @@ function Base({
                           </ContractProvider>
                         </DeFiScanProvider>
                       </TokensProvider>
-                    </NetworkEnvironmentProvider>
-                  </WhaleProvider>
-                </WhaleNetworkProvider>
-              </NetworkProvider>
+                    </WhaleProvider>
+                  </WhaleNetworkProvider>
+                </NetworkProvider>
+              </NetworkEnvironmentProvider>
             )}
           </ConnectKitProvider>
         </WagmiConfig>
