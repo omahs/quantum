@@ -97,9 +97,7 @@ export async function getServerSideProps() {
     .then((res) => Promise.all([res.json(), res.status]))
     .then(([data, statusCode]) => {
       if (statusCode === 200) {
-        if (data?.isUp === false) {
-          isBridgeUp = false;
-        }
+        isBridgeUp = data?.isUp === false;
       } else {
         console.error("Get bridge status API error.");
       }
