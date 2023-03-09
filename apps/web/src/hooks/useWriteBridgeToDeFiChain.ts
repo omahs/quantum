@@ -26,6 +26,7 @@ interface BridgeToDeFiChainI {
   transferAmount: BigNumber;
   tokenName: Erc20Token;
   tokenDecimals: number | "gwei";
+  hasEnoughAllowance: boolean;
   onBridgeTxnSettled: () => void;
   setEventError: (error: EventErrorI | undefined) => void;
 }
@@ -35,6 +36,7 @@ export default function useWriteBridgeToDeFiChain({
   transferAmount,
   tokenName,
   tokenDecimals,
+  hasEnoughAllowance,
   onBridgeTxnSettled,
   setEventError,
 }: BridgeToDeFiChainI) {
@@ -43,7 +45,13 @@ export default function useWriteBridgeToDeFiChain({
 
   const handlePrepContractError = (err) => {
     let customErrorDisplay: EventErrorI["customErrorDisplay"];
-    if (err.message.includes("insufficient allowance")) {
+    const errorMsg = err.message?.toLowerCase() ?? "";
+    const testnetAllowanceErr = errorMsg.includes("insufficient allowance");
+    const mainnetAllowanceErr =
+      errorMsg.includes("safeerc20: low-level call failed") &&
+      !hasEnoughAllowance &&
+      !sendingFromETH;
+    if (testnetAllowanceErr || mainnetAllowanceErr) {
       // Need to request approval from user - Insufficient allowance
       customErrorDisplay = "InsufficientAllowanceError";
     }

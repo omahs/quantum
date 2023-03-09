@@ -38,7 +38,7 @@ export default function EvmToDeFiChainTransfer({
   const { isMobile } = useResponsive();
   const { networkEnv } = useNetworkEnvironmentContext();
   const { BridgeV1, Erc20Tokens, ExplorerURL } = useContractContext();
-  const sendingFromETH = data.from.tokenName === ETHEREUM_SYMBOL;
+  const bridgingETH = data.from.tokenSymbol === ETHEREUM_SYMBOL;
   const { setStorage } = useStorageContext();
 
   // Read details from token contract
@@ -46,7 +46,7 @@ export default function EvmToDeFiChainTransfer({
     address: Erc20Tokens[data.from.tokenName].address,
     abi: erc20ABI,
   };
-  const { data: readTokenData } = useContractReads({
+  const { data: readTokenData, refetch: refetchTokenData } = useContractReads({
     contracts: [
       {
         ...erc20TokenContract,
@@ -58,13 +58,14 @@ export default function EvmToDeFiChainTransfer({
         functionName: "decimals",
       },
     ],
-    enabled: !sendingFromETH,
-    watch: true,
+    enabled: !bridgingETH,
   });
 
   const tokenDecimals = readTokenData?.[1] ?? "gwei";
-  const tokenAllowance = utils.formatEther(
-    readTokenData?.[0] ?? ethers.BigNumber.from(0)
+  const tokenAllowance = readTokenData?.[0] ?? ethers.BigNumber.from(0);
+
+  const hasEnoughAllowance = tokenAllowance.gte(
+    utils.parseUnits(data.to.amount.toFixed(), tokenDecimals)
   );
 
   const {
@@ -78,6 +79,7 @@ export default function EvmToDeFiChainTransfer({
     transferAmount: data.to.amount,
     tokenName: data.from.tokenName as Erc20Token,
     tokenDecimals,
+    hasEnoughAllowance,
     onBridgeTxnSettled: () => setHasPendingTx(false),
     setEventError,
   });
@@ -91,6 +93,7 @@ export default function EvmToDeFiChainTransfer({
     tokenName: data.from.tokenName as Erc20Token,
     setErrorMessage,
     refetchBridge,
+    refetchTokenData,
   });
 
   useEffect(() => {
@@ -106,15 +109,14 @@ export default function EvmToDeFiChainTransfer({
 
   // Requires approval for more allowance
   useEffect(() => {
-    const hasInsufficientAllowance = data.to.amount.gt(tokenAllowance);
     if (
-      data.from.tokenSymbol !== ETHEREUM_SYMBOL && // ETH doesn't require approval
+      !bridgingETH && // ETH doesn't require approval
       (eventError?.customErrorDisplay === "InsufficientAllowanceError" ||
-        hasInsufficientAllowance)
+        !hasEnoughAllowance)
     ) {
       setRequiresApproval(true);
     }
-  }, [eventError?.customErrorDisplay, tokenAllowance]);
+  }, [eventError?.customErrorDisplay, hasEnoughAllowance]);
 
   // Consolidate all the possible status of the txn before its tx hash is created
   useEffect(() => {
@@ -150,7 +152,6 @@ export default function EvmToDeFiChainTransfer({
   ]);
 
   useEffect(() => {
-    const hasEnoughAllowance = data.to.amount.lte(tokenAllowance);
     const successfulApproval = isApproveTxnSuccess && refetchedBridgeFn;
 
     if (successfulApproval && hasEnoughAllowance) {
@@ -161,16 +162,28 @@ export default function EvmToDeFiChainTransfer({
     } else if (hasEnoughAllowance) {
       setRequiresApproval(false);
     }
-  }, [isApproveTxnSuccess, tokenAllowance, refetchedBridgeFn]);
+  }, [isApproveTxnSuccess, hasEnoughAllowance, refetchedBridgeFn]);
 
-  const handleInitiateTransfer = () => {
+  const handleInitiateTransfer = async () => {
     setErrorMessage(undefined);
     setEventError(undefined);
     setHasPendingTx(true);
-    if (requiresApproval) {
-      writeApprove?.();
-      return;
+
+    if (!bridgingETH) {
+      // Refetch token allowance
+      const { data: refetchedData } = await refetchTokenData();
+      const latestTokenAllowance = refetchedData?.[0];
+      const latestTokenDecimals = refetchedData?.[1];
+      const hasInsufficientAllowance = latestTokenAllowance?.lt(
+        utils.parseUnits(data.to.amount.toFixed(), latestTokenDecimals)
+      );
+      if (hasInsufficientAllowance) {
+        setRequiresApproval(true);
+        writeApprove?.();
+        return;
+      }
     }
+
     // If no approval required, perform bridge function directly
     writeBridgeToDeFiChain?.();
   };

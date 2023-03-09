@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { FiAlertCircle, FiCheck } from "react-icons/fi";
 import { utils } from "ethers";
 import {
+  erc20ABI,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -22,6 +24,7 @@ import useCheckBalance from "@hooks/useCheckBalance";
 import useTransferFee from "@hooks/useTransferFee";
 import useTimeCounter from "@hooks/useTimeCounter";
 import { getDuration } from "@utils/durationHelper";
+import { ETHEREUM_SYMBOL } from "../../constants";
 
 const CLAIM_INPUT_ERROR =
   "Check your connection and try again. If the error persists get in touch with us.";
@@ -50,6 +53,17 @@ export default function StepLastClaim({
   const tokenAddress = Erc20Tokens[data.to.tokenName].address;
   const { setStorage } = useStorageContext();
 
+  const isTokenETH = data.to.tokenSymbol === ETHEREUM_SYMBOL;
+  const { data: tokenDecimals, isFetched: isContractFetched } = useContractRead(
+    {
+      address: tokenAddress,
+      abi: erc20ABI,
+      functionName: "decimals",
+      cacheOnBlock: true,
+      enabled: !isTokenETH, // skip native ETH
+    }
+  );
+
   const [isClaimExpired, setIsClaimExpired] = useState(false);
   const { timeRemaining } = useTimeCounter(
     dayjs(new Date(signedClaim.deadline * 1000)).diff(dayjs()),
@@ -58,23 +72,30 @@ export default function StepLastClaim({
 
   // Prepare write contract for `claimFund` function
   const [fee] = useTransferFee(data.to.amount.toString(), selectedNetworkA);
-  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0);
-  const { config: bridgeConfig } = usePrepareContractWrite({
-    address: BridgeV1.address,
-    abi: BridgeV1.abi,
-    functionName: "claimFund",
-    args: [
-      data.to.address,
-      utils.parseEther(amountLessFee.toFixed()),
-      signedClaim.nonce,
-      signedClaim.deadline,
-      tokenAddress,
-      signedClaim.signature,
-    ],
-    onError: () => {
-      if (!isClaimExpired) setError(CLAIM_INPUT_ERROR);
-    },
-  });
+  const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0).toFixed();
+  const parsedAmount = isTokenETH
+    ? utils.parseEther(amountLessFee)
+    : utils.parseUnits(amountLessFee, tokenDecimals);
+  const { config: bridgeConfig, refetch: refetchClaimConfig } =
+    usePrepareContractWrite({
+      address: BridgeV1.address,
+      abi: BridgeV1.abi,
+      functionName: "claimFund",
+      args: [
+        data.to.address,
+        parsedAmount,
+        signedClaim.nonce,
+        signedClaim.deadline,
+        tokenAddress,
+        signedClaim.signature,
+      ],
+      onError: () => {
+        if (!isClaimExpired && isContractFetched) {
+          setError(CLAIM_INPUT_ERROR);
+        }
+      },
+      enabled: !isContractFetched,
+    });
 
   // Write contract for `claimFund` function
   const {
@@ -95,12 +116,12 @@ export default function StepLastClaim({
 
   const { getBalance } = useCheckBalance();
   const isSufficientBalance = (balance): boolean =>
-    new BigNumber(balance).isGreaterThan(data.to.amount);
+    new BigNumber(balance).isGreaterThanOrEqualTo(data.to.amount);
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(false);
 
   async function checkBalance() {
     const balance = await getBalance(data.to.tokenSymbol);
-    const isSufficient = isSufficientBalance(balance);
+    const isSufficient = balance !== null && isSufficientBalance(balance);
     if (!isSufficient) {
       setError(INSUFFICIENT_FUND_ERROR);
     }
@@ -109,12 +130,18 @@ export default function StepLastClaim({
 
   useEffect(() => {
     checkBalance();
+    refetchClaimConfig();
   }, []);
+
+  useEffect(() => {
+    refetchClaimConfig();
+  }, [isContractFetched]);
 
   const handleOnClaim = async () => {
     setError(undefined);
     setShowLoader(true);
     if (!write) {
+      refetchClaimConfig();
       checkBalance();
       setTimeout(async () => {
         if (isBalanceSufficient) {

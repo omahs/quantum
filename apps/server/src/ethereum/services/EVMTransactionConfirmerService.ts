@@ -6,9 +6,9 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { TokenSymbol } from 'src/defichain/model/VerifyDto';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
+import { TokenSymbol } from '../../defichain/model/VerifyDto';
 import { WhaleApiClientProvider } from '../../defichain/providers/WhaleApiClientProvider';
 import { SendService } from '../../defichain/services/SendService';
 import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
@@ -161,9 +161,21 @@ export class EVMTransactionConfirmerService {
           { name: 'tokenAddress', type: 'address' },
         ],
       };
+
+      // Parse amount based on token symbol
+      let parsedAmount: EthBigNumber;
+      if (tokenSymbol === TokenSymbol.ETH) {
+        parsedAmount = ethers.utils.parseEther(amount);
+      } else {
+        // ERC20 token
+        const tokenContract = new ethers.Contract(tokenAddress, ERC20__factory.abi, this.ethersRpcProvider);
+        const tokenDecimalPlaces = await tokenContract.decimals();
+        parsedAmount = ethers.utils.parseUnits(amount, tokenDecimalPlaces);
+      }
+
       const data = {
         to: receiverAddress,
-        amount: ethers.utils.parseEther(amount),
+        amount: parsedAmount,
         nonce,
         deadline,
         tokenAddress,
@@ -265,6 +277,8 @@ export class EVMTransactionConfirmerService {
           id: txDetails.id,
         },
         data: {
+          amount: amountLessFee.toFixed(8),
+          tokenSymbol: sendTxPayload.symbol,
           sendTransactionHash,
         },
       });
