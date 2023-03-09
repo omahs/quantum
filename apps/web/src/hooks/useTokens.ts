@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NetworkOptionsI, TokensI } from "types";
+import { NetworkOptionsI, TokensI, Network } from "types";
 import { useNetworkContext } from "@contexts/NetworkContext";
 
 export default function useTokens() {
@@ -16,6 +16,9 @@ export default function useTokens() {
   const [selectedTokensB, setSelectedTokensB] = useState<TokensI>(
     defaultNetworkB.tokens[0]
   );
+
+  const [isSendingFromEthNetwork, setIsSendingFromEthNetwork] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const networkB = filteredNetwork.find(
@@ -52,7 +55,9 @@ export default function useTokens() {
     resetNetworkSelection();
   }, [filteredNetwork]);
 
-  useEffect(() => {}, [selectedNetworkA]);
+  useEffect(() => {
+    setIsSendingFromEthNetwork(selectedNetworkA.name === Network.Ethereum);
+  }, [selectedNetworkA]);
 
   return {
     selectedNetworkA,
@@ -64,5 +69,6 @@ export default function useTokens() {
     setSelectedNetworkB,
     setSelectedTokensB,
     resetNetworkSelection,
+    isSendingFromEthNetwork,
   };
 }

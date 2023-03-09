@@ -86,6 +86,7 @@ export default function BridgeForm({
     setSelectedNetworkB,
     setSelectedTokensB,
     resetNetworkSelection,
+    isSendingFromEthNetwork,
   } = useTokens();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
@@ -108,7 +109,7 @@ export default function BridgeForm({
   const [fee, feeSymbol] = useTransferFee(amount, selectedNetworkA);
 
   const { address, isConnected } = useAccount();
-  const isSendingFromEthNetwork = selectedNetworkA.name === Network.Ethereum;
+
   const {
     data: evmBalance,
     refetch: refetchEvmBalance,
