@@ -126,8 +126,8 @@ export default function StepLastClaim({
     setError(undefined);
     setShowLoader(true);
 
-    const { isSuccess } = await refetchClaimConfig();
-    if (isSuccess && writeClaimTxn) {
+    const { isSuccess: isSuccessRefetch } = await refetchClaimConfig();
+    if (isSuccessRefetch && writeClaimTxn) {
       writeClaimTxn();
       return;
     }
