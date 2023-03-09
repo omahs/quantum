@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
 
 import { SemaphoreCache } from '../libs/caches/SemaphoreCache';
 import { VersionModel } from './VersionInterface';
@@ -8,6 +9,7 @@ import { VersionModel } from './VersionInterface';
 export class VersionController {
   constructor(private configService: ConfigService, protected readonly cache: SemaphoreCache) {}
 
+  @SkipThrottle()
   @Get()
   public async getVersion(): Promise<VersionModel> {
     const key = `APP_VERSION`;

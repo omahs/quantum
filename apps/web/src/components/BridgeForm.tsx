@@ -106,20 +106,19 @@ export default function BridgeForm({
   const [fee, feeSymbol] = useTransferFee(amount);
 
   const { address, isConnected } = useAccount();
-  const isSendingErcToken =
-    selectedNetworkA.name === Network.Ethereum &&
-    selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
+  const isSendingFromEthNetwork = selectedNetworkA.name === Network.Ethereum;
   const {
     data: evmBalance,
     refetch: refetchEvmBalance,
     isFetching: isEvmBalanceFetching,
   } = useBalance({
     address,
-    enabled: isSendingErcToken,
+    enabled: isSendingFromEthNetwork,
     watch: false,
-    ...(isSendingErcToken && {
-      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
-    }),
+    ...(isSendingFromEthNetwork &&
+      selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL && {
+        token: Erc20Tokens[selectedTokensA.tokenA.name].address,
+      }),
   });
 
   const maxAmount = new BigNumber(evmBalance?.formatted ?? 0);
@@ -199,7 +198,7 @@ export default function BridgeForm({
   };
 
   const onTransferTokens = async (): Promise<void> => {
-    if (isSendingErcToken) {
+    if (isSendingFromEthNetwork) {
       // Revalidate entered amount after refetching EVM balance
       const refetchedEvmBalance = await refetchEvmBalance();
       if (
@@ -285,7 +284,7 @@ export default function BridgeForm({
 
   async function confirmationModalonClose(noCloseWarning: boolean) {
     if (noCloseWarning) {
-      if (isSendingErcToken) {
+      if (isSendingFromEthNetwork) {
         // Wait 15 seconds to give some time for txn to be confirmed
         setTimeout(async () => {
           await refetchEvmBalance();

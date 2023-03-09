@@ -109,7 +109,10 @@ function Base({
         <meta name="twitter:creator" content="@birthdaydev" />
         <meta name="twitter:title" content={siteTitle} />
         <meta name="twitter:description" content={shortDescription} />
-        <meta name="twitter:image" content="/bridge_share.png" />
+        <meta
+          name="twitter:image"
+          content="https://quantumbridge.app/bridge_share.png"
+        />
         <meta name="twitter:image:alt" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
 
