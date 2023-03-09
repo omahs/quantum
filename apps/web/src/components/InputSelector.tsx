@@ -56,7 +56,6 @@ interface SelectorI {
   options?: NetworkOptionsI[] | TokensI[];
   onSelect?: (value: any) => void;
   value: NetworkOptionsI | TokensI;
-  isFetching?: boolean;
 }
 function Divider() {
   return <div className="mx-5 border-t-[0.5px] border-[#42424280] lg:mx-6" />;
@@ -105,13 +104,7 @@ function NetworkOptions({ options }: { options: NetworkOptionsI[] }) {
     </>
   );
 }
-function TokenOptions({
-  options,
-  isFetching,
-}: {
-  options: TokensI[];
-  isFetching: boolean;
-}) {
+function TokenOptions({ options }: { options: TokensI[] }) {
   return (
     <div>
       {options?.map((option) => (
@@ -129,7 +122,7 @@ function TokenOptions({
                   active && "bg-dark-gradient-1"
                 )}
               >
-                {isFetching ? (
+                {!options ? (
                   <SkeletonLoader isDesktop />
                 ) : (
                   <div className="flex flex-row items-center justify-between">
@@ -189,7 +182,6 @@ export default function InputSelector({
   floatingObj,
   type,
   disabled = false,
-  isFetching = false,
 }: SelectorI) {
   const { floating, y, strategy } = floatingObj;
   const roundedBorderStyle =
@@ -283,10 +275,7 @@ export default function InputSelector({
                           options={options as NetworkOptionsI[]}
                         />
                       ) : (
-                        <TokenOptions
-                          options={options as TokensI[]}
-                          isFetching={isFetching}
-                        />
+                        <TokenOptions options={options as TokensI[]} />
                       )}
                     </div>
                   </div>
