@@ -6,6 +6,7 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
+import { useNetwork } from "wagmi";
 import { Erc20Token, Network, TokensI } from "types";
 import { useLazyBridgeSettingsQuery } from "@store/index";
 
@@ -163,6 +164,7 @@ export function useNetworkContext(): NetworkContextI {
 export function NetworkProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
+  const { chain } = useNetwork();
   const [dfcFee, setDfcFee] = useState<`${number}` | number>(0);
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
   const [filteredNetwork, setFilteredNetwork] =
@@ -204,7 +206,7 @@ export function NetworkProvider({
       }
     };
     getBridgeSettings();
-  }, [networks]);
+  }, [networks, chain]);
 
   const context: NetworkContextI = useMemo(
     () => ({
