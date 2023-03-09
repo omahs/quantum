@@ -104,7 +104,7 @@ export default function BridgeForm({
   const [utilityModalData, setUtilityModalData] =
     useState<ModalConfigType | null>(null);
 
-  const [fee, feeSymbol] = useTransferFee(amount);
+  const [fee, feeSymbol] = useTransferFee(amount, selectedNetworkA);
 
   const { address, isConnected } = useAccount();
   const isSendingErcToken =

@@ -173,7 +173,6 @@ export function NetworkProvider({
   useEffect(() => {
     const getBridgeSettings = async () => {
       const { data, isSuccess } = await trigger({});
-      console.log("data", data);
       if (isSuccess) {
         if (data.defichain) {
           setDfcFee(data.defichain.transferFee);

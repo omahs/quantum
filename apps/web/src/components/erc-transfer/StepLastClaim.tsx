@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/router";
 import { useContractContext } from "@contexts/ContractContext";
 import { useStorageContext } from "@contexts/StorageContext";
+import useTokens from "@hooks/useTokens";
 import ActionButton from "@components/commons/ActionButton";
 import Modal from "@components/commons/Modal";
 import ErrorModal from "@components/commons/ErrorModal";
@@ -41,6 +42,7 @@ export default function StepLastClaim({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const { selectedNetworkA } = useTokens();
   const [showLoader, setShowLoader] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -55,7 +57,7 @@ export default function StepLastClaim({
   );
 
   // Prepare write contract for `claimFund` function
-  const [fee] = useTransferFee(data.to.amount.toString());
+  const [fee] = useTransferFee(data.to.amount.toString(), selectedNetworkA);
   const amountLessFee = BigNumber.max(data.to.amount.minus(fee), 0);
   const { config: bridgeConfig } = usePrepareContractWrite({
     address: BridgeV1.address,

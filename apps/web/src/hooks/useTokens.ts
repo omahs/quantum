@@ -52,6 +52,8 @@ export default function useTokens() {
     resetNetworkSelection();
   }, [filteredNetwork]);
 
+  useEffect(() => {}, [selectedNetworkA]);
+
   return {
     selectedNetworkA,
     selectedTokensA,
