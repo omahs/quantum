@@ -5,6 +5,7 @@ import MobileBottomMenu from "@components/MobileBottomMenu";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
 import { useStorageContext } from "@contexts/StorageContext";
+import Logging from "@api/logging";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
@@ -97,16 +98,16 @@ export async function getServerSideProps() {
     .then((res) => Promise.all([res.json(), res.status]))
     .then(([data, statusCode]) => {
       if (statusCode === 200) {
-        isBridgeUp = data?.isUp === false;
+        isBridgeUp = data?.isUp;
       } else {
-        console.error("Get bridge status API error.");
+        Logging.error("Get bridge status API error.");
       }
       return {
         props: { isBridgeUp }, // will be passed to the page component as props
       };
     })
     .catch((e) => {
-      console.error(`${e}`);
+      Logging.error(`${e}`);
       return {
         props: { isBridgeUp }, // will be passed to the page component as props
       };
