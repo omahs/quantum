@@ -2,10 +2,16 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { FetchArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import { AddressDetails, BridgeSettings, BridgeVersion } from "types";
 import { HttpStatusCode } from "axios";
+import type { RootState } from "@store/reducers/rootReducer";
 
 const staggeredBaseQueryWithBailOut = retry(
   async (args: string | FetchArgs, api, extraOptions) => {
-    const result = await fetchBaseQuery()(args, api, extraOptions);
+    const result = await fetchBaseQuery({
+      prepareHeaders: (headers, { getState }) => {
+        const { version } = getState() as RootState;
+        headers.set("app-version", version);
+      },
+    })(args, api, extraOptions);
     // bail out of re-tries if TooManyRequests,
     // because we know successive re-retries would be redundant
     if (result.error?.status === HttpStatusCode.TooManyRequests) {

@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { FaReddit, FaGithub, FaTwitter } from "react-icons/fa";
 import { BsMedium } from "react-icons/bs";
 import Image from "next/image";
-import { useLazyBridgeVersionQuery } from "store";
+import { useBridgeVersionQuery } from "store";
 import Socials from "./commons/Socials";
 
 const DeFiChainSocialItems = [
@@ -42,23 +41,12 @@ const BirthdayResearchSocialItems = [
     icon: FaGithub,
     testId: "gitHub_br",
     label: "GitHub",
-    href: "https://github.com/BirthdayResearch",
+    href: "https://github.com/BirthdayResearch/quantum",
   },
 ];
 
 export default function Footer() {
-  const [version, setVersion] = useState("0.0.0");
-
-  const [trigger] = useLazyBridgeVersionQuery();
-
-  useEffect(() => {
-    async function getBridgeVersion() {
-      const { data } = await trigger({});
-      if (data?.v) setVersion(data.v);
-    }
-
-    getBridgeVersion();
-  }, []);
+  const { data } = useBridgeVersionQuery();
 
   return (
     <footer
@@ -80,12 +68,12 @@ export default function Footer() {
           </div>
         </div>
         <div className="pl-1 flex-row justify-between">
-          <div className="font-semibold">Version {version}</div>
+          <div className="font-semibold">Version {data?.v ?? "0.0.0"}</div>
           <div>
             Quantum is a proud development of Birthday Research — the blockchain
-            R&D arm of Cake DeFi.
+            R&D arm of Cake DeFi
           </div>
-          <div className="flex flex-row justify-between pt-[19px] md:pt-[26px] lg:pt-2">
+          <div className="flex flex-row justify-between pt-[19px] md:pt-[26px] lg:pt-2 items-end md:items-start">
             <div className="flex flex-col md:flex-row md:items-end">
               <a
                 href="https://birthday.dev"
@@ -97,7 +85,7 @@ export default function Footer() {
               </a>
               <Socials items={BirthdayResearchSocialItems} />
             </div>
-            <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0">
+            <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0 text-right">
               <a
                 href="https://defichain.com"
                 target="_blank"
@@ -106,7 +94,10 @@ export default function Footer() {
               >
                 &copy; DeFiChain
               </a>
-              <Socials items={DeFiChainSocialItems} />
+              <Socials
+                items={DeFiChainSocialItems}
+                containerStyle="pt-2 md:pt-0"
+              />
             </div>
           </div>
         </div>

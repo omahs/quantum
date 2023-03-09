@@ -5,6 +5,7 @@ import MobileBottomMenu from "@components/MobileBottomMenu";
 import useWatchEthTxn from "@hooks/useWatchEthTxn";
 import TransactionStatus from "@components/TransactionStatus";
 import { useStorageContext } from "@contexts/StorageContext";
+import Logging from "@api/logging";
 import { CONFIRMATIONS_BLOCK_TOTAL } from "../constants";
 import useBridgeFormStorageKeys from "../hooks/useBridgeFormStorageKeys";
 import { getStorageItem } from "../utils/localStorage";
@@ -88,6 +89,29 @@ function Home() {
       </div>
     </section>
   );
+}
+
+export async function getServerSideProps() {
+  let isBridgeUp = true;
+
+  return fetch(`https://wallet.defichain.com/api/v0/bridge/status`)
+    .then((res) => Promise.all([res.json(), res.status]))
+    .then(([data, statusCode]) => {
+      if (statusCode === 200) {
+        isBridgeUp = data?.isUp;
+      } else {
+        Logging.error("Get bridge status API error.");
+      }
+      return {
+        props: { isBridgeUp }, // will be passed to the page component as props
+      };
+    })
+    .catch((e) => {
+      Logging.error(`${e}`);
+      return {
+        props: { isBridgeUp }, // will be passed to the page component as props
+      };
+    });
 }
 
 export default Home;

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
+import { FiRefreshCw } from "react-icons/fi";
 import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
@@ -105,18 +106,22 @@ export default function BridgeForm({
   const [fee, feeSymbol] = useTransferFee(amount);
 
   const { address, isConnected } = useAccount();
-  const isSendingErcToken =
-    selectedNetworkA.name === Network.Ethereum &&
-    selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL;
-  const { data } = useBalance({
+  const isSendingFromEthNetwork = selectedNetworkA.name === Network.Ethereum;
+  const {
+    data: evmBalance,
+    refetch: refetchEvmBalance,
+    isFetching: isEvmBalanceFetching,
+  } = useBalance({
     address,
-    watch: true,
-    ...(isSendingErcToken && {
-      token: Erc20Tokens[selectedTokensA.tokenA.name].address,
-    }),
+    enabled: isSendingFromEthNetwork,
+    watch: false,
+    ...(isSendingFromEthNetwork &&
+      selectedTokensA.tokenA.name !== ETHEREUM_SYMBOL && {
+        token: Erc20Tokens[selectedTokensA.tokenA.name].address,
+      }),
   });
 
-  const maxAmount = new BigNumber(data?.formatted ?? 0);
+  const maxAmount = new BigNumber(evmBalance?.formatted ?? 0);
   const [fromAddress, setFromAddress] = useState<string>(address || "");
   const [hasUnconfirmedTxn, setHasUnconfirmedTxn] = useState(false);
 
@@ -160,10 +165,10 @@ export default function BridgeForm({
     setSelectedNetworkA(selectedNetworkB);
   };
 
-  const validateAmountInput = (value: string) => {
+  const validateAmountInput = (value: string, maxValue: BigNumber) => {
     const isSendingToDFC = selectedNetworkB.name === Network.DeFiChain;
     let err = "";
-    if (isSendingToDFC && new BigNumber(value).gt(maxAmount.toFixed(8))) {
+    if (isSendingToDFC && new BigNumber(value).gt(maxValue.toFixed(8))) {
       err = "Insufficient Funds";
     }
     if (
@@ -175,6 +180,8 @@ export default function BridgeForm({
       err = "Invalid Amount";
     }
     setAmountErr(err);
+
+    return err;
   };
 
   const onInputChange = (value: string): void => {
@@ -186,11 +193,24 @@ export default function BridgeForm({
       (numberOnlyRegex.test(value) && maxDpRegex.test(value))
     ) {
       setAmount(value);
-      validateAmountInput(value);
+      validateAmountInput(value, maxAmount);
     }
   };
 
-  const onTransferTokens = (): void => {
+  const onTransferTokens = async (): Promise<void> => {
+    if (isSendingFromEthNetwork) {
+      // Revalidate entered amount after refetching EVM balance
+      const refetchedEvmBalance = await refetchEvmBalance();
+      if (
+        validateAmountInput(
+          amount,
+          new BigNumber(refetchedEvmBalance.data?.formatted ?? 0)
+        )
+      ) {
+        return;
+      }
+    }
+
     if (!hasUnconfirmedTxn) {
       const newTxn = {
         selectedNetworkA,
@@ -219,6 +239,10 @@ export default function BridgeForm({
     setAmountErr("");
     resetNetworkSelection();
     resetNetworkEnv();
+  };
+
+  const onRefreshEvmBalance = async () => {
+    await refetchEvmBalance();
   };
 
   const getActionBtnLabel = () => {
@@ -258,8 +282,15 @@ export default function BridgeForm({
     },
   };
 
-  function confirmationModalonClose(noCloseWarning: boolean) {
+  async function confirmationModalonClose(noCloseWarning: boolean) {
     if (noCloseWarning) {
+      if (isSendingFromEthNetwork) {
+        // Wait 15 seconds to give some time for txn to be confirmed
+        setTimeout(async () => {
+          await refetchEvmBalance();
+        }, 15000);
+      }
+
       setShowConfirmModal(false);
     } else setUtilityModalData(UtilityModalMessage.leaveTransaction);
   }
@@ -267,7 +298,7 @@ export default function BridgeForm({
   useEffect(() => {
     if (amount) {
       // Revalidate entered amount when selected token is changed
-      validateAmountInput(amount);
+      validateAmountInput(amount, maxAmount);
     }
   }, [maxAmount]);
 
@@ -390,26 +421,35 @@ export default function BridgeForm({
           showAmountsBtn={selectedNetworkA.name === Network.Ethereum}
           disabled={hasUnconfirmedTxn}
         />
-        <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2">
-          {amountErr ? (
-            <span className="text-xs lg:text-sm text-error">{amountErr}</span>
-          ) : (
-            selectedNetworkA.name === Network.Ethereum && (
-              <>
-                <span className="text-xs lg:text-sm text-dark-700">
-                  Available:
-                </span>
-                <NumericFormat
-                  className="text-xs lg:text-sm text-dark-900 ml-1"
-                  value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
-                  decimalScale={5}
-                  thousandSeparator
-                  suffix={` ${selectedTokensA.tokenA.name}`}
-                />
-              </>
-            )
-          )}
-        </div>
+        {isConnected && (
+          <div className="flex flex-row pl-3 md:pl-5 lg:pl-6 mt-2 items-center">
+            {amountErr ? (
+              <span className="text-xs lg:text-sm text-error">{amountErr}</span>
+            ) : (
+              selectedNetworkA.name === Network.Ethereum && (
+                <>
+                  <span className="text-xs lg:text-sm text-dark-700">
+                    Available:
+                  </span>
+                  <NumericFormat
+                    className="text-xs lg:text-sm text-dark-900 ml-1"
+                    value={maxAmount.toFixed(5, BigNumber.ROUND_FLOOR)}
+                    decimalScale={5}
+                    thousandSeparator
+                    suffix={` ${selectedTokensA.tokenA.name}`}
+                  />
+                  <FiRefreshCw
+                    onClick={onRefreshEvmBalance}
+                    size={12}
+                    className={clsx("text-dark-900 ml-2 cursor-pointer", {
+                      "animate-spin": isEvmBalanceFetching,
+                    })}
+                  />
+                </>
+              )
+            )}
+          </div>
+        )}
       </div>
       <SwitchButton onClick={switchNetwork} disabled={hasUnconfirmedTxn} />
 

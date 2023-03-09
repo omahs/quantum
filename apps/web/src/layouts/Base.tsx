@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { PropsWithChildren, useEffect, useState } from "react";
+import { Provider } from "react-redux";
 import {
   appName,
   keywords,
@@ -25,9 +26,8 @@ import {
 } from "@waveshq/walletkit-ui";
 import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
-import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { bridgeApi } from "@store/defichain";
 import { StorageProvider } from "@contexts/StorageContext";
+import { store } from "@store/store";
 import ScreenContainer from "../components/ScreenContainer";
 import { ETHEREUM_MAINNET_ID } from "../constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "../config";
@@ -61,7 +61,10 @@ const client = createClient(
   })
 );
 
-function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
+function Base({
+  children,
+  isBridgeUp,
+}: PropsWithChildren<any>): JSX.Element | null {
   const initialTheme = getInitialTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -106,7 +109,10 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
         <meta name="twitter:creator" content="@birthdaydev" />
         <meta name="twitter:title" content={siteTitle} />
         <meta name="twitter:description" content={shortDescription} />
-        <meta name="twitter:image" content="/bridge_share.png" />
+        <meta
+          name="twitter:image"
+          content="https://quantumbridge.app/bridge_share.png"
+        />
         <meta name="twitter:image:alt" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
 
@@ -123,13 +129,32 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
+        {process.env.NODE_ENV !== "development" && (
+          <script
+            nonce="raygun"
+            async
+            defer
+            type="text/javascript"
+            dangerouslySetInnerHTML={{
+              __html: `
+              !function(a,b,c,d,e,f,g,h){a.RaygunObject=e,a[e]=a[e]||function(){
+              (a[e].o=a[e].o||[]).push(arguments)},f=b.createElement(c),g=b.getElementsByTagName(c)[0],
+              f.async=1,f.src=d,g.parentNode.insertBefore(f,g),h=a.onerror,a.onerror=function(b,c,d,f,g){
+              h&&h(b,c,d,f,g),g||(g=new Error(b)),a[e].q=a[e].q||[],a[e].q.push({
+              e:g})}}(window,document,"script","//cdn.raygun.io/raygun4js/raygun.min.js","rg4js");
+
+              rg4js('apiKey', 'xgLWC9Tpzmeo88rziVxnHA');
+              rg4js('enableCrashReporting', true);`,
+            }}
+          />
+        )}
       </Head>
 
-      <WagmiConfig client={client}>
-        <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
-          {mounted && (
-            <NetworkProvider>
-              <ApiProvider api={bridgeApi}>
+      <Provider store={store}>
+        <WagmiConfig client={client}>
+          <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
+            {mounted && (
+              <NetworkProvider>
                 <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
                   <WhaleProvider>
                     <NetworkEnvironmentProvider>
@@ -137,7 +162,9 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                         <ContractProvider>
                           <ThemeProvider theme={initialTheme}>
                             <StorageProvider>
-                              <ScreenContainer>{children}</ScreenContainer>
+                              <ScreenContainer isBridgeUp={isBridgeUp}>
+                                {children}
+                              </ScreenContainer>
                             </StorageProvider>
                           </ThemeProvider>
                         </ContractProvider>
@@ -145,11 +172,11 @@ function Base({ children }: PropsWithChildren<any>): JSX.Element | null {
                     </NetworkEnvironmentProvider>
                   </WhaleProvider>
                 </WhaleNetworkProvider>
-              </ApiProvider>
-            </NetworkProvider>
-          )}
-        </ConnectKitProvider>
-      </WagmiConfig>
+              </NetworkProvider>
+            )}
+          </ConnectKitProvider>
+        </WagmiConfig>
+      </Provider>
     </div>
   );
 }
