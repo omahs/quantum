@@ -227,12 +227,15 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     const transactionDbRecord = await prismaService.bridgeEventTransactions.findFirst({
       where: { transactionHash: transactionCall.hash },
     });
-    expect(transactionDbRecord?.sendTransactionHash).toStrictEqual(res.transactionHash);
-    expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
-    await defichain.generateBlock();
 
     // Deduct fee
     const amountLessFee = deductTransferFee(new BigNumber(1));
+
+    expect(transactionDbRecord?.tokenSymbol).toStrictEqual('USDC');
+    expect(transactionDbRecord?.claimAmount).toStrictEqual(amountLessFee);
+    expect(transactionDbRecord?.sendTransactionHash).toStrictEqual(res.transactionHash);
+    expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
+    await defichain.generateBlock();
 
     // check token gets transferred to the address
     const listToken = await defichain.whaleClient?.address.listToken(address);

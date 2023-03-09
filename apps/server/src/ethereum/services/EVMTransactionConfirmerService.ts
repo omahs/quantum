@@ -277,6 +277,8 @@ export class EVMTransactionConfirmerService {
           id: txDetails.id,
         },
         data: {
+          claimAmount: amountLessFee.toString(),
+          tokenSymbol: sendTxPayload.symbol,
           sendTransactionHash,
         },
       });
