@@ -83,9 +83,9 @@ export default function Footer() {
           <div className="font-semibold">Version {version}</div>
           <div>
             Quantum is a proud development of Birthday Research — the blockchain
-            R&D arm of Cake DeFi.
+            R&D arm of Cake DeFi
           </div>
-          <div className="flex flex-row justify-between pt-[19px] md:pt-[26px] lg:pt-2">
+          <div className="flex flex-row justify-between pt-[19px] md:pt-[26px] lg:pt-2 items-end md:items-start">
             <div className="flex flex-col md:flex-row md:items-end">
               <a
                 href="https://birthday.dev"
@@ -97,7 +97,7 @@ export default function Footer() {
               </a>
               <Socials items={BirthdayResearchSocialItems} />
             </div>
-            <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0">
+            <div className="md:flex md:flex-row-reverse lg:flex-col lg:items-end lg:pt-0 text-right">
               <a
                 href="https://defichain.com"
                 target="_blank"
@@ -106,7 +106,10 @@ export default function Footer() {
               >
                 &copy; DeFiChain
               </a>
-              <Socials items={DeFiChainSocialItems} />
+              <Socials
+                items={DeFiChainSocialItems}
+                containerStyle="pt-2 md:pt-0"
+              />
             </div>
           </div>
         </div>
