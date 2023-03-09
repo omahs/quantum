@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { PropsWithChildren, useEffect, useState } from "react";
+import { Provider } from "react-redux";
 import {
   appName,
   keywords,
@@ -25,9 +26,8 @@ import {
 } from "@waveshq/walletkit-ui";
 import SecuredStoreAPI from "@api/secure-storage";
 import Logging from "@api/logging";
-import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { bridgeApi } from "@store/defichain";
 import { StorageProvider } from "@contexts/StorageContext";
+import { store } from "@store/store";
 import ScreenContainer from "../components/ScreenContainer";
 import { ETHEREUM_MAINNET_ID } from "../constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "../config";
@@ -150,11 +150,11 @@ function Base({
         )}
       </Head>
 
-      <WagmiConfig client={client}>
-        <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
-          {mounted && (
-            <NetworkProvider>
-              <ApiProvider api={bridgeApi}>
+      <Provider store={store}>
+        <WagmiConfig client={client}>
+          <ConnectKitProvider mode="dark" options={{ initialChainId: 0 }}>
+            {mounted && (
+              <NetworkProvider>
                 <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
                   <WhaleProvider>
                     <NetworkEnvironmentProvider>
@@ -172,11 +172,11 @@ function Base({
                     </NetworkEnvironmentProvider>
                   </WhaleProvider>
                 </WhaleNetworkProvider>
-              </ApiProvider>
-            </NetworkProvider>
-          )}
-        </ConnectKitProvider>
-      </WagmiConfig>
+              </NetworkProvider>
+            )}
+          </ConnectKitProvider>
+        </WagmiConfig>
+      </Provider>
     </div>
   );
 }

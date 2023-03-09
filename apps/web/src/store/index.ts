@@ -1,5 +1,6 @@
 import useWrappedMutation from "@hooks/useWrappedMutation";
 import useWrappedLazyQuery from "@hooks/useWrappedLazyQuery";
+import useWrappedQuery from "@hooks/useWrappedQuery";
 
 import { bridgeApi } from "./defichain";
 
@@ -19,8 +20,8 @@ const useBalanceDfcMutation = () =>
   useWrappedMutation(bridgeApi.useBalanceDfcMutation);
 const useLazyBridgeStatusQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeStatusQuery, true);
-const useLazyBridgeVersionQuery = () =>
-  useWrappedLazyQuery(bridgeApi.useLazyBridgeVersionQuery);
+const useBridgeVersionQuery = (args?: Parameters<typeof useWrappedQuery>[1]) =>
+  useWrappedQuery(bridgeApi.useBridgeVersionQuery, args);
 const useLazyBridgeSettingsQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeSettingsQuery);
 
@@ -33,7 +34,7 @@ export {
   useBalanceEvmMutation,
   useBalanceDfcMutation,
   useLazyBridgeStatusQuery,
-  useLazyBridgeVersionQuery,
+  useBridgeVersionQuery,
   useLazyBridgeSettingsQuery,
   bridgeApi,
 };
