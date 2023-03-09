@@ -2,9 +2,9 @@ import clsx from "clsx";
 import { useState } from "react";
 import IconTooltip from "@components/commons/IconTooltip";
 import ActionButton from "@components/commons/ActionButton";
-import { useNetworkContext } from "@contexts/NetworkContext";
 import { Network } from "types";
 import { useAccount } from "wagmi";
+import useTokens from "@hooks/useTokens";
 import WalletAddressInput from "@components/WalletAddressInput";
 import { TRANSACTION_ERROR_INFO } from "../../constants";
 
@@ -19,8 +19,8 @@ export default function StepOneInitiate({
   goToNextStep: () => void;
   isReadOnly: boolean;
 }) {
-  const { selectedNetworkA } = useNetworkContext();
   const { isConnected } = useAccount();
+  const { selectedNetworkA } = useTokens();
 
   const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
 
