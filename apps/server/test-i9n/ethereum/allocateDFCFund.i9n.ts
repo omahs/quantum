@@ -232,7 +232,7 @@ describe('Bridge Service Allocate DFC Fund Integration Tests', () => {
     const amountLessFee = deductTransferFee(new BigNumber(1));
 
     expect(transactionDbRecord?.tokenSymbol).toStrictEqual('USDC');
-    expect(transactionDbRecord?.claimAmount).toStrictEqual(amountLessFee);
+    expect(transactionDbRecord?.amount).toStrictEqual(amountLessFee);
     expect(transactionDbRecord?.sendTransactionHash).toStrictEqual(res.transactionHash);
     expect(transactionDbRecord?.status).toStrictEqual(EthereumTransactionStatus.CONFIRMED);
     await defichain.generateBlock();
