@@ -6,7 +6,7 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { ISO8601String } from 'src/types';
+import { Iso8601String } from 'src/types';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { TokenSymbol } from '../../defichain/model/VerifyDto';
@@ -17,7 +17,6 @@ import { PrismaService } from '../../PrismaService';
 import { getNextDayTimestampInSec } from '../../utils/DateUtils';
 import { getDTokenDetailsByWToken } from '../../utils/TokensUtils';
 import { StatsModel } from '../EthereumInterface';
-
 
 @Injectable()
 export class EVMTransactionConfirmerService {
@@ -64,12 +63,77 @@ export class EVMTransactionConfirmerService {
     return ethers.utils.formatUnits(balance, assetDecimalPlaces);
   }
 
-  async getStats(date?: ISO8601String): Promise<StatsModel> {
-    return {totalTransactions: 1,
-    confirmedTransactions: 1,
-    amountBridged: {
-        "ETH": 1
-    }};
+  async getStats(date?: Iso8601String): Promise<StatsModel> {
+    const today = date ? new Date(date) : new Date();
+    today.setUTCHours(0, 0, 0, 0); // set to UTC +0
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    // CONCURRENCY!!
+    const [totalTransactions, confirmedTransactions] = await Promise.all([
+      this.prisma.deFiChainAddressIndex.count({
+        where: {
+          createdAt: {
+            gte: today.toISOString(),
+            lt: tomorrow.toISOString(),
+          },
+        },
+      }),
+
+      // Count only confirmed transactions
+      this.prisma.deFiChainAddressIndex.findMany({
+        // Probably overkill checking both botStatus and ethReceiverAddress
+        where: {
+          botStatus: 'COMPLETE',
+          ethReceiverAddress: { not: null },
+          tokenSymbol: { not: null },
+          claimAmount: { not: null },
+          createdAt: {
+            gte: today.toISOString(),
+            lt: tomorrow.toISOString(),
+          },
+        },
+      }),
+    ]);
+
+    // First, sum each token with BigNumber for accuracy
+
+    const amountBridgedBigN: { [k in SupportedEVMTokenSymbols]: BigNumber } = {
+      ETH: BigNumber(0),
+      USDT: BigNumber(0),
+      USDC: BigNumber(0),
+      WBTC: BigNumber(0),
+    };
+
+    for (const transaction of confirmedTransactions) {
+      const { tokenSymbol, claimAmount } = transaction;
+      if (tokenSymbol && tokenSymbol in SupportedEVMTokenSymbols) {
+        amountBridgedBigN[tokenSymbol as SupportedEVMTokenSymbols] = amountBridgedBigN[
+          tokenSymbol as SupportedEVMTokenSymbols
+        ].plus(BigNumber(claimAmount as string));
+      }
+    }
+
+    // Then, convert to string in preparation for response payload
+    const numericalPlaceholder = '0.000000';
+    const amountBridged: { [k in SupportedEVMTokenSymbols]: string } = {
+      ETH: numericalPlaceholder,
+      USDT: numericalPlaceholder,
+      USDC: numericalPlaceholder,
+      WBTC: numericalPlaceholder,
+    };
+
+    Object.keys(amountBridged).forEach((token) => {
+      amountBridged[token as SupportedEVMTokenSymbols] = amountBridgedBigN[token as SupportedEVMTokenSymbols]
+        .decimalPlaces(6, BigNumber.ROUND_FLOOR)
+        .toString();
+    });
+
+    return {
+      totalTransactions,
+      confirmedTransactions: confirmedTransactions.length,
+      amountBridged,
+    };
   }
 
   async handleTransaction(transactionHash: string): Promise<HandledEVMTransaction> {

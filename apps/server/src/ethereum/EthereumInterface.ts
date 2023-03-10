@@ -1,9 +1,9 @@
-import { Erc20Token } from "src/types"
+import { SupportedEVMTokenSymbols } from 'src/AppConfig';
 
 export interface StatsModel {
-    totalTransactions: number,
-    confirmedTransactions: number,
-    amountBridged: {
-        [token in Erc20Token]?: number
-    }
+  totalTransactions: number;
+  confirmedTransactions: number;
+  amountBridged: {
+    [token in SupportedEVMTokenSymbols]?: string;
+  };
 }
