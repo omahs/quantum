@@ -1,19 +1,41 @@
 describe("Maintenance", () => {
-  beforeEach(() => {
-    cy.visit("http://localhost:3000/");
-  });
-
   it("should display homepage when bridge is not down", () => {
-    cy.intercept("GET", "**/bridge/status", {
-      body: { isUp: true },
+    cy.visit("http://localhost:3000/", {
+      onBeforeLoad: (win) => {
+        let nextData: any;
+        Object.defineProperty(win, "__NEXT_DATA__", {
+          set(o) {
+            console.log("setting __NEXT_DATA__", o.props.pageProps);
+            // here is our change to modify the injected parsed data
+            o.props.pageProps.isBridgeUp = true;
+            nextData = o;
+          },
+          get() {
+            return nextData;
+          },
+        });
+      },
     });
     cy.findByTestId("homepage").should("exist");
     cy.findByTestId("maintenance").should("not.exist");
   });
 
   it("should display maintenance page when Quantum Bridge is down", () => {
-    cy.intercept("GET", "**/bridge/status", {
-      body: { isUp: false },
+    cy.visit("http://localhost:3000/", {
+      onBeforeLoad: (win) => {
+        let nextData: any;
+        Object.defineProperty(win, "__NEXT_DATA__", {
+          set(o) {
+            console.log("setting __NEXT_DATA__", o.props.pageProps);
+            // here is our change to modify the injected parsed data
+            o.props.pageProps.isBridgeUp = false;
+            nextData = o;
+          },
+          get() {
+            return nextData;
+          },
+        });
+      },
     });
     cy.findByTestId("homepage").should("not.exist");
     cy.findByTestId("maintenance").should("exist");
