@@ -6,6 +6,7 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
+import { ISO8601String } from 'src/types';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { TokenSymbol } from '../../defichain/model/VerifyDto';
@@ -15,6 +16,8 @@ import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
 import { getNextDayTimestampInSec } from '../../utils/DateUtils';
 import { getDTokenDetailsByWToken } from '../../utils/TokensUtils';
+import { StatsModel } from '../EthereumInterface';
+
 
 @Injectable()
 export class EVMTransactionConfirmerService {
@@ -59,6 +62,14 @@ export class EVMTransactionConfirmerService {
     const balance = await tokenContract.balanceOf(this.contract.address);
     const assetDecimalPlaces = await tokenContract.decimals();
     return ethers.utils.formatUnits(balance, assetDecimalPlaces);
+  }
+
+  async getStats(date?: ISO8601String): Promise<StatsModel> {
+    return {totalTransactions: 1,
+    confirmedTransactions: 1,
+    amountBridged: {
+        "ETH": 1
+    }};
   }
 
   async handleTransaction(transactionHash: string): Promise<HandledEVMTransaction> {

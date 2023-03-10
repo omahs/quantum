@@ -1,9 +1,12 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ISO8601String } from 'src/types';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { EthereumTransactionValidationPipe } from '../../pipes/EthereumTransactionValidation.pipe';
 import { EVMTransactionConfirmerService, HandledEVMTransaction } from '../services/EVMTransactionConfirmerService';
+import { StatsModel } from '../EthereumInterface';
+
 
 @Controller()
 export class EthereumController {
@@ -12,6 +15,11 @@ export class EthereumController {
   @Get('balance/:tokenSymbol')
   async getBalance(@Param('tokenSymbol') tokenSymbol: SupportedEVMTokenSymbols): Promise<string> {
     return this.evmTransactionConfirmerService.getBalance(tokenSymbol);
+  }
+
+  @Get('stats')
+  async getStats(@Param('date') date?: ISO8601String): Promise<StatsModel> {
+    return this.evmTransactionConfirmerService.getStats(date);
   }
 
   @Post('handleTransaction')
