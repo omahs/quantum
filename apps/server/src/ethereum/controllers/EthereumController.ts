@@ -22,9 +22,19 @@ export class EthereumController {
 
   @Get('stats')
   async getStats(@Param('date') date?: Iso8601String): Promise<StatsModel> {
-    return (await this.cache.get(`ETH_STATS_${date}`, async () => this.evmTransactionConfirmerService.getStats(date), {
-      ttl: 3600_000 * 24, // 1 day
-    })) as StatsModel;
+    return (await this.cache.get(
+      `ETH_STATS_${date}`,
+      async () => {
+        try {
+          return await this.evmTransactionConfirmerService.getStats(date);
+        } catch (e) {
+          throw new Error('API call for Ethereum statistics was unsuccessful', { cause: e });
+        }
+      },
+      {
+        ttl: 3600_000 * 24, // 1 day
+      },
+    )) as StatsModel;
   }
 
   @Post('handleTransaction')

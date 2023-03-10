@@ -71,7 +71,7 @@ export class EVMTransactionConfirmerService {
 
     // CONCURRENCY!!
     const [totalTransactions, confirmedTransactions] = await Promise.all([
-      this.prisma.deFiChainAddressIndex.count({
+      this.prisma.bridgeEventTransactions.count({
         where: {
           createdAt: {
             gte: today.toISOString(),
@@ -81,13 +81,11 @@ export class EVMTransactionConfirmerService {
       }),
 
       // Count only confirmed transactions
-      this.prisma.deFiChainAddressIndex.findMany({
-        // Probably overkill checking both botStatus and ethReceiverAddress
+      this.prisma.bridgeEventTransactions.findMany({
         where: {
-          botStatus: 'COMPLETE',
-          ethReceiverAddress: { not: null },
+          status: 'CONFIRMED',
           tokenSymbol: { not: null },
-          claimAmount: { not: null },
+          amount: { not: null },
           createdAt: {
             gte: today.toISOString(),
             lt: tomorrow.toISOString(),
@@ -106,11 +104,11 @@ export class EVMTransactionConfirmerService {
     };
 
     for (const transaction of confirmedTransactions) {
-      const { tokenSymbol, claimAmount } = transaction;
+      const { tokenSymbol, amount } = transaction;
       if (tokenSymbol && tokenSymbol in SupportedEVMTokenSymbols) {
         amountBridgedBigN[tokenSymbol as SupportedEVMTokenSymbols] = amountBridgedBigN[
           tokenSymbol as SupportedEVMTokenSymbols
-        ].plus(BigNumber(claimAmount as string));
+        ].plus(BigNumber(amount as string));
       }
     }
 
