@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
+import { SemaphoreCache } from 'src/libs/caches/SemaphoreCache';
 
 import { WhaleApiClientProvider } from '../defichain/providers/WhaleApiClientProvider';
 import { WhaleWalletProvider } from '../defichain/providers/WhaleWalletProvider';
@@ -19,9 +20,10 @@ import { EVMTransactionConfirmerService } from './services/EVMTransactionConfirm
     WhaleApiClientProvider,
     DeFiChainTransactionService,
     EVMTransactionConfirmerService,
+    SemaphoreCache,
   ],
   controllers: [EthereumController],
-  imports: [EthersModule],
+  imports: [EthersModule, CacheModule.register({ max: 10_000 })],
   exports: [EVMTransactionConfirmerService],
 })
 export class EthereumModule {}
