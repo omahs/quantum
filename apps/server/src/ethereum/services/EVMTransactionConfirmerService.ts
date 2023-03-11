@@ -64,7 +64,10 @@ export class EVMTransactionConfirmerService {
   }
 
   async getStats(date?: Iso8601String): Promise<StatsModel> {
-    const today = date ? new Date(date) : new Date();
+    // Use today's date if no param is given
+    // NOTE: REMOVE THE TIMESTAMP UNLESS YOU WANT A 24-HOUR ROLLING WINDOW
+    const dateOnly = date ?? (new Date().toISOString().slice(0, 10) as Iso8601String);
+    const today = new Date(dateOnly);
     today.setUTCHours(0, 0, 0, 0); // set to UTC +0
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
@@ -131,6 +134,7 @@ export class EVMTransactionConfirmerService {
       totalTransactions,
       confirmedTransactions: confirmedTransactions.length,
       amountBridged,
+      date: dateOnly,
     };
   }
 
