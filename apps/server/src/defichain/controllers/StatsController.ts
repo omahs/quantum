@@ -21,7 +21,7 @@ export class StatsController {
   }
 
   @SkipThrottle()
-  @Get('/stats/:date')
+  @Get('/stats')
   async get(@Param('date') date?: string) {
     // return this.whaleClient.getClient().stats.get();
     return this.defichainStatsService.getDefiChainStats(date);
