@@ -1,9 +1,9 @@
-import { Erc20Token } from 'src/types';
+import { SupportedDFCTokenSymbols } from 'src/AppConfig';
 
 export interface StatsModel {
   totalTransactions: number;
   confirmedTransactions: number;
   amountBridged: {
-    [token in Erc20Token]?: number;
+    [token in SupportedDFCTokenSymbols]?: number;
   };
 }
