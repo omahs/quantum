@@ -158,19 +158,17 @@ function Base({
                 <NetworkProvider>
                   <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
                     <WhaleProvider>
-                      <TokensProvider>
-                        <DeFiScanProvider>
-                          <ContractProvider>
-                            <ThemeProvider theme={initialTheme}>
-                              <StorageProvider>
-                                <ScreenContainer isBridgeUp={isBridgeUp}>
-                                  {children}
-                                </ScreenContainer>
-                              </StorageProvider>
-                            </ThemeProvider>
-                          </ContractProvider>
-                        </DeFiScanProvider>
-                      </TokensProvider>
+                      <DeFiScanProvider>
+                        <ContractProvider>
+                          <ThemeProvider theme={initialTheme}>
+                            <StorageProvider>
+                              <ScreenContainer isBridgeUp={isBridgeUp}>
+                                <TokensProvider>{children}</TokensProvider>
+                              </ScreenContainer>
+                            </StorageProvider>
+                          </ThemeProvider>
+                        </ContractProvider>
+                      </DeFiScanProvider>
                     </WhaleProvider>
                   </WhaleNetworkProvider>
                 </NetworkProvider>

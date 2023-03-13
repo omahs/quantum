@@ -125,7 +125,7 @@ export default function ConfirmTransferModal({
 
   useDisableEscapeKey(show);
 
-  const [fee, feeSymbol] = useTransferFee(amount, selectedNetworkA);
+  const [fee, feeSymbol] = useTransferFee(amount);
 
   // Direction of transfer
   const isSendingToDFC = selectedNetworkB.name === Network.DeFiChain;

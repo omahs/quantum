@@ -6,7 +6,7 @@ import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { useNetworkContext } from "@contexts/NetworkContext";
-import useTokens from "@hooks/useTokens";
+import { useTokensContext } from "@contexts/TokensContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
 import { Network, NetworkOptionsI, SelectionType, TokensI } from "types";
 import SwitchIcon from "@components/icons/SwitchIcon";
@@ -76,6 +76,7 @@ export default function BridgeForm({
   hasPendingTxn: boolean;
 }) {
   const { filteredNetwork } = useNetworkContext();
+
   const {
     selectedNetworkA,
     selectedTokensA,
@@ -87,7 +88,7 @@ export default function BridgeForm({
     setSelectedTokensB,
     resetNetworkSelection,
     isSendingFromEthNetwork,
-  } = useTokens();
+  } = useTokensContext();
 
   const { networkEnv, updateNetworkEnv, resetNetworkEnv } =
     useNetworkEnvironmentContext();
@@ -106,7 +107,7 @@ export default function BridgeForm({
   const [utilityModalData, setUtilityModalData] =
     useState<ModalConfigType | null>(null);
 
-  const [fee, feeSymbol] = useTransferFee(amount, selectedNetworkA);
+  const [fee, feeSymbol] = useTransferFee(amount);
 
   const { address, isConnected } = useAccount();
 

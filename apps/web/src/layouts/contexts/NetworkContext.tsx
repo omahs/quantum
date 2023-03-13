@@ -11,6 +11,7 @@ import { Erc20Token, Network, TokensI } from "types";
 import { useBridgeSettingsQuery } from "@store/index";
 
 interface NetworkContextI {
+  isTokensAvailable: boolean;
   evmFee: string | number;
   dfcFee: string | number;
   filteredNetwork: [NetworkI<Erc20Token>, NetworkI<string>];
@@ -165,6 +166,7 @@ export function NetworkProvider({
   children,
 }: PropsWithChildren<{}>): JSX.Element | null {
   const { chain } = useNetwork();
+  const [isTokensAvailable, setIsTokensAvailable] = useState<boolean>(false);
   const [dfcFee, setDfcFee] = useState<`${number}` | number>(0);
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
   const [filteredNetwork, setFilteredNetwork] =
@@ -199,11 +201,14 @@ export function NetworkProvider({
           matchedNetworks as [NetworkI<Erc20Token>, NetworkI<string>]
         );
       }
+
+      setIsTokensAvailable(true);
     }
   }, [data, chain]);
 
   const context: NetworkContextI = useMemo(
     () => ({
+      isTokensAvailable,
       evmFee,
       dfcFee,
       filteredNetwork,
@@ -214,7 +219,7 @@ export function NetworkProvider({
 
   return (
     <NetworkContext.Provider value={context}>
-      {children}
+      {isTokensAvailable ? children : null}
     </NetworkContext.Provider>
   );
 }
