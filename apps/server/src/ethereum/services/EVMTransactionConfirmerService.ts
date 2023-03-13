@@ -6,7 +6,7 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { Iso8601String } from 'src/types';
+import { Iso8601DateOnlyString, Iso8601String } from 'src/types';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { TokenSymbol } from '../../defichain/model/VerifyDto';
@@ -63,10 +63,10 @@ export class EVMTransactionConfirmerService {
     return ethers.utils.formatUnits(balance, assetDecimalPlaces);
   }
 
-  async getStats(date?: Iso8601String): Promise<StatsModel> {
+  async getStats(date?: Iso8601DateOnlyString): Promise<StatsModel> {
     // Use today's date if no param is given
     // NOTE: REMOVE THE TIMESTAMP UNLESS YOU WANT A 24-HOUR ROLLING WINDOW
-    const dateOnly = date ?? (new Date().toISOString().slice(0, 10) as Iso8601String);
+    const dateOnly = date ?? (new Date().toISOString().slice(0, 10) as Iso8601DateOnlyString);
     const today = new Date(dateOnly);
     today.setUTCHours(0, 0, 0, 0); // set to UTC +0
     const tomorrow = new Date(today);
@@ -89,6 +89,7 @@ export class EVMTransactionConfirmerService {
           status: 'CONFIRMED',
           tokenSymbol: { not: null },
           amount: { not: null },
+          sendTransactionHash: { not: null },
           createdAt: {
             gte: today.toISOString(),
             lt: tomorrow.toISOString(),
@@ -98,7 +99,6 @@ export class EVMTransactionConfirmerService {
     ]);
 
     // First, sum each token with BigNumber for accuracy
-
     const amountBridgedBigN: { [k in SupportedEVMTokenSymbols]: BigNumber } = {
       ETH: BigNumber(0),
       USDT: BigNumber(0),
@@ -135,6 +135,7 @@ export class EVMTransactionConfirmerService {
       confirmedTransactions: confirmedTransactions.length,
       amountBridged,
       date: dateOnly,
+      cacheTime: new Date().toISOString() as Iso8601String,
     };
   }
 

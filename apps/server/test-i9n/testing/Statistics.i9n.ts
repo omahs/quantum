@@ -48,6 +48,24 @@ describe('Statistics Service Test', () => {
     expect(JSON.parse(txReceipt.payload).date).toStrictEqual(targetDate);
   });
 
+  it(`should throw an error if invalid or no date is provided`, async () => {
+    const txReceipt1 = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/stats?date=abc`,
+    });
+
+    const txReceipt2 = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/stats?date=`,
+    });
+
+    const expectedErrorMessage = 'API call for Ethereum statistics was unsuccessful: Invalid time value';
+    expect(JSON.parse(txReceipt1.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt1.payload).error).toStrictEqual(expectedErrorMessage);
+    expect(JSON.parse(txReceipt2.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt2.payload).error).toStrictEqual(expectedErrorMessage);
+  });
+
   it(`should be correctly formatted`, async () => {
     const txReceipt = await testing.inject({
       method: 'GET',
@@ -57,6 +75,7 @@ describe('Statistics Service Test', () => {
     const parsedPayload = JSON.parse(txReceipt.payload);
 
     expect(parsedPayload).toHaveProperty('date');
+    expect(parsedPayload).toHaveProperty('cacheTime');
     expect(parsedPayload).toHaveProperty('totalTransactions');
     expect(parsedPayload).toHaveProperty('confirmedTransactions');
     expect(parsedPayload).toHaveProperty('amountBridged');

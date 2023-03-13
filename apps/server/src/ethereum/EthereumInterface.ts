@@ -1,5 +1,5 @@
 import { SupportedEVMTokenSymbols } from 'src/AppConfig';
-import { Iso8601String } from 'src/types';
+import { Iso8601DateOnlyString, Iso8601String } from 'src/types';
 
 export interface StatsModel {
   totalTransactions: number;
@@ -7,5 +7,6 @@ export interface StatsModel {
   amountBridged: {
     [token in SupportedEVMTokenSymbols]?: string;
   };
-  date: Iso8601String;
+  date: Iso8601DateOnlyString;
+  cacheTime: Iso8601String;
 }

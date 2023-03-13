@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
 import { EthereumTransactionValidationPipe } from '../../pipes/EthereumTransactionValidation.pipe';
-import { Iso8601String } from '../../types';
+import { Iso8601DateOnlyString } from '../../types';
 import { StatsModel } from '../EthereumInterface';
 import { EVMTransactionConfirmerService, HandledEVMTransaction } from '../services/EVMTransactionConfirmerService';
 
@@ -20,15 +20,24 @@ export class EthereumController {
     return this.evmTransactionConfirmerService.getBalance(tokenSymbol);
   }
 
-  @Get('stats')
-  async getStats(@Param('date') date?: Iso8601String): Promise<StatsModel> {
+  @Get('stats/')
+  async getStats(@Query('date') date?: Iso8601DateOnlyString): Promise<StatsModel> {
     return (await this.cache.get(
-      `ETH_STATS_${date}`,
+      `ETH_STATS_${date ?? 'TODAY'}`,
       async () => {
         try {
           return await this.evmTransactionConfirmerService.getStats(date);
-        } catch (e) {
-          throw new Error('API call for Ethereum statistics was unsuccessful', { cause: e });
+        } catch (e: any) {
+          throw new HttpException(
+            {
+              status: e.code || HttpStatus.INTERNAL_SERVER_ERROR,
+              error: `API call for Ethereum statistics was unsuccessful: ${e.message}`,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            {
+              cause: e,
+            },
+          );
         }
       },
       {
