@@ -1,5 +1,5 @@
 // import { stats } from '@defichain/whale-api-client';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
@@ -7,6 +7,8 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 // import { StatsModel } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
 import { WhaleApiService } from '../services/WhaleApiService';
+
+export type Iso8601String = `${number}-${number}-${number}`;
 
 @Controller()
 export class StatsController {
@@ -22,13 +24,7 @@ export class StatsController {
 
   @SkipThrottle()
   @Get('/stats')
-  async get(@Param('date') date?: string) {
-    // return this.whaleClient.getClient().stats.get();
+  async get(@Query('date') date?: string) {
     return this.defichainStatsService.getDefiChainStats(date);
-  }
-
-  @Get('/test')
-  async getTest() {
-    return this.defichainStatsService.test();
   }
 }
