@@ -65,6 +65,42 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           icon: "/tokens/dETH.svg",
         },
       },
+      {
+        tokenA: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+        },
+        tokenB: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+        },
+        tokenB: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "EUROC",
+          symbol: "EUROC",
+          icon: "/tokens/EUROC.svg",
+        },
+        tokenB: {
+          name: "dEUROC",
+          symbol: "EUROC",
+          icon: "/tokens/dEUROC.svg",
+        },
+      },
     ],
   },
   {
@@ -93,6 +129,42 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           name: "ETH",
           symbol: "ETH",
           icon: "/tokens/ETH.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+        },
+        tokenB: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+        },
+        tokenB: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "dEUROC",
+          symbol: "EUROC",
+          icon: "/tokens/dEUROC.svg",
+        },
+        tokenB: {
+          name: "EUROC",
+          symbol: "EUROC",
+          icon: "/tokens/EUROC.svg",
         },
       },
     ],
