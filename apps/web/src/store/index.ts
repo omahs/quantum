@@ -22,8 +22,8 @@ const useLazyBridgeStatusQuery = () =>
   useWrappedLazyQuery(bridgeApi.useLazyBridgeStatusQuery, true);
 const useBridgeVersionQuery = (args?: Parameters<typeof useWrappedQuery>[1]) =>
   useWrappedQuery(bridgeApi.useBridgeVersionQuery, args);
-const useLazyBridgeSettingsQuery = () =>
-  useWrappedLazyQuery(bridgeApi.useLazyBridgeSettingsQuery);
+const useBridgeSettingsQuery = (args?: Parameters<typeof useWrappedQuery>[1]) =>
+  useWrappedQuery(bridgeApi.useBridgeSettingsQuery, args);
 
 export {
   useGenerateAddressMutation,
@@ -35,6 +35,6 @@ export {
   useBalanceDfcMutation,
   useLazyBridgeStatusQuery,
   useBridgeVersionQuery,
-  useLazyBridgeSettingsQuery,
+  useBridgeSettingsQuery,
   bridgeApi,
 };

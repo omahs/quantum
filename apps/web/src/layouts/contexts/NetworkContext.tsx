@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useNetwork } from "wagmi";
 import { Erc20Token, Network, TokensI } from "types";
-import { useLazyBridgeSettingsQuery } from "@store/index";
+import { useBridgeSettingsQuery } from "@store/index";
 
 interface NetworkContextI {
   evmFee: string | number;
@@ -169,44 +169,38 @@ export function NetworkProvider({
   const [evmFee, setEvmFee] = useState<`${number}` | number>(0);
   const [filteredNetwork, setFilteredNetwork] =
     useState<[NetworkI<Erc20Token>, NetworkI<string>]>(networks);
-  const [trigger] = useLazyBridgeSettingsQuery();
+  const { data } = useBridgeSettingsQuery();
 
-  // fetch bridge settings
   useEffect(() => {
-    const getBridgeSettings = async () => {
-      const { data, isSuccess } = await trigger({});
-      if (isSuccess) {
-        if (data.defichain) {
-          setDfcFee(data.defichain.transferFee);
-        }
-        if (data.ethereum) {
-          setEvmFee(data.ethereum.transferFee);
-        }
+    if (data) {
+      setDfcFee(data.defichain.transferFee);
+      setEvmFee(data.ethereum.transferFee);
 
-        const matchedNetworks = networks.map((network) => {
-          const supportedToken =
-            network.name === Network.DeFiChain
-              ? data?.defichain.supportedTokens
-              : data?.ethereum.supportedTokens;
+      const matchedNetworks = networks.map((network) => {
+        const supportedToken =
+          network.name === Network.DeFiChain
+            ? data?.defichain.supportedTokens
+            : data?.ethereum.supportedTokens;
 
-          let tokenMatcher: TokensI[] = [];
-          if (supportedToken !== undefined) {
-            tokenMatcher = network.tokens.filter((token) =>
-              supportedToken.includes(token.tokenA.symbol)
-            );
-          }
-          return {
-            ...network,
-            tokens: tokenMatcher,
-          };
-        });
+        let tokenMatcher: TokensI[] = [];
+        if (supportedToken !== undefined) {
+          tokenMatcher = network.tokens.filter((token) =>
+            supportedToken.includes(token.tokenA.symbol)
+          );
+        }
+        return {
+          ...network,
+          tokens: tokenMatcher,
+        };
+      });
+
+      if (matchedNetworks) {
         setFilteredNetwork(
           matchedNetworks as [NetworkI<Erc20Token>, NetworkI<string>]
         );
       }
-    };
-    getBridgeSettings();
-  }, [networks, chain]);
+    }
+  }, [data, chain]);
 
   const context: NetworkContextI = useMemo(
     () => ({
