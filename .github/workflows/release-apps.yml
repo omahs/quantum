@@ -66,8 +66,8 @@ jobs:
             linux/amd64
             linux/arm64
           tags: ${{ steps.tags.outputs.result }}
-          cache-from: type=registry,ref=ghcr.io/waveshq/bridge:buildcache
-          cache-to: type=registry,ref=ghcr.io/waveshq/bridge:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/birthdayresearch/quantum:buildcache
+          cache-to: type=registry,ref=ghcr.io/birthdayresearch/quantum:buildcache,mode=max
 
   aws_ecr:
     name: Publish AWS ECR
