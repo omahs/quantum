@@ -18,7 +18,7 @@
     "test:unit": "jest --selectProjects test:unit",
     "test:i9n": "jest --selectProjects test:i9n",
     "test:e2e": "jest --selectProjects test:e2e",
-    "docker:pull": "docker pull ghcr.io/jellyfishsdk/whale-api:3.29.1 && docker pull ghcr.io/jellyfishsdk/playground-api:3.29.1 && docker pull defi/defichain:3.2.6 && docker pull postgres:15.2-alpine"
+    "docker:pull": "docker pull ghcr.io/jellyfishsdk/whale-api:3.30.0 && docker pull ghcr.io/jellyfishsdk/playground-api:3.30.0 && docker pull defi/defichain:3.2.7 && docker pull postgres:15.2-alpine"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -51,11 +51,11 @@
     "pg": "^8.10.0"
   },
   "devDependencies": {
-    "@birthdayresearch/eslint-config": "^0.5.4",
-    "@birthdayresearch/sticky-prettier": "^0.5.4",
-    "@birthdayresearch/sticky-testcontainers": "^0.5.4",
-    "@birthdayresearch/sticky-turbo-jest": "^0.5.4",
-    "@birthdayresearch/sticky-typescript": "^0.5.4",
+    "@birthdayresearch/eslint-config": "^0.5.5",
+    "@birthdayresearch/sticky-prettier": "^0.5.5",
+    "@birthdayresearch/sticky-testcontainers": "^0.5.5",
+    "@birthdayresearch/sticky-turbo-jest": "^0.5.5",
+    "@birthdayresearch/sticky-typescript": "^0.5.5",
     "@nestjs/cli": "^9.2.0",
     "@nestjs/schematics": "^9.0.4",
     "@nestjs/testing": "^9.3.9",
