@@ -104,6 +104,7 @@ export class EVMTransactionConfirmerService {
       USDT: BigNumber(0),
       USDC: BigNumber(0),
       WBTC: BigNumber(0),
+      EUROC: BigNumber(0),
     };
 
     for (const transaction of confirmedTransactions) {
@@ -122,6 +123,7 @@ export class EVMTransactionConfirmerService {
       USDT: numericalPlaceholder,
       USDC: numericalPlaceholder,
       WBTC: numericalPlaceholder,
+      EUROC: numericalPlaceholder,
     };
 
     Object.keys(amountBridged).forEach((token) => {
