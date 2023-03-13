@@ -76,7 +76,6 @@ export default function BridgeForm({
   hasPendingTxn: boolean;
 }) {
   const { filteredNetwork } = useNetworkContext();
-
   const {
     selectedNetworkA,
     selectedTokensA,

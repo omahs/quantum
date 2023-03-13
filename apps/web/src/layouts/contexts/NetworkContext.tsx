@@ -214,7 +214,7 @@ export function NetworkProvider({
       filteredNetwork,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filteredNetwork]
+    [filteredNetwork, chain, data]
   );
 
   return (

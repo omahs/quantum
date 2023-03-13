@@ -97,7 +97,7 @@ export function TokensProvider({ children }: PropsWithChildren<{}>) {
       isSendingFromEthNetwork,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedTokensA, selectedTokensB]
+    [selectedNetworkA, selectedTokensA, selectedTokensB]
   );
   return (
     <TokensContext.Provider value={context}>{children}</TokensContext.Provider>

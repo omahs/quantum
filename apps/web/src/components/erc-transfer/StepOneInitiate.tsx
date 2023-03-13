@@ -4,7 +4,7 @@ import IconTooltip from "@components/commons/IconTooltip";
 import ActionButton from "@components/commons/ActionButton";
 import { Network } from "types";
 import { useAccount } from "wagmi";
-import useTokens from "@hooks/useTokens";
+import { useTokensContext } from "@contexts/TokensContext";
 import WalletAddressInput from "@components/WalletAddressInput";
 import { TRANSACTION_ERROR_INFO } from "../../constants";
 
@@ -20,7 +20,7 @@ export default function StepOneInitiate({
   isReadOnly: boolean;
 }) {
   const { isConnected } = useAccount();
-  const { selectedNetworkA } = useTokens();
+  const { selectedNetworkA } = useTokensContext();
 
   const [hasAddressInputErr, setHasAddressInputErr] = useState<boolean>(false);
 
