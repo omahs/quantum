@@ -1,9 +1,9 @@
 import { SupportedDFCTokenSymbols } from 'src/AppConfig';
 
-export interface StatsModel {
+export interface DeFiChainStats {
   totalTransactions: number;
   confirmedTransactions: number;
-  amountBridged: {
-    [token in SupportedDFCTokenSymbols]?: number;
-  };
+  amountBridgedToDfc: BridgedEvmToDfc;
+  date: string;
 }
+export type BridgedEvmToDfc = Record<SupportedDFCTokenSymbols, string>;

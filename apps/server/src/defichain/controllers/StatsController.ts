@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 
-// import { StatsModel } from '../DefichainInterface';
+import { DeFiChainStats } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
 import { WhaleApiService } from '../services/WhaleApiService';
 
@@ -24,7 +24,7 @@ export class StatsController {
 
   @SkipThrottle()
   @Get('/stats')
-  async get(@Query('date') date?: string) {
+  async get(@Query('date') date?: string): Promise<DeFiChainStats> {
     return this.defichainStatsService.getDefiChainStats(date);
   }
 }
