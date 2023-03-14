@@ -23,6 +23,7 @@ function Home() {
       const event = e;
       const unconfirmedHash = getStorageItem<string>(UNCONFIRMED_TXN_HASH_KEY);
       const unsentFundHash = getStorageItem<string>(UNSENT_FUND_TXN_HASH_KEY);
+
       if (unconfirmedHash !== undefined || unsentFundHash !== undefined) {
         // display native reload warning modal if there is unconfirmed txn ongoing
         event.preventDefault();

@@ -6,7 +6,8 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
-import { NetworkOptionsI, TokensI, Network } from "types";
+import { NetworkOptionsI, TokensI } from "types";
+
 import { useNetworkContext } from "@contexts/NetworkContext";
 
 interface TokenContextI {
@@ -19,7 +20,6 @@ interface TokenContextI {
   setSelectedNetworkB: (networkB: NetworkOptionsI) => void;
   setSelectedTokensB: (tokenB: TokensI) => void;
   resetNetworkSelection: () => void;
-  isSendingFromEthNetwork: boolean;
 }
 
 const TokensContext = createContext<TokenContextI>(undefined as any);
@@ -29,6 +29,9 @@ export function useTokensContext(): TokenContextI {
 
 export function TokensProvider({ children }: PropsWithChildren<{}>) {
   const { filteredNetwork } = useNetworkContext();
+
+  // if network dint change then dont update the filteredNetwork
+
   const [defaultNetworkA, defaultNetworkB] = filteredNetwork;
   const [selectedNetworkA, setSelectedNetworkA] =
     useState<NetworkOptionsI>(defaultNetworkA);
@@ -41,17 +44,14 @@ export function TokensProvider({ children }: PropsWithChildren<{}>) {
     defaultNetworkB.tokens[0]
   );
 
-  const [isSendingFromEthNetwork, setIsSendingFromEthNetwork] =
-    useState<boolean>(false);
-
   useEffect(() => {
     const networkB = filteredNetwork.find(
-      (network) => network.name !== selectedNetworkA?.name
+      (network) => network.name !== selectedNetworkA.name
     );
     if (networkB !== undefined) {
       setSelectedNetworkB(networkB);
       const tokens = selectedNetworkA.tokens.find(
-        (item) => item.tokenA.name === selectedTokensB?.tokenA.name
+        (item) => item.tokenA.name === selectedTokensB.tokenA.name
       );
       if (tokens !== undefined) {
         setSelectedTokensA(tokens);
@@ -61,7 +61,7 @@ export function TokensProvider({ children }: PropsWithChildren<{}>) {
 
   useEffect(() => {
     const tokens = selectedNetworkB.tokens.find(
-      (item) => item.tokenA.name === selectedTokensA?.tokenB.name
+      (item) => item.tokenA.name === selectedTokensA.tokenB.name
     );
     if (tokens !== undefined) {
       setSelectedTokensB(tokens);
@@ -75,13 +75,11 @@ export function TokensProvider({ children }: PropsWithChildren<{}>) {
     setSelectedTokensB(defaultNetworkB.tokens[0]);
   };
 
-  useEffect(() => {
+  const handleFilteredNetworkChange = () => {
     resetNetworkSelection();
-  }, [filteredNetwork]);
+  };
 
-  useEffect(() => {
-    setIsSendingFromEthNetwork(selectedNetworkA?.name === Network.Ethereum);
-  }, [selectedNetworkA]);
+  useMemo(() => handleFilteredNetworkChange(), [filteredNetwork]);
 
   const context: TokenContextI = useMemo(
     () => ({
@@ -94,7 +92,6 @@ export function TokensProvider({ children }: PropsWithChildren<{}>) {
       setSelectedNetworkB,
       setSelectedTokensB,
       resetNetworkSelection,
-      isSendingFromEthNetwork,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedNetworkA, selectedTokensA, selectedTokensB]
