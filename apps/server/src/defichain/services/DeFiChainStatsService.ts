@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
+import { Cache } from 'cache-manager';
 import { PrismaService } from 'src/PrismaService';
 
 import { SupportedDFCTokenSymbols } from '../../AppConfig';
@@ -7,7 +8,7 @@ import { BridgedEvmToDfc, DeFiChainStats } from '../DefichainInterface';
 
 @Injectable()
 export class DeFiChainStatsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache, private prisma: PrismaService) {}
 
   async getDefiChainStats(date?: string | undefined): Promise<DeFiChainStats> {
     const dateOnly = date ?? new Date().toISOString().substring(0, 10);

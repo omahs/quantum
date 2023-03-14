@@ -1,5 +1,5 @@
 // import { stats } from '@defichain/whale-api-client';
-import { Controller, Get, Query } from '@nestjs/common';
+import { CacheInterceptor, CacheTTL, Controller, Get, Query, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
 import { EnvironmentNetwork } from '@waveshq/walletkit-core';
@@ -7,6 +7,7 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import { DeFiChainStats } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
 
+@UseInterceptors(CacheInterceptor)
 @Controller()
 export class StatsController {
   private network: EnvironmentNetwork;
@@ -16,6 +17,7 @@ export class StatsController {
   }
 
   @SkipThrottle()
+  @CacheTTL(3600_000 * 24) // 1 day
   @Get('/stats')
   async get(@Query('date') date?: string): Promise<DeFiChainStats> {
     return this.defichainStatsService.getDefiChainStats(date);
