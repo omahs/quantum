@@ -1,21 +1,22 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
-import { Cache } from 'cache-manager';
 import { PrismaService } from 'src/PrismaService';
 
 import { SupportedDFCTokenSymbols } from '../../AppConfig';
 import { BridgedEvmToDfc, DeFiChainStats } from '../DefichainInterface';
+import { StatsDto } from '../model/StatsDto';
 
 @Injectable()
 export class DeFiChainStatsService {
-  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache, private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async getDefiChainStats(date?: string | undefined): Promise<DeFiChainStats> {
-    const dateOnly = date ?? new Date().toISOString().substring(0, 10);
-    const today = new Date(dateOnly);
+  async getDefiChainStats(date?: StatsDto): Promise<DeFiChainStats> {
+    const dateOnly = date ?? new Date();
+    const today = new Date(dateOnly.toString());
     today.setUTCHours(0, 0, 0, 0); // set to UTC +0
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
+    // console.log(dateOnly);
 
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.deFiChainAddressIndex.count({
