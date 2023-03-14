@@ -6,7 +6,13 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
-import { Erc20Token, Network, NetworkOptionsI, TokensI } from "types";
+import {
+  Erc20Token,
+  Network,
+  NetworkOptionsI,
+  TokenDetailI,
+  TokensI,
+} from "types";
 
 interface NetworkContextI {
   selectedNetworkA: NetworkOptionsI;
@@ -18,13 +24,6 @@ interface NetworkContextI {
   setSelectedNetworkB: (networkB: NetworkOptionsI) => void;
   setSelectedTokensB: (tokenB: TokensI) => void;
   resetNetworkSelection: () => void;
-}
-
-interface TokenDetailI<T> {
-  name: T;
-  symbol: string;
-  icon: string;
-  supply: string;
 }
 
 interface NetworkI<T> {
@@ -47,13 +46,11 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           name: "WBTC",
           symbol: "WBTC",
           icon: "/tokens/wBTC.svg",
-          supply: "1925543.1234",
         },
         tokenB: {
           name: "dBTC",
           symbol: "BTC",
           icon: "/tokens/dBTC.svg",
-          supply: "1925543.1234",
         },
       },
       {
@@ -61,13 +58,47 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           name: "ETH",
           symbol: "ETH",
           icon: "/tokens/ETH.svg",
-          supply: "120052901.9012",
         },
         tokenB: {
           name: "dETH",
           symbol: "ETH",
           icon: "/tokens/dETH.svg",
-          supply: "120052901.9012",
+        },
+      },
+      {
+        tokenA: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+        },
+        tokenB: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+        },
+        tokenB: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "EUROC",
+          symbol: "EUROC",
+          icon: "/tokens/EUROC.svg",
+        },
+        tokenB: {
+          name: "dEUROC",
+          symbol: "EUROC",
+          icon: "/tokens/dEUROC.svg",
         },
       },
     ],
@@ -81,13 +112,11 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           name: "dBTC",
           symbol: "BTC",
           icon: "/tokens/dBTC.svg",
-          supply: "1801245.4321",
         },
         tokenB: {
           name: "WBTC",
           symbol: "WBTC",
           icon: "/tokens/wBTC.svg",
-          supply: "1801245.4321",
         },
       },
       {
@@ -95,13 +124,47 @@ export const networks: [NetworkI<Erc20Token>, NetworkI<string>] = [
           name: "dETH",
           symbol: "ETH",
           icon: "/tokens/dETH.svg",
-          supply: "107732901.8210",
         },
         tokenB: {
           name: "ETH",
           symbol: "ETH",
           icon: "/tokens/ETH.svg",
-          supply: "107732901.8210",
+        },
+      },
+      {
+        tokenA: {
+          name: "dUSDT",
+          symbol: "USDT",
+          icon: "/tokens/dUSDT.svg",
+        },
+        tokenB: {
+          name: "USDT",
+          symbol: "USDT",
+          icon: "/tokens/USDT.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "dUSDC",
+          symbol: "USDC",
+          icon: "/tokens/dUSDC.svg",
+        },
+        tokenB: {
+          name: "USDC",
+          symbol: "USDC",
+          icon: "/tokens/USDC.svg",
+        },
+      },
+      {
+        tokenA: {
+          name: "dEUROC",
+          symbol: "EUROC",
+          icon: "/tokens/dEUROC.svg",
+        },
+        tokenB: {
+          name: "EUROC",
+          symbol: "EUROC",
+          icon: "/tokens/EUROC.svg",
         },
       },
     ],
