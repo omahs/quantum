@@ -13,7 +13,8 @@ export class DeFiChainStatsService {
     const dateOnly = date ?? new Date().toISOString().substring(0, 10);
     const today = new Date(dateOnly);
     today.setUTCHours(0, 0, 0, 0); // set to UTC +0
-    const tomorrow = new Date(today.getDate() + 1);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
     const confirmedTransactions = await this.prisma.deFiChainAddressIndex.findMany({
       where: {
@@ -45,7 +46,6 @@ export class DeFiChainStatsService {
       DFI: BigNumber(0),
       EUROC: BigNumber(0),
     };
-
     for (const transaction of confirmedTransactions) {
       const { tokenSymbol, claimAmount } = transaction;
       if (tokenSymbol && claimAmount !== null) {
