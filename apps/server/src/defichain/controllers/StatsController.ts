@@ -6,19 +6,12 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 
 import { DeFiChainStats } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
-import { WhaleApiService } from '../services/WhaleApiService';
-
-export type Iso8601String = `${number}-${number}-${number}`;
 
 @Controller()
 export class StatsController {
   private network: EnvironmentNetwork;
 
-  constructor(
-    private readonly whaleClient: WhaleApiService,
-    private readonly configService: ConfigService,
-    private defichainStatsService: DeFiChainStatsService,
-  ) {
+  constructor(private readonly configService: ConfigService, private defichainStatsService: DeFiChainStatsService) {
     this.network = configService.getOrThrow<EnvironmentNetwork>(`defichain.network`);
   }
 
