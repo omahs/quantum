@@ -1,7 +1,9 @@
-import { IsDateString, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsOptional } from 'class-validator';
 
 export class StatsDto {
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   @IsOptional()
-  date?: string;
+  date?: Date;
 }

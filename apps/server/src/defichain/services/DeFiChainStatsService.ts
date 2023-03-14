@@ -16,7 +16,6 @@ export class DeFiChainStatsService {
     today.setUTCHours(0, 0, 0, 0); // set to UTC +0
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    // console.log(dateOnly);
 
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.deFiChainAddressIndex.count({
