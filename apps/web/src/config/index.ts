@@ -35,3 +35,20 @@ export const TESTNET_CONFIG: ContractContextI = {
     EUROC: { address: "0x5ea4bbB3204522f3Ac65137D1E12027D9848231A" },
   },
 };
+
+// Local Hardhat
+export const LOCAL_HARDHAT_CONFIG: ContractContextI = {
+  EthereumRpcUrl: "http://127.0.0.1:8545",
+  ExplorerURL: "https://goerli.etherscan.io",
+  BridgeV1: {
+    address: "0x96E5E1d6377ffA08B9c08B066f430e33e3c4C9ef",
+    abi: BridgeV1Testnet,
+  },
+  Erc20Tokens: {
+    WBTC: { address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9" },
+    USDT: { address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0" },
+    USDC: { address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" },
+    ETH: { address: "0x0000000000000000000000000000000000000000" },
+    EUROC: { address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707" },
+  },
+};

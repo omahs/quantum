@@ -22,10 +22,33 @@ export async function tokenDeployment(): Promise<TestTokens> {
       `To verify on Etherscan: npx hardhat verify --network goerli --contract contracts/TestToken.sol:TestToken ${mockTokenUSDC.address} MockUSDC MUSDC`,
     );
   }
-  return { usdtContract: mockTokenUSDT, usdcContract: mockTokenUSDC };
+  const mockTokenWBTC = await ERC20.deploy('MockWBTC', 'MWBTC');
+  await mockTokenWBTC.deployed();
+  console.log('Test MWBTC token is deployed to ', mockTokenWBTC.address);
+  if (chainId !== 1337) {
+    console.log(
+      `To verify on Etherscan: npx hardhat verify --network goerli --contract contracts/TestToken.sol:TestToken ${mockTokenWBTC.address} MockBTC MWBTC`,
+    );
+  }
+  const mockTokenEUROC = await ERC20.deploy('MockEUROC', 'MEUROC');
+  await mockTokenEUROC.deployed();
+  console.log('Test MEURO token is deployed to ', mockTokenEUROC.address);
+  if (chainId !== 1337) {
+    console.log(
+      `To verify on Etherscan: npx hardhat verify --network goerli --contract contracts/TestToken.sol:TestToken ${mockTokenEUROC.address} MockEURO MEUROC`,
+    );
+  }
+  return {
+    usdtContract: mockTokenUSDT,
+    usdcContract: mockTokenUSDC,
+    wbtcContract: mockTokenWBTC,
+    eurocContract: mockTokenEUROC,
+  };
 }
 
 interface TestTokens {
   usdtContract: TestToken;
   usdcContract: TestToken;
+  wbtcContract: TestToken;
+  eurocContract: TestToken;
 }
