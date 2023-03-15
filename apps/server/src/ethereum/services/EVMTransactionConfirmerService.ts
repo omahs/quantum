@@ -6,7 +6,6 @@ import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 import BigNumber from 'bignumber.js';
 import { BigNumber as EthBigNumber, ethers } from 'ethers';
 import { BridgeV1, BridgeV1__factory, ERC20__factory } from 'smartcontracts';
-import { Iso8601DateOnlyString, Iso8601String } from 'src/types';
 
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { TokenSymbol } from '../../defichain/model/VerifyDto';
@@ -16,7 +15,7 @@ import { ETHERS_RPC_PROVIDER } from '../../modules/EthersModule';
 import { PrismaService } from '../../PrismaService';
 import { getNextDayTimestampInSec } from '../../utils/DateUtils';
 import { getDTokenDetailsByWToken } from '../../utils/TokensUtils';
-import { StatsModel } from '../EthereumInterface';
+import { StatsDto, StatsQueryDto } from '../EthereumInterface';
 
 @Injectable()
 export class EVMTransactionConfirmerService {
@@ -63,22 +62,28 @@ export class EVMTransactionConfirmerService {
     return ethers.utils.formatUnits(balance, assetDecimalPlaces);
   }
 
-  async getStats(date?: Iso8601DateOnlyString): Promise<StatsModel> {
+  async getStats(date?: StatsQueryDto): Promise<StatsDto> {
     // Use today's date if no param is given
     // NOTE: REMOVE THE TIMESTAMP UNLESS YOU WANT A 24-HOUR ROLLING WINDOW
-    const dateOnly = date ?? (new Date().toISOString().slice(0, 10) as Iso8601DateOnlyString);
-    const today = new Date(dateOnly);
-    today.setUTCHours(0, 0, 0, 0); // set to UTC +0
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const dateOnly = date ?? new Date().toISOString().slice(0, 10);
+    const dateFrom = new Date(dateOnly as string);
+    const today = new Date();
+
+    if (dateFrom > today) {
+      throw new BadRequestException(`Cannot query future date.`);
+    }
+
+    dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
+    const dateTo = new Date(today);
+    dateTo.setDate(dateFrom.getDate() + 1);
 
     // CONCURRENCY!!
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.bridgeEventTransactions.count({
         where: {
           createdAt: {
-            gte: today.toISOString(),
-            lt: tomorrow.toISOString(),
+            gte: dateFrom.toISOString(),
+            lt: dateTo.toISOString(),
           },
         },
       }),
@@ -91,8 +96,8 @@ export class EVMTransactionConfirmerService {
           amount: { not: null },
           sendTransactionHash: { not: null },
           createdAt: {
-            gte: today.toISOString(),
-            lt: tomorrow.toISOString(),
+            gte: dateFrom.toISOString(),
+            lt: dateTo.toISOString(),
           },
         },
       }),
@@ -136,8 +141,6 @@ export class EVMTransactionConfirmerService {
       totalTransactions,
       confirmedTransactions: confirmedTransactions.length,
       amountBridged,
-      date: dateOnly,
-      cacheTime: new Date().toISOString() as Iso8601String,
     };
   }
 

@@ -1,5 +1,13 @@
-import { SupportedEVMTokenSymbols } from 'src/AppConfig';
-import { Iso8601DateOnlyString, Iso8601String } from 'src/types';
+import { IsDateString, IsOptional } from 'class-validator';
+
+import { SupportedEVMTokenSymbols } from '../AppConfig';
+import { Iso8601DateOnlyString } from '../utils/StatsUtils';
+
+export class StatsQueryDto {
+  @IsOptional()
+  @IsDateString()
+  date?: Iso8601DateOnlyString;
+}
 
 export interface StatsModel {
   totalTransactions: number;
@@ -7,6 +15,20 @@ export interface StatsModel {
   amountBridged: {
     [token in SupportedEVMTokenSymbols]?: string;
   };
-  date: Iso8601DateOnlyString;
-  cacheTime: Iso8601String;
+}
+
+export class StatsDto {
+  readonly totalTransactions: number;
+
+  readonly confirmedTransactions: number;
+
+  readonly amountBridged: {
+    [token in SupportedEVMTokenSymbols]?: string;
+  };
+
+  constructor(statsModel: StatsModel) {
+    this.totalTransactions = statsModel.totalTransactions;
+    this.confirmedTransactions = statsModel.confirmedTransactions;
+    this.amountBridged = statsModel.amountBridged;
+  }
 }

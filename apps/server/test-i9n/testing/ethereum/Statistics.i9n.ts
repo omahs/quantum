@@ -1,12 +1,25 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 
-import { StartedDeFiChainStubContainer } from '../defichain/containers/DeFiChainStubContainer';
-import { BridgeServerTestingApp } from './BridgeServerTestingApp';
-import { buildTestConfig, TestingModule } from './TestingModule';
+import { StatsModel } from '../../../src/ethereum/EthereumInterface';
+import { StartedDeFiChainStubContainer } from '../../defichain/containers/DeFiChainStubContainer';
+import { BridgeServerTestingApp } from '../BridgeServerTestingApp';
+import { buildTestConfig, TestingModule } from '../TestingModule';
 
 describe('Statistics Service Test', () => {
   let testing: BridgeServerTestingApp;
   let startedPostgresContainer: StartedPostgreSqlContainer;
+
+  function verifyFormat(parsedPayload: StatsModel) {
+    expect(parsedPayload).toHaveProperty('totalTransactions');
+    expect(parsedPayload).toHaveProperty('confirmedTransactions');
+    expect(parsedPayload).toHaveProperty('amountBridged');
+
+    expect(parsedPayload.amountBridged).toHaveProperty('ETH');
+    expect(parsedPayload.amountBridged).toHaveProperty('WBTC');
+    expect(parsedPayload.amountBridged).toHaveProperty('USDT');
+    expect(parsedPayload.amountBridged).toHaveProperty('USDC');
+    expect(parsedPayload.amountBridged).toHaveProperty('EUROC');
+  }
 
   beforeAll(async () => {
     startedPostgresContainer = await new PostgreSqlContainer().start();
@@ -33,8 +46,7 @@ describe('Statistics Service Test', () => {
       url: `/ethereum/stats`,
     });
 
-    const dateToday = new Date().toISOString().slice(0, 10);
-    expect(JSON.parse(txReceipt.payload).date).toStrictEqual(dateToday);
+    verifyFormat(JSON.parse(txReceipt.payload));
   });
 
   it(`should return given date's data`, async () => {
@@ -45,7 +57,7 @@ describe('Statistics Service Test', () => {
       url: `/ethereum/stats?date=${targetDate}`,
     });
 
-    expect(JSON.parse(txReceipt.payload).date).toStrictEqual(targetDate);
+    verifyFormat(JSON.parse(txReceipt.payload));
   });
 
   it(`should throw an error if invalid or no date is provided`, async () => {
@@ -73,16 +85,6 @@ describe('Statistics Service Test', () => {
     });
 
     const parsedPayload = JSON.parse(txReceipt.payload);
-
-    expect(parsedPayload).toHaveProperty('date');
-    expect(parsedPayload).toHaveProperty('cacheTime');
-    expect(parsedPayload).toHaveProperty('totalTransactions');
-    expect(parsedPayload).toHaveProperty('confirmedTransactions');
-    expect(parsedPayload).toHaveProperty('amountBridged');
-
-    expect(parsedPayload.amountBridged).toHaveProperty('ETH');
-    expect(parsedPayload.amountBridged).toHaveProperty('WBTC');
-    expect(parsedPayload.amountBridged).toHaveProperty('USDT');
-    expect(parsedPayload.amountBridged).toHaveProperty('USDC');
+    verifyFormat(parsedPayload);
   });
 });

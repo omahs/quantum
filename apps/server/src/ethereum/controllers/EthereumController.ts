@@ -4,8 +4,7 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
 import { EthereumTransactionValidationPipe } from '../../pipes/EthereumTransactionValidation.pipe';
-import { Iso8601DateOnlyString } from '../../types';
-import { StatsModel } from '../EthereumInterface';
+import { StatsDto, StatsModel, StatsQueryDto } from '../EthereumInterface';
 import { EVMTransactionConfirmerService, HandledEVMTransaction } from '../services/EVMTransactionConfirmerService';
 
 @Controller()
@@ -21,12 +20,13 @@ export class EthereumController {
   }
 
   @Get('stats/')
-  async getStats(@Query('date') date?: Iso8601DateOnlyString): Promise<StatsModel> {
-    return (await this.cache.get(
+  async getStats(@Query('date') date?: StatsQueryDto): Promise<StatsDto | undefined> {
+    return this.cache.get(
       `ETH_STATS_${date ?? 'TODAY'}`,
       async () => {
         try {
-          return await this.evmTransactionConfirmerService.getStats(date);
+          const statsModel: StatsModel = await this.evmTransactionConfirmerService.getStats(date);
+          return new StatsDto(statsModel);
         } catch (e: any) {
           throw new HttpException(
             {
@@ -43,7 +43,7 @@ export class EthereumController {
       {
         ttl: 3600_000 * 24, // 1 day
       },
-    )) as StatsModel;
+    );
   }
 
   @Post('handleTransaction')
