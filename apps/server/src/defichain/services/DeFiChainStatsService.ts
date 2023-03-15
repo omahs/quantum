@@ -3,14 +3,13 @@ import BigNumber from 'bignumber.js';
 import { PrismaService } from 'src/PrismaService';
 
 import { SupportedDFCTokenSymbols } from '../../AppConfig';
-import { BridgedEvmToDfc, DeFiChainStats } from '../DefichainInterface';
-import { StatsDto } from '../model/StatsDto';
+import { BridgedEvmToDfc, StatsDto, StatsQueryDto } from '../DefichainInterface';
 
 @Injectable()
 export class DeFiChainStatsService {
   constructor(private prisma: PrismaService) {}
 
-  async getDefiChainStats(date?: StatsDto): Promise<DeFiChainStats> {
+  async getDefiChainStats(date?: StatsQueryDto): Promise<StatsDto> {
     const dateOnly = date ?? new Date();
     const dateFrom = new Date(dateOnly.toString());
     dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
