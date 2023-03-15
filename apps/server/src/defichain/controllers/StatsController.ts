@@ -1,4 +1,3 @@
-// import { stats } from '@defichain/whale-api-client';
 import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 
