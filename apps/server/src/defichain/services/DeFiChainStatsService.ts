@@ -32,6 +32,8 @@ export class DeFiChainStatsService {
         where: {
           claimSignature: { not: null },
           address: { not: undefined },
+          tokenSymbol: { not: null },
+          claimAmount: { not: null },
           createdAt: {
             // new Date() creates date with current time and day and etc.
             gte: today,
@@ -71,11 +73,9 @@ function getAmountBridged(
   };
   for (const transaction of confirmedTransactions) {
     const { tokenSymbol, claimAmount } = transaction;
-    if (tokenSymbol && claimAmount !== null) {
-      amountBridgedBigN[tokenSymbol as SupportedDFCTokenSymbols] = amountBridgedBigN[
-        tokenSymbol as SupportedDFCTokenSymbols
-      ].plus(BigNumber(claimAmount as string));
-    }
+    amountBridgedBigN[tokenSymbol as SupportedDFCTokenSymbols] = amountBridgedBigN[
+      tokenSymbol as SupportedDFCTokenSymbols
+    ].plus(BigNumber(claimAmount as string));
   }
   const numericalPlaceholder = '0.000000';
   const amountBridgedToDfc: BridgedEvmToDfc = {
