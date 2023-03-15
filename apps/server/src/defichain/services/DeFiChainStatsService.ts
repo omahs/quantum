@@ -45,12 +45,12 @@ export class DeFiChainStatsService {
       }),
     ]);
 
-    const amountBridgedToDfc = getAmountBridged(confirmedTransactions);
+    const amountBridged = getAmountBridged(confirmedTransactions);
 
     return {
       totalTransactions,
       confirmedTransactions: confirmedTransactions.length,
-      amountBridgedToDfc,
+      amountBridged,
     };
   }
 }

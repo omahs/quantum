@@ -1,5 +1,5 @@
 // import { stats } from '@defichain/whale-api-client';
-import { Controller, Get, HttpException, HttpStatus, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { SemaphoreCache } from 'src/libs/caches/SemaphoreCache';
 
@@ -13,7 +13,6 @@ export class StatsController {
 
   @SkipThrottle()
   @Get('/stats')
-  @UsePipes(new ValidationPipe({ transform: true }))
   async get(@Query('date') date?: StatsDto): Promise<DeFiChainStats> {
     return (await this.cache.get(
       `DFC_STATS_${date ?? 'TODAY'}`,
