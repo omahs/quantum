@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { PrismaService } from 'src/PrismaService';
 
 import { SupportedDFCTokenSymbols } from '../../AppConfig';
-import { BridgedEvmToDfc, DeFiChainStats, StatsDto } from '../DefichainInterface';
+import { BridgedDfcToEvm, DeFiChainStats, StatsDto } from '../DefichainInterface';
 
 @Injectable()
 export class DeFiChainStatsService {
@@ -66,7 +66,7 @@ function getAmountBridged(
     tokenSymbol: string | null;
     claimAmount: string | null;
   }>,
-): BridgedEvmToDfc {
+): BridgedDfcToEvm {
   const amountBridgedBigN = {
     USDC: BigNumber(0),
     USDT: BigNumber(0),
@@ -82,7 +82,7 @@ function getAmountBridged(
     ].plus(BigNumber(claimAmount as string));
   }
   const numericalPlaceholder = '0.000000';
-  const amountBridgedToDfc: BridgedEvmToDfc = {
+  const amountBridgedToEVM: BridgedDfcToEvm = {
     USDC: numericalPlaceholder,
     USDT: numericalPlaceholder,
     BTC: numericalPlaceholder,
@@ -93,11 +93,11 @@ function getAmountBridged(
 
   for (const key in amountBridgedBigN) {
     if ({}.hasOwnProperty.call(amountBridgedBigN, key)) {
-      amountBridgedToDfc[key as SupportedDFCTokenSymbols] = amountBridgedBigN[key as SupportedDFCTokenSymbols]
+      amountBridgedToEVM[key as SupportedDFCTokenSymbols] = amountBridgedBigN[key as SupportedDFCTokenSymbols]
         .decimalPlaces(6, BigNumber.ROUND_FLOOR)
         .toString();
     }
   }
 
-  return amountBridgedToDfc;
+  return amountBridgedToEVM;
 }

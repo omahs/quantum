@@ -4,9 +4,9 @@ import { SupportedDFCTokenSymbols } from 'src/AppConfig';
 export interface DeFiChainStats {
   totalTransactions: number;
   confirmedTransactions: number;
-  amountBridged: BridgedEvmToDfc;
+  amountBridged: BridgedDfcToEvm;
 }
-export type BridgedEvmToDfc = Record<SupportedDFCTokenSymbols, string>;
+export type BridgedDfcToEvm = Record<SupportedDFCTokenSymbols, string>;
 
 export type Iso8601DateOnlyString = `${number}-${number}-${number}`;
 
