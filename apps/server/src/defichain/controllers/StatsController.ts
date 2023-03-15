@@ -13,8 +13,8 @@ export class StatsController {
 
   @SkipThrottle()
   @Get('/stats')
-  async get(@Query('date') date?: StatsDto): Promise<DeFiChainStats> {
-    return (await this.cache.get(
+  async get(@Query('date') date?: StatsDto): Promise<DeFiChainStats | undefined> {
+    return this.cache.get(
       `DFC_STATS_${date ?? 'TODAY'}`,
       async () => {
         try {
@@ -35,6 +35,6 @@ export class StatsController {
       {
         ttl: 3600_000 * 24, // 1 day
       },
-    )) as DeFiChainStats;
+    );
   }
 }
