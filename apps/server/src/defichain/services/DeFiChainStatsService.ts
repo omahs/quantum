@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { PrismaService } from 'src/PrismaService';
 
@@ -16,6 +16,11 @@ export class DeFiChainStatsService {
     dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
     const dateTo = new Date(dateFrom);
     dateTo.setDate(dateFrom.getDate() + 1);
+    const today = new Date();
+
+    if (dateFrom > today) {
+      throw new BadRequestException(`Cannot query future date.`);
+    }
 
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.deFiChainAddressIndex.count({
