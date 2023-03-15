@@ -9,26 +9,32 @@ export class StatsQueryDto {
   date?: Iso8601DateOnlyString;
 }
 
-export interface StatsModel {
-  totalTransactions: number;
-  confirmedTransactions: number;
-  amountBridged: {
-    [token in SupportedEVMTokenSymbols]?: string;
-  };
-}
-
 export class StatsDto {
   readonly totalTransactions: number;
 
   readonly confirmedTransactions: number;
 
   readonly amountBridged: {
-    [token in SupportedEVMTokenSymbols]?: string;
+    USDC: string;
+    USDT: string;
+    WBTC: string;
+    ETH: string;
+    EUROC: string;
   };
 
-  constructor(statsModel: StatsModel) {
-    this.totalTransactions = statsModel.totalTransactions;
-    this.confirmedTransactions = statsModel.confirmedTransactions;
-    this.amountBridged = statsModel.amountBridged;
+  constructor(
+    totalTransactions: number,
+    confirmedTransactions: number,
+    amountBridged: Record<SupportedEVMTokenSymbols, string>,
+  ) {
+    this.totalTransactions = totalTransactions;
+    this.confirmedTransactions = confirmedTransactions;
+    this.amountBridged = {
+      USDC: amountBridged[SupportedEVMTokenSymbols.USDC]?.toString(),
+      USDT: amountBridged[SupportedEVMTokenSymbols.USDT]?.toString(),
+      WBTC: amountBridged[SupportedEVMTokenSymbols.WBTC]?.toString(),
+      ETH: amountBridged[SupportedEVMTokenSymbols.ETH]?.toString(),
+      EUROC: amountBridged[SupportedEVMTokenSymbols.EUROC]?.toString(),
+    };
   }
 }

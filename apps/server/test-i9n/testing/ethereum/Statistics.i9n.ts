@@ -1,6 +1,6 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 
-import { StatsModel } from '../../../src/ethereum/EthereumInterface';
+import { StatsDto } from '../../../src/ethereum/EthereumInterface';
 import { StartedDeFiChainStubContainer } from '../../defichain/containers/DeFiChainStubContainer';
 import { BridgeServerTestingApp } from '../BridgeServerTestingApp';
 import { buildTestConfig, TestingModule } from '../TestingModule';
@@ -9,7 +9,7 @@ describe('Statistics Service Test', () => {
   let testing: BridgeServerTestingApp;
   let startedPostgresContainer: StartedPostgreSqlContainer;
 
-  function verifyFormat(parsedPayload: StatsModel) {
+  function verifyFormat(parsedPayload: StatsDto) {
     expect(parsedPayload).toHaveProperty('totalTransactions');
     expect(parsedPayload).toHaveProperty('confirmedTransactions');
     expect(parsedPayload).toHaveProperty('amountBridged');
@@ -60,22 +60,40 @@ describe('Statistics Service Test', () => {
     verifyFormat(JSON.parse(txReceipt.payload));
   });
 
-  it(`should throw an error if invalid or no date is provided`, async () => {
-    const txReceipt1 = await testing.inject({
+  it(`should throw an error if invalid date is provided`, async () => {
+    const txReceipt = await testing.inject({
       method: 'GET',
       url: `/ethereum/stats?date=abc`,
     });
 
-    const txReceipt2 = await testing.inject({
+    expect(JSON.parse(txReceipt.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt.payload).error).toStrictEqual(
+      'API call for Ethereum statistics was unsuccessful: Invalid time value',
+    );
+  });
+
+  it(`should throw an error if date parameter is missing`, async () => {
+    const txReceipt = await testing.inject({
       method: 'GET',
       url: `/ethereum/stats?date=`,
     });
 
-    const expectedErrorMessage = 'API call for Ethereum statistics was unsuccessful: Invalid time value';
-    expect(JSON.parse(txReceipt1.payload).status).toStrictEqual(500);
-    expect(JSON.parse(txReceipt1.payload).error).toStrictEqual(expectedErrorMessage);
-    expect(JSON.parse(txReceipt2.payload).status).toStrictEqual(500);
-    expect(JSON.parse(txReceipt2.payload).error).toStrictEqual(expectedErrorMessage);
+    expect(JSON.parse(txReceipt.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt.payload).error).toStrictEqual(
+      'API call for Ethereum statistics was unsuccessful: Invalid time value',
+    );
+  });
+
+  it(`should throw an error if future date is provided`, async () => {
+    const txReceipt = await testing.inject({
+      method: 'GET',
+      url: `/ethereum/stats?date=2033-03-15`,
+    });
+
+    expect(JSON.parse(txReceipt.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt.payload).error).toStrictEqual(
+      'API call for Ethereum statistics was unsuccessful: Cannot query future date',
+    );
   });
 
   it(`should be correctly formatted`, async () => {

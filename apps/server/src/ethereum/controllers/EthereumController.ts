@@ -4,7 +4,7 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { SupportedEVMTokenSymbols } from '../../AppConfig';
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
 import { EthereumTransactionValidationPipe } from '../../pipes/EthereumTransactionValidation.pipe';
-import { StatsDto, StatsModel, StatsQueryDto } from '../EthereumInterface';
+import { StatsDto, StatsQueryDto } from '../EthereumInterface';
 import { EVMTransactionConfirmerService, HandledEVMTransaction } from '../services/EVMTransactionConfirmerService';
 
 @Controller()
@@ -25,8 +25,11 @@ export class EthereumController {
       `ETH_STATS_${date ?? 'TODAY'}`,
       async () => {
         try {
-          const statsModel: StatsModel = await this.evmTransactionConfirmerService.getStats(date);
-          return new StatsDto(statsModel);
+          // const statsModel = await this.evmTransactionConfirmerService.getStats(date);
+          // return new StatsDto(statsModel);
+          const { totalTransactions, confirmedTransactions, amountBridged } =
+            await this.evmTransactionConfirmerService.getStats(date);
+          return new StatsDto(totalTransactions, confirmedTransactions, amountBridged);
         } catch (e: any) {
           throw new HttpException(
             {

@@ -70,7 +70,7 @@ export class EVMTransactionConfirmerService {
     const today = new Date();
 
     if (dateFrom > today) {
-      throw new BadRequestException(`Cannot query future date.`);
+      throw new BadRequestException(`Cannot query future date`);
     }
 
     dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
