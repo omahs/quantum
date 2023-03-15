@@ -12,18 +12,18 @@ export class DeFiChainStatsService {
 
   async getDefiChainStats(date?: StatsDto): Promise<DeFiChainStats> {
     const dateOnly = date ?? new Date();
-    const today = new Date(dateOnly.toString());
-    today.setUTCHours(0, 0, 0, 0); // set to UTC +0
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const dateFrom = new Date(dateOnly.toString());
+    dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
+    const dateTo = new Date(dateFrom);
+    dateTo.setDate(dateFrom.getDate() + 1);
 
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.deFiChainAddressIndex.count({
         where: {
           createdAt: {
             //   new Date() creates date with current time and day and etc.
-            gte: today,
-            lt: tomorrow,
+            gte: dateFrom,
+            lt: dateTo,
           },
         },
       }),
@@ -36,8 +36,8 @@ export class DeFiChainStatsService {
           claimAmount: { not: null },
           createdAt: {
             // new Date() creates date with current time and day and etc.
-            gte: today,
-            lt: tomorrow,
+            gte: dateFrom,
+            lt: dateTo,
           },
         },
         select: {
