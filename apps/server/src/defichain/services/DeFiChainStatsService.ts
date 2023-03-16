@@ -90,13 +90,11 @@ function getAmountBridged(
     EUROC: numericalPlaceholder,
   };
 
-  for (const key in amountBridgedBigN) {
-    if ({}.hasOwnProperty.call(amountBridgedBigN, key)) {
-      amountBridgedToEVM[key as SupportedDFCTokenSymbols] = amountBridgedBigN[key as SupportedDFCTokenSymbols]
-        .decimalPlaces(6, BigNumber.ROUND_FLOOR)
-        .toString();
-    }
-  }
+  Object.keys(amountBridgedBigN).forEach((key) => {
+    amountBridgedToEVM[key as SupportedDFCTokenSymbols] = amountBridgedBigN[key as SupportedDFCTokenSymbols]
+      .decimalPlaces(6, BigNumber.ROUND_FLOOR)
+      .toString();
+  });
 
   return amountBridgedToEVM;
 }
