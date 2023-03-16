@@ -1,6 +1,6 @@
 import { IsDateString, IsOptional } from 'class-validator';
-import { SupportedDFCTokenSymbols } from 'src/AppConfig';
 
+import { SupportedDFCTokenSymbols } from '../AppConfig';
 import { Iso8601DateOnlyString } from '../utils/StatsUtils';
 
 export class DeFiChainStats {
