@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
-import { PrismaService } from 'src/PrismaService';
 
 import { SupportedDFCTokenSymbols } from '../../AppConfig';
+import { PrismaService } from '../../PrismaService';
 import { BridgedDfcToEvm, DeFiChainStats, DFCStatsDto } from '../DefichainInterface';
 
 @Injectable()
