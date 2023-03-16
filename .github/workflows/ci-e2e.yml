@@ -5,9 +5,9 @@ on:
   schedule:
     - cron: "0 1 * * *"
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false # https://github.com/cypress-io/github-action/issues/48
       matrix:
-        containers: [1]
+        containers: [ 1 ]
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
@@ -55,7 +55,9 @@ jobs:
           install: false
           record: true
           parallel: true
-          start: pnpm run synpress:run
+          start: |
+            pnpm run dev
+            pnpm run synpress:run
           browser: chrome
           spec: cypress/e2e/**
           tag: ${{ github.event_name }}
