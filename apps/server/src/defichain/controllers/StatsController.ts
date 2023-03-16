@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/commo
 import { SkipThrottle } from '@nestjs/throttler';
 
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
-import { DeFiChainStats, StatsDto } from '../DefichainInterface';
+import { DeFiChainStats, DFCStatsDto } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
 
 @Controller()
@@ -11,7 +11,7 @@ export class StatsController {
 
   @SkipThrottle()
   @Get('/stats')
-  async get(@Query('date') date?: StatsDto): Promise<DeFiChainStats | undefined> {
+  async get(@Query('date') date?: DFCStatsDto): Promise<DeFiChainStats | undefined> {
     return this.cache.get(
       `DFC_STATS_${date ?? 'TODAY'}`,
       async () => {

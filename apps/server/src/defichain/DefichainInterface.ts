@@ -10,7 +10,7 @@ export type BridgedDfcToEvm = Record<SupportedDFCTokenSymbols, string>;
 
 export type Iso8601DateOnlyString = `${number}-${number}-${number}`;
 
-export class StatsDto {
+export class DFCStatsDto {
   @IsDateString()
   @IsOptional()
   date?: Iso8601DateOnlyString;
