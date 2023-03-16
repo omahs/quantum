@@ -1,5 +1,8 @@
-// TODO: Mock wallet data
-
+import {
+  HardhatNetworkContainer,
+  StartedHardhatNetworkContainer,
+} from "smartcontracts";
+import { mintAndApproveTestTokensLocal } from "../../../../packages/smartcontracts/src/scripts/localContractsDeployment";
 beforeEach(() => {
   cy.visit("http://localhost:3000/?network=Local", {
     onBeforeLoad: (win) => {
@@ -19,7 +22,14 @@ beforeEach(() => {
   });
 });
 
-describe("Bridge from Ethereum to DeFiChain", () => {
+describe("Bridge from Ethereum to DeFiChain", async () => {
+  await mintAndApproveTestTokensLocal();
+  let startedHardhatContainer: StartedHardhatNetworkContainer;
+
+  before(async () => {
+    startedHardhatContainer = await new HardhatNetworkContainer().start();
+  });
+
   it("should be able to connect to metamask wallet", () => {
     cy.findByTestId("connect-button").should("be.visible");
     cy.connectMetaMaskWallet();
