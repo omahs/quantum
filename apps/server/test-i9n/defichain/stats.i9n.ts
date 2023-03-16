@@ -1,17 +1,113 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
+import { WhaleWalletAccount } from '@defichain/whale-api-wallet';
+import BigNumber from 'bignumber.js';
+import {
+  BridgeV1,
+  HardhatNetwork,
+  HardhatNetworkContainer,
+  StartedHardhatNetworkContainer,
+  TestToken,
+} from 'smartcontracts';
 
 import { DeFiChainStats } from '../../src/defichain/DefichainInterface';
+import { WhaleWalletProvider } from '../../src/defichain/providers/WhaleWalletProvider';
+import { PrismaService } from '../../src/PrismaService';
+import { BridgeContractFixture } from '../testing/BridgeContractFixture';
 import { BridgeServerTestingApp } from '../testing/BridgeServerTestingApp';
 import { buildTestConfig, TestingModule } from '../testing/TestingModule';
 import { DeFiChainStubContainer, StartedDeFiChainStubContainer } from './containers/DeFiChainStubContainer';
 
-let defichain: StartedDeFiChainStubContainer;
-let testing: BridgeServerTestingApp;
-let startedPostgresContainer: StartedPostgreSqlContainer;
-
 describe('DeFiChain Stats Testing', () => {
+  let defichain: StartedDeFiChainStubContainer;
+  let testing: BridgeServerTestingApp;
+  let startedPostgresContainer: StartedPostgreSqlContainer;
+  let prismaService: PrismaService;
+
+  let bridgeContract: BridgeV1;
+  let startedHardhatContainer: StartedHardhatNetworkContainer;
+  let hardhatNetwork: HardhatNetwork;
+  let bridgeContractFixture: BridgeContractFixture;
+  let ethWalletAddress: string;
+  let mwbtcContract: TestToken;
+
   // Tests are slower because it's running 3 containers at the same time
   jest.setTimeout(3600000);
+  let whaleWalletProvider: WhaleWalletProvider;
+  let localAddress: string;
+  let wallet: WhaleWalletAccount;
+  const WALLET_ENDPOINT = `/defichain/wallet/`;
+  const VERIFY_ENDPOINT = `${WALLET_ENDPOINT}verify`;
+
+  beforeAll(async () => {
+    startedPostgresContainer = await new PostgreSqlContainer().start();
+    defichain = await new DeFiChainStubContainer().start();
+    const whaleURL = await defichain.getWhaleURL();
+
+    // Hardhat - get signer
+    startedHardhatContainer = await new HardhatNetworkContainer().start();
+    hardhatNetwork = await startedHardhatContainer.ready();
+    bridgeContractFixture = new BridgeContractFixture(hardhatNetwork);
+    ethWalletAddress = await hardhatNetwork.contractSigner.getAddress();
+    await bridgeContractFixture.setup();
+    ({ bridgeProxy: bridgeContract, musdt: mwbtcContract } =
+      bridgeContractFixture.contractsWithAdminAndOperationalSigner);
+
+    testing = new BridgeServerTestingApp(
+      TestingModule.register(
+        buildTestConfig({
+          defichain: {
+            whaleURL,
+            key: StartedDeFiChainStubContainer.LOCAL_MNEMONIC,
+            transferFee: '0.003',
+            dustUTXO: '0.001',
+            supportedTokens: 'BTC,ETH',
+          },
+          startedHardhatContainer,
+          testnet: {
+            bridgeContractAddress: bridgeContract.address,
+            ethWalletPrivKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', // local hardhat wallet
+          },
+          startedPostgresContainer,
+        }),
+      ),
+    );
+
+    const app = await testing.start();
+
+    // init postgres database
+    prismaService = app.get<PrismaService>(PrismaService);
+
+    whaleWalletProvider = app.get<WhaleWalletProvider>(WhaleWalletProvider);
+    wallet = whaleWalletProvider.createWallet(2);
+    localAddress = await wallet.getAddress();
+  });
+
+  afterAll(async () => {
+    // teardown database
+    await prismaService.deFiChainAddressIndex.deleteMany({});
+    await testing.stop();
+    await startedPostgresContainer.stop();
+    await defichain.stop();
+  });
+
+  type MockedPayload = {
+    amount: string;
+    symbol: string;
+    address: string;
+    ethReceiverAddress: string;
+    tokenAddress: string;
+  };
+
+  async function verify(mockedPayload: MockedPayload) {
+    const initialResponse = await testing.inject({
+      method: 'POST',
+      url: `${VERIFY_ENDPOINT}`,
+      payload: mockedPayload,
+    });
+    const response = JSON.parse(initialResponse.body);
+
+    return response;
+  }
 
   function verifyFormat(parsedPayload: DeFiChainStats) {
     expect(parsedPayload).toHaveProperty('totalTransactions');
@@ -26,26 +122,43 @@ describe('DeFiChain Stats Testing', () => {
     expect(parsedPayload.amountBridged).toHaveProperty('EUROC');
   }
 
-  beforeAll(async () => {
-    startedPostgresContainer = await new PostgreSqlContainer().start();
+  it('should verify fund in the wallet address and top up UTXO', async () => {
+    const hotWallet = whaleWalletProvider.getHotWallet();
+    const hotWalletAddress = await hotWallet.getAddress();
 
-    defichain = await new DeFiChainStubContainer().start();
-    testing = new BridgeServerTestingApp(
-      TestingModule.register(
-        buildTestConfig({
-          defichain: { key: StartedDeFiChainStubContainer.LOCAL_MNEMONIC },
-          startedPostgresContainer,
-        }),
-      ),
+    // Send UTXO to Hot Wallet
+    await defichain.playgroundRpcClient?.wallet.sendToAddress(hotWalletAddress, 1);
+    await defichain.generateBlock();
+
+    // Sends token to the address
+    await defichain.playgroundClient?.rpc.call(
+      'sendtokenstoaddress',
+      [
+        {},
+        {
+          [localAddress]: `10@BTC`,
+        },
+      ],
+      'number',
     );
+    await defichain.generateBlock();
 
-    await testing.start();
-  });
+    const response = await verify({
+      amount: '10',
+      symbol: 'BTC',
+      address: localAddress,
+      ethReceiverAddress: ethWalletAddress,
+      tokenAddress: mwbtcContract.address,
+    });
+    expect(response.isValid).toBeTruthy();
+    expect(response.signature).toBeDefined();
+    expect(response.nonce).toBeDefined();
+    expect(response.deadline).toBeDefined();
 
-  afterAll(async () => {
-    await testing.stop();
-    await startedPostgresContainer.stop();
-    await defichain.stop();
+    await defichain.generateBlock();
+    expect(await defichain.whaleClient.address.getBalance(localAddress)).toStrictEqual(
+      new BigNumber('0.001').toFixed(8),
+    );
   });
 
   it('should be able to make calls to DeFiChain server', async () => {
