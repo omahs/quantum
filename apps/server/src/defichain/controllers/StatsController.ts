@@ -1,15 +1,35 @@
+import { stats } from '@defichain/whale-api-client';
 import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
+import { EnvironmentNetwork } from '@waveshq/walletkit-core';
 
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
 import { DeFiChainStats, DFCStatsDto } from '../DefichainInterface';
 import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
+import { WhaleApiService } from '../services/WhaleApiService';
 
 @Controller()
 export class StatsController {
-  constructor(protected readonly cache: SemaphoreCache, private defichainStatsService: DeFiChainStatsService) {}
+  private network: EnvironmentNetwork;
+
+  constructor(
+    private readonly whaleClient: WhaleApiService,
+    private readonly configService: ConfigService,
+    protected readonly cache: SemaphoreCache,
+    private defichainStatsService: DeFiChainStatsService,
+  ) {
+    this.network = configService.getOrThrow<EnvironmentNetwork>(`defichain.network`);
+  }
+
+  @SkipThrottle()
+  @Get('/clientStats')
+  async get(): Promise<stats.StatsData> {
+    return this.whaleClient.getClient().stats.get();
+  }
 
   @Get('/stats')
-  async get(@Query('date') date?: DFCStatsDto): Promise<DeFiChainStats | undefined> {
+  async getDFCStats(@Query('date') date?: DFCStatsDto): Promise<DeFiChainStats | undefined> {
     return this.cache.get(
       `DFC_STATS_${date ?? 'TODAY'}`,
       async () => {
