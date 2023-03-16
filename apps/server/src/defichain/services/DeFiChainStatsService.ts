@@ -10,24 +10,23 @@ export class DeFiChainStatsService {
   constructor(private prisma: PrismaService) {}
 
   async getDefiChainStats(date?: DFCStatsDto): Promise<DeFiChainStats> {
-    const dateOnly = date ?? new Date();
-    const dateFrom = new Date(dateOnly.toString());
-    dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
-    const dateTo = new Date(dateFrom);
-    dateTo.setDate(dateFrom.getDate() + 1);
+    const dateOnly = date ?? new Date().toISOString().slice(0, 10);
+    const dateFrom = new Date(dateOnly as string);
     const today = new Date();
-
     if (dateFrom > today) {
       throw new BadRequestException(`Cannot query future date.`);
     }
+    dateFrom.setUTCHours(0, 0, 0, 0); // set to UTC +0
+    const dateTo = new Date(dateFrom);
+    dateTo.setDate(dateFrom.getDate() + 1);
 
     const [totalTransactions, confirmedTransactions] = await Promise.all([
       this.prisma.deFiChainAddressIndex.count({
         where: {
           createdAt: {
             //   new Date() creates date with current time and day and etc.
-            gte: dateFrom,
-            lt: dateTo,
+            gte: dateFrom.toISOString(),
+            lt: dateTo.toISOString(),
           },
         },
       }),
@@ -40,8 +39,8 @@ export class DeFiChainStatsService {
           claimAmount: { not: null },
           createdAt: {
             // new Date() creates date with current time and day and etc.
-            gte: dateFrom,
-            lt: dateTo,
+            gte: dateFrom.toISOString(),
+            lt: dateTo.toISOString(),
           },
         },
         select: {
@@ -67,7 +66,7 @@ function getAmountBridged(
     claimAmount: string | null;
   }>,
 ): BridgedDfcToEvm {
-  const amountBridgedBigN = {
+  const amountBridgedBigN: Record<SupportedDFCTokenSymbols, BigNumber> = {
     USDC: BigNumber(0),
     USDT: BigNumber(0),
     BTC: BigNumber(0),

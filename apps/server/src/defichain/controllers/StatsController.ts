@@ -1,5 +1,4 @@
 import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
 
 import { SemaphoreCache } from '../../libs/caches/SemaphoreCache';
 import { DeFiChainStats, DFCStatsDto } from '../DefichainInterface';
@@ -9,14 +8,15 @@ import { DeFiChainStatsService } from '../services/DeFiChainStatsService';
 export class StatsController {
   constructor(protected readonly cache: SemaphoreCache, private defichainStatsService: DeFiChainStatsService) {}
 
-  @SkipThrottle()
   @Get('/stats')
   async get(@Query('date') date?: DFCStatsDto): Promise<DeFiChainStats | undefined> {
     return this.cache.get(
       `DFC_STATS_${date ?? 'TODAY'}`,
       async () => {
         try {
-          return await this.defichainStatsService.getDefiChainStats(date);
+          const { totalTransactions, confirmedTransactions, amountBridged } =
+            await this.defichainStatsService.getDefiChainStats(date);
+          return new DeFiChainStats(totalTransactions, confirmedTransactions, amountBridged);
         } catch (e: any) {
           throw new HttpException(
             {
