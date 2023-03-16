@@ -120,7 +120,7 @@ export class EVMTransactionConfirmerService {
     uniqueDfcAddress,
   }: SignClaim): Promise<{ signature: string; nonce: number; deadline: number }> {
     try {
-      this.logger.log(`[Sign] ${amount} ${tokenAddress} ${receiverAddress}`);
+      this.logger.log(`[Sign] ${amount} ${tokenAddress} ${uniqueDfcAddress} ${receiverAddress}`);
 
       // Check and return same claim details if txn is already signed previously
       const existingTxn = await this.prisma.deFiChainAddressIndex.findFirst({
@@ -199,9 +199,10 @@ export class EVMTransactionConfirmerService {
         },
       });
 
-      this.logger.log(`[Sign SUCCESS] ${amount} ${tokenAddress} ${receiverAddress}`);
+      this.logger.log(`[Sign SUCCESS] ${amount} ${tokenAddress} ${uniqueDfcAddress} ${receiverAddress}`);
       return { signature, nonce: nonce.toNumber(), deadline };
     } catch (e: any) {
+      this.logger.log(`[Sign ERROR] ${amount} ${tokenAddress} ${uniqueDfcAddress} ${receiverAddress}`);
       throw new Error('There is a problem in signing this claim', { cause: e });
     }
   }
@@ -294,6 +295,7 @@ export class EVMTransactionConfirmerService {
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
           cause: e,
+          description: `[AllocateDFCFund ERROR] ${transactionHash}`,
         },
       );
     }
