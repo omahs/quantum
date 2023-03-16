@@ -131,7 +131,27 @@ export default function BridgeForm({
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
   const [tokenBalances, setTokenBalances] = useState({});
 
+  // async function balanceFetcher() {
+  //   const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+  //   const balance = await getBalance(selectedTokensA.tokenB.symbol);
+  //   setTokenBalances({
+  //     ...tokenBalances,
+  //     [key]: balance,
+  //   });
+  // }
+
+  async function balanceFetcher() {
+    console.log("balanceFetcher");
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = 1;
+    setTokenBalances({
+      ...tokenBalances,
+      [key]: balance,
+    });
+  }
+
   const checkBalance = debounce(async () => {
+    console.log("checkBalance");
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = await getBalance(selectedTokensA.tokenB.symbol);
     setTokenBalances({
@@ -139,6 +159,21 @@ export default function BridgeForm({
       [key]: balance,
     });
   }, 200);
+
+  function validateTransfer() {
+    console.log("validate transfer");
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = tokenBalances[key];
+    if (balance === null) {
+      setIsBalanceSufficient(false);
+    }
+    if (balance) {
+      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
+        amount !== "" ? amount : 0
+      );
+      setIsBalanceSufficient(isSufficientBalance);
+    }
+  }
 
   useEffect(() => {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
@@ -155,6 +190,7 @@ export default function BridgeForm({
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
+    console.log("affected");
     checkBalance();
   }, [selectedNetworkA, selectedTokensA, networkEnv]);
 
@@ -197,8 +233,13 @@ export default function BridgeForm({
     }
   };
 
+  // on retry must refetch
   const onTransferTokens = async (): Promise<void> => {
+    console.log("action");
     if (isSendingFromEthNetwork) {
+      // balanceFetcher();
+      validateTransfer();
+
       // Revalidate entered amount after refetching EVM balance
       const refetchedEvmBalance = await refetchEvmBalance();
       if (
