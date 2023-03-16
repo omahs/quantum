@@ -1,6 +1,5 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
 import { WhaleWalletAccount } from '@defichain/whale-api-wallet';
-import BigNumber from 'bignumber.js';
 import {
   BridgeV1,
   HardhatNetwork,
@@ -122,7 +121,14 @@ describe('DeFiChain Stats Testing', () => {
     expect(parsedPayload.amountBridged).toHaveProperty('EUROC');
   }
 
-  it('should verify fund in the wallet address and top up UTXO', async () => {
+  it('should verify fund is displayed accurately in endpoint', async () => {
+    await testing.inject({
+      method: 'GET',
+      url: `${WALLET_ENDPOINT}address/generate`,
+      query: {
+        refundAddress: localAddress,
+      },
+    });
     const hotWallet = whaleWalletProvider.getHotWallet();
     const hotWalletAddress = await hotWallet.getAddress();
 
@@ -156,9 +162,26 @@ describe('DeFiChain Stats Testing', () => {
     expect(response.deadline).toBeDefined();
 
     await defichain.generateBlock();
-    expect(await defichain.whaleClient.address.getBalance(localAddress)).toStrictEqual(
-      new BigNumber('0.001').toFixed(8),
-    );
+    const claimAmt = await prismaService.deFiChainAddressIndex.findMany({
+      where: {
+        refundAddress: localAddress,
+      },
+      select: {
+        claimAmount: true,
+      },
+    });
+    expect(claimAmt).not.toBeNull();
+
+    const targetDate = new Date().toISOString().slice(0, 10);
+
+    const initialResponse = await testing.inject({
+      method: 'GET',
+      url: `/defichain/stats?date=${targetDate}`,
+    });
+
+    expect(JSON.parse(initialResponse.payload).confirmedTransactions).toStrictEqual(1);
+    expect(JSON.parse(initialResponse.payload).amountBridged.BTC).toStrictEqual('9.97');
+    verifyFormat(JSON.parse(initialResponse.payload));
   });
 
   it('should be able to make calls to DeFiChain server', async () => {
