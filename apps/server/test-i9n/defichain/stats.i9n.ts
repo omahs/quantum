@@ -90,12 +90,12 @@ describe('DeFiChain Stats Testing', () => {
   it(`should throw an error if date parameter is missing`, async () => {
     const txReceipt = await testing.inject({
       method: 'GET',
-      url: `/ethereum/stats?date=`,
+      url: `/defichain/stats?date=`,
     });
 
     expect(JSON.parse(txReceipt.payload).status).toStrictEqual(500);
     expect(JSON.parse(txReceipt.payload).error).toStrictEqual(
-      'API call for Ethereum statistics was unsuccessful: Invalid time value',
+      'API call for DefiChain statistics was unsuccessful: Invalid time value',
     );
   });
 
