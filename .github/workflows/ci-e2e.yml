@@ -55,8 +55,8 @@ jobs:
           install: false
           record: true
           parallel: true
-          start: pnpm run dev
-          command: pnpm run synpress:run
+          start: pnpm dev
+          command: pnpm synpress:run
           browser: chrome
           spec: cypress/e2e/**
           tag: ${{ github.event_name }}
