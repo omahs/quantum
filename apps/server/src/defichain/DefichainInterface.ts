@@ -14,12 +14,12 @@ export class DeFiChainStats {
     this.totalTransactions = totalTransactions;
     this.confirmedTransactions = confirmedTransactions;
     this.amountBridged = {
-      USDC: amountBridged[SupportedDFCTokenSymbols.USDC]?.toString(),
-      USDT: amountBridged[SupportedDFCTokenSymbols.USDT]?.toString(),
-      BTC: amountBridged[SupportedDFCTokenSymbols.BTC]?.toString(),
-      ETH: amountBridged[SupportedDFCTokenSymbols.ETH]?.toString(),
-      DFI: amountBridged[SupportedDFCTokenSymbols.DFI]?.toString(),
-      EUROC: amountBridged[SupportedDFCTokenSymbols.EUROC]?.toString(),
+      USDC: amountBridged[SupportedDFCTokenSymbols.USDC]?.toString() || '0.000000',
+      USDT: amountBridged[SupportedDFCTokenSymbols.USDT]?.toString() || '0.000000',
+      BTC: amountBridged[SupportedDFCTokenSymbols.BTC]?.toString() || '0.000000',
+      ETH: amountBridged[SupportedDFCTokenSymbols.ETH]?.toString() || '0.000000',
+      DFI: amountBridged[SupportedDFCTokenSymbols.DFI]?.toString() || '0.000000',
+      EUROC: amountBridged[SupportedDFCTokenSymbols.EUROC]?.toString() || '0.000000',
     };
   }
 }
