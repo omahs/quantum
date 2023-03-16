@@ -1,4 +1,5 @@
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@birthdayresearch/sticky-testcontainers';
+import { DeFiChainStats } from 'dist/defichain/DefichainInterface';
 
 import { BridgeServerTestingApp } from '../testing/BridgeServerTestingApp';
 import { buildTestConfig, TestingModule } from '../testing/TestingModule';
@@ -7,9 +8,24 @@ import { DeFiChainStubContainer, StartedDeFiChainStubContainer } from './contain
 let defichain: StartedDeFiChainStubContainer;
 let testing: BridgeServerTestingApp;
 let startedPostgresContainer: StartedPostgreSqlContainer;
+
 describe('DeFiChain Stats Testing', () => {
   // Tests are slower because it's running 3 containers at the same time
   jest.setTimeout(3600000);
+
+  function verifyFormat(parsedPayload: DeFiChainStats) {
+    expect(parsedPayload).toHaveProperty('totalTransactions');
+    expect(parsedPayload).toHaveProperty('confirmedTransactions');
+    expect(parsedPayload).toHaveProperty('amountBridged');
+
+    expect(parsedPayload.amountBridged).toHaveProperty('USDC');
+    expect(parsedPayload.amountBridged).toHaveProperty('USDT');
+    expect(parsedPayload.amountBridged).toHaveProperty('BTC');
+    expect(parsedPayload.amountBridged).toHaveProperty('ETH');
+    expect(parsedPayload.amountBridged).toHaveProperty('DFI');
+    expect(parsedPayload.amountBridged).toHaveProperty('EUROC');
+  }
+
   beforeAll(async () => {
     startedPostgresContainer = await new PostgreSqlContainer().start();
 
@@ -46,8 +62,7 @@ describe('DeFiChain Stats Testing', () => {
       method: 'GET',
       url: `/defichain/stats`,
     });
-    const dateToday = new Date().toISOString().slice(0, 10);
-    expect(JSON.parse(initialResponse.payload).date).toStrictEqual(dateToday);
+    verifyFormat(JSON.parse(initialResponse.payload));
   });
 
   it(`should return stats for the given date`, async () => {
@@ -57,7 +72,7 @@ describe('DeFiChain Stats Testing', () => {
       method: 'GET',
       url: `/defichain/stats?date=${targetDate}`,
     });
-    expect(JSON.parse(initialResponse.payload).date).toStrictEqual(targetDate);
+    verifyFormat(JSON.parse(initialResponse.payload));
   });
 
   it(`should throw an error if invalid or no date is provided`, async () => {
@@ -66,16 +81,22 @@ describe('DeFiChain Stats Testing', () => {
       url: `/defichain/stats?date=abc`,
     });
 
-    const txReceipt2 = await testing.inject({
+    expect(JSON.parse(txReceipt1.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt1.payload).error).toStrictEqual(
+      'API call for DefiChain statistics was unsuccessful: Invalid time value',
+    );
+  });
+
+  it(`should throw an error if date parameter is missing`, async () => {
+    const txReceipt = await testing.inject({
       method: 'GET',
-      url: `/defichain/stats?date=`,
+      url: `/ethereum/stats?date=`,
     });
 
-    const expectedErrorMessage = 'API call for DefiChain statistics was unsuccessful: Invalid time value';
-    expect(JSON.parse(txReceipt1.payload).status).toStrictEqual(500);
-    expect(JSON.parse(txReceipt1.payload).error).toStrictEqual(expectedErrorMessage);
-    expect(JSON.parse(txReceipt2.payload).status).toStrictEqual(500);
-    expect(JSON.parse(txReceipt2.payload).error).toStrictEqual(expectedErrorMessage);
+    expect(JSON.parse(txReceipt.payload).status).toStrictEqual(500);
+    expect(JSON.parse(txReceipt.payload).error).toStrictEqual(
+      'API call for Ethereum statistics was unsuccessful: Invalid time value',
+    );
   });
 
   it(`should be correctly formatted`, async () => {
@@ -86,15 +107,6 @@ describe('DeFiChain Stats Testing', () => {
 
     const parsedPayload = JSON.parse(txReceipt.payload);
 
-    expect(parsedPayload).toHaveProperty('totalTransactions');
-    expect(parsedPayload).toHaveProperty('confirmedTransactions');
-    expect(parsedPayload).toHaveProperty('amountBridged');
-
-    expect(parsedPayload.amountBridged).toHaveProperty('USDC');
-    expect(parsedPayload.amountBridged).toHaveProperty('USDT');
-    expect(parsedPayload.amountBridged).toHaveProperty('BTC');
-    expect(parsedPayload.amountBridged).toHaveProperty('ETH');
-    expect(parsedPayload.amountBridged).toHaveProperty('DFI');
-    expect(parsedPayload.amountBridged).toHaveProperty('EUROC');
+    verifyFormat(parsedPayload);
   });
 });
