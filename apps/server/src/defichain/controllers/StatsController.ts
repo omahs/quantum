@@ -23,7 +23,7 @@ export class StatsController {
   }
 
   @SkipThrottle()
-  @Get('/clientStats')
+  @Get('/whale/stats')
   async get(): Promise<stats.StatsData> {
     return this.whaleClient.getClient().stats.get();
   }
