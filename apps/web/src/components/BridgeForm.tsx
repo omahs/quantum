@@ -131,31 +131,21 @@ export default function BridgeForm({
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
   const [tokenBalances, setTokenBalances] = useState({});
 
-  async function getHotBalance() {
-    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = await getBalance(selectedTokensA.tokenB.symbol);
-    setTokenBalances({
-      ...tokenBalances,
-      [key]: balance,
-    });
-
-    return tokenBalances;
-  }
-
-  const checkBalance = debounce(async () => {
-    getHotBalance();
-  }, 200);
-
-  const checkBalanceNoDebounce = async () => {
+  async function getBalanceFn() {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = await getBalance(selectedTokensA.tokenB.symbol);
     const updatedBalances = {
       ...tokenBalances,
       [key]: balance,
     };
+
     setTokenBalances(updatedBalances);
     return updatedBalances;
-  };
+  }
+
+  const checkBalance = debounce(async () => {
+    getBalanceFn();
+  }, 200);
 
   function verifyTransferredBalance(currBalance?: {}) {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
@@ -220,9 +210,8 @@ export default function BridgeForm({
     }
   };
 
-  // on retry must refetch
   const onTransferTokens = async (): Promise<void> => {
-    const checkHotBalance = await checkBalanceNoDebounce();
+    const checkHotBalance = await getBalanceFn();
     const verifyTransfer = verifyTransferredBalance(checkHotBalance);
 
     if (verifyTransfer) {
