@@ -131,66 +131,53 @@ export default function BridgeForm({
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
   const [tokenBalances, setTokenBalances] = useState({});
 
-  // async function balanceFetcher() {
-  //   const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-  //   const balance = await getBalance(selectedTokensA.tokenB.symbol);
-  //   setTokenBalances({
-  //     ...tokenBalances,
-  //     [key]: balance,
-  //   });
-  // }
-
-  async function balanceFetcher() {
-    console.log("balanceFetcher");
-    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = 1;
-    setTokenBalances({
-      ...tokenBalances,
-      [key]: balance,
-    });
-  }
-
-  const checkBalance = debounce(async () => {
-    console.log("checkBalance");
+  async function getHotBalance() {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = await getBalance(selectedTokensA.tokenB.symbol);
     setTokenBalances({
       ...tokenBalances,
       [key]: balance,
     });
+
+    return tokenBalances;
+  }
+
+  const checkBalance = debounce(async () => {
+    getHotBalance();
   }, 200);
 
-  function validateTransfer() {
-    console.log("validate transfer");
+  const checkBalanceNoDebounce = async () => {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = tokenBalances[key];
+    const balance = await getBalance(selectedTokensA.tokenB.symbol);
+    const updatedBalances = {
+      ...tokenBalances,
+      [key]: balance,
+    };
+    setTokenBalances(updatedBalances);
+    return updatedBalances;
+  };
+
+  function verifyTransferredBalance(currBalance?: {}) {
+    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
+    const balance = currBalance ? currBalance[key] : tokenBalances[key];
+
     if (balance === null) {
       setIsBalanceSufficient(false);
+      return true;
     }
-    if (balance) {
-      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
-        amount !== "" ? amount : 0
-      );
-      setIsBalanceSufficient(isSufficientBalance);
-    }
+    const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
+      amount !== "" ? amount : 0
+    );
+    setIsBalanceSufficient(isSufficientBalance);
+
+    return isSufficientBalance;
   }
 
   useEffect(() => {
-    const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = tokenBalances[key];
-    if (balance === null) {
-      setIsBalanceSufficient(false);
-    }
-    if (balance) {
-      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
-        amount !== "" ? amount : 0
-      );
-      setIsBalanceSufficient(isSufficientBalance);
-    }
+    verifyTransferredBalance();
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
-    console.log("affected");
     checkBalance();
   }, [selectedNetworkA, selectedTokensA, networkEnv]);
 
@@ -235,37 +222,38 @@ export default function BridgeForm({
 
   // on retry must refetch
   const onTransferTokens = async (): Promise<void> => {
-    console.log("action");
-    if (isSendingFromEthNetwork) {
-      // balanceFetcher();
-      validateTransfer();
+    const checkHotBalance = await checkBalanceNoDebounce();
+    const verifyTransfer = verifyTransferredBalance(checkHotBalance);
 
-      // Revalidate entered amount after refetching EVM balance
-      const refetchedEvmBalance = await refetchEvmBalance();
-      if (
-        validateAmountInput(
-          amount,
-          new BigNumber(refetchedEvmBalance.data?.formatted ?? 0)
-        )
-      ) {
-        return;
+    if (verifyTransfer) {
+      if (isSendingFromEthNetwork) {
+        // Revalidate entered amount after refetching EVM balance
+        const refetchedEvmBalance = await refetchEvmBalance();
+        if (
+          validateAmountInput(
+            amount,
+            new BigNumber(refetchedEvmBalance.data?.formatted ?? 0)
+          )
+        ) {
+          return;
+        }
       }
-    }
 
-    if (!hasUnconfirmedTxn) {
-      const newTxn = {
-        selectedNetworkA,
-        selectedTokensA,
-        selectedNetworkB,
-        selectedTokensB,
-        networkEnv,
-        amount,
-        fromAddress,
-        toAddress: addressInput,
-      };
-      setStorage("txn-form", JSON.stringify(newTxn));
+      if (!hasUnconfirmedTxn) {
+        const newTxn = {
+          selectedNetworkA,
+          selectedTokensA,
+          selectedNetworkB,
+          selectedTokensB,
+          networkEnv,
+          amount,
+          fromAddress,
+          toAddress: addressInput,
+        };
+        setStorage("txn-form", JSON.stringify(newTxn));
+      }
+      setShowConfirmModal(true);
     }
-    setShowConfirmModal(true);
   };
 
   const onResetTransferForm = () => {
