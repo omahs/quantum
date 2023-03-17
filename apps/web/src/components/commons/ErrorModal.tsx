@@ -26,13 +26,14 @@ export default function ErrorModal({
         <span className="pt-12">
           <ActionButton
             label={primaryButtonLabel}
-            customStyle="md:px-6 text-xg lg:!py-3 lg:px-8 xl:px-14"
+            responsiveStyle="text-lg px-[72px] py-3"
             onClick={onPrimaryButtonClick}
           />
           <ActionButton
             label="Close"
             variant="secondary"
-            customStyle="mt-2 md:px-2.5 lg:text-xl lg:!py-3 lg:px-8 xl:px-14"
+            responsiveStyle="text-base px-[72px] py-3"
+            customStyle="mt-2"
             onClick={onClose}
           />
         </span>

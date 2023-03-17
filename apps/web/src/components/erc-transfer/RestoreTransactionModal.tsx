@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { ethers } from "ethers";
 import ActionButton from "@components/commons/ActionButton";
@@ -184,7 +184,8 @@ export default function RestoreTransactionModal({
         <div className="mt-8 lg:px-[31px]">
           <ActionButton
             label="Restore transaction"
-            customStyle="bg-dark-1000 md:px-6 text-lg lg:!py-3 lg:px-8 xl:px-14"
+            responsiveStyle="text-sm py-3 md:px-6 lg:text-lg lg:px-8 xl:px-14"
+            customStyle="bg-dark-1000"
             disabled={txnAddress === ""}
             onClick={checkTXnHash}
           />

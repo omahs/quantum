@@ -69,6 +69,7 @@ export default function StepOneInitiate({
             variant="primary"
             disabled={hasAddressInputErr}
             onClick={goToNextStep}
+            responsiveStyle="text-sm py-3.5 md:py-2.5"
           />
           <div className="text-dark-500 text-center text-xs pt-3">
             {hasAddressInputErr ? (

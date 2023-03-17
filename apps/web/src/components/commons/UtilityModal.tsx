@@ -27,16 +27,18 @@ export default function UtilityModal({
         <div className="text-sm md:text-lg leading-5 md:leading-6 w-full text-dark-900 text-center mt-2 px-[29px]">
           {message}
         </div>
-        <span className="mt-[76px]">
+        <span className="mt-[76px] w-full max-w-[231px] md:max-w-[316px]">
           <ActionButton
             label={primaryButtonLabel}
-            customStyle="bg-error md:px-6 text-xg lg:!py-3 lg:px-8 xl:px-14"
+            responsiveStyle="text-base py-3 md:px-6 lg:px-8 xl:px-14"
+            customStyle="bg-error"
             onClick={onPrimaryButtonClick}
           />
           <ActionButton
             label={secondaryButtonLabel}
             variant="secondary"
-            customStyle="mt-2 md:px-2.5 lg:!py-3 lg:px-8 xl:px-14 border-[0.5px] border-dark-500"
+            responsiveStyle="text-base py-3 mt-2 md:px-2.5 lg:px-8 xl:px-14 "
+            customStyle="border-[0.5px] border-dark-500"
             onClick={onSecondaryButtonClick}
           />
         </span>

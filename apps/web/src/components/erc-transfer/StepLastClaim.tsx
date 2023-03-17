@@ -280,6 +280,7 @@ export default function StepLastClaim({
         <ActionButton
           label={StatusMessage[claimStatus].btnLabel}
           onClick={StatusMessage[claimStatus].btnAction}
+          responsiveStyle="text-sm  py-2.5"
         />
         {claimStatus === "READY" && (
           <div

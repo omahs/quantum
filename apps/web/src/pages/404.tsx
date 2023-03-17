@@ -32,8 +32,12 @@ function Page404() {
         The page you are looking for might have been changed or removed. Make
         sure the URL that you entered is correct.
       </p>
-      <div className={clsx("pt-6 w-8/12", "md:pt-12 md:w-8/12 lg:w-[300px]")}>
-        <ActionButton label="Return to home" onClick={() => router.push("/")} />
+      <div className={clsx("inline-block pt-6", "md:pt-8 lg:pt-12")}>
+        <ActionButton
+          label="Return to home"
+          onClick={() => router.push("/")}
+          responsiveStyle="px-14 py-3 lg:py-4 lg:text-base"
+        />
       </div>
     </section>
   );

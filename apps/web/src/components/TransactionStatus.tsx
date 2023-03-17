@@ -173,11 +173,12 @@ export default function TransactionStatus({
             )} */}
           </div>
         </div>
-        {isUnsentFund && (
+        {!isLg && isUnsentFund && (
           <ActionButton
             label="Try again"
             variant="primary"
-            customStyle="mt-6 lg:mt-0 text-dark-100 w-full lg:w-fit lg:h-[40px] lg:self-center lg:text-xs"
+            responsiveStyle="text-xs mt-6 leading-5 py-3.5 px-5"
+            customStyle="text-dark-100 w-full"
             onClick={handleRetrySend}
             disabled={isThrottleLimitReached || isRetrying}
             isRefresh={!isRetrying}
@@ -188,7 +189,8 @@ export default function TransactionStatus({
           <ActionButton
             label="Close"
             variant="secondary"
-            customStyle="mt-6 dark-section-bg"
+            responsiveStyle="text-sm py-3.5 mt-6"
+            customStyle="dark-section-bg"
             onClick={onClose}
           />
         )}
@@ -202,6 +204,19 @@ export default function TransactionStatus({
                 isReverted={isReverted}
                 isUnsentFund={isUnsentFund}
                 isApiSuccess={isApiSuccess}
+              />
+            )}
+
+            {isUnsentFund && (
+              <ActionButton
+                label="Try again"
+                variant="primary"
+                responsiveStyle="text-xs leading-5 px-5 mt-0 w-fit py-2.5 h-[40px] self-center"
+                customStyle="text-dark-100 w-full"
+                onClick={handleRetrySend}
+                disabled={isThrottleLimitReached || isRetrying}
+                isRefresh={!isRetrying}
+                isLoading={isRetrying}
               />
             )}
 
