@@ -7,7 +7,13 @@ import { ConnectKitButton } from "connectkit";
 import { autoUpdate, shift, size, useFloating } from "@floating-ui/react-dom";
 import { networks, useNetworkContext } from "@contexts/NetworkContext";
 import { useNetworkEnvironmentContext } from "@contexts/NetworkEnvironmentContext";
-import { Network, NetworkOptionsI, SelectionType, TokensI } from "types";
+import {
+  Network,
+  NetworkOptionsI,
+  SelectionType,
+  TokensI,
+  TokenBalances,
+} from "types";
 import SwitchIcon from "@components/icons/SwitchIcon";
 import UtilityModal, {
   ModalConfigType,
@@ -132,7 +138,7 @@ export default function BridgeForm({
   const [tokenBalances, setTokenBalances] = useState({});
   const [isVerifyingTransaction, setIsVerifyingTransaction] = useState(false);
 
-  async function getBalanceFn() {
+  async function getBalanceFn(): Promise<TokenBalances> {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = await getBalance(selectedTokensA.tokenB.symbol);
     const updatedBalances = {
@@ -145,13 +151,12 @@ export default function BridgeForm({
   }
 
   const checkBalance = debounce(async () => {
-    getBalanceFn();
+    await getBalanceFn();
   }, 200);
 
-  async function verifyTransfer(refetch?: boolean) {
+  async function verifySufficientHWBalance(refetch?: boolean) {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const refetchBalance = refetch ? await getBalanceFn() : tokenBalances;
-    const balance = refetch ? refetchBalance[key] : tokenBalances[key];
+    const balance = (refetch ? await getBalanceFn() : tokenBalances)[key];
 
     if (balance === null) {
       setIsBalanceSufficient(false);
@@ -171,7 +176,7 @@ export default function BridgeForm({
   }
 
   useEffect(() => {
-    verifyTransfer();
+    verifySufficientHWBalance();
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
@@ -219,8 +224,8 @@ export default function BridgeForm({
 
   const onTransferTokens = async (): Promise<void> => {
     setIsVerifyingTransaction(true);
-    const verify = await verifyTransfer(true);
-    if (verify) {
+    const isBalanceSufficientVerified = await verifySufficientHWBalance(true);
+    if (isBalanceSufficientVerified) {
       if (isSendingFromEthNetwork) {
         // Revalidate entered amount after refetching EVM balance
         const refetchedEvmBalance = await refetchEvmBalance();
