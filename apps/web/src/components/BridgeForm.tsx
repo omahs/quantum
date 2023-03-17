@@ -135,10 +135,10 @@ export default function BridgeForm({
 
   const { getBalance } = useCheckBalance();
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
-  const [tokenBalances, setTokenBalances] = useState({});
+  const [tokenBalances, setTokenBalances] = useState<TokenBalances | {}>({});
   const [isVerifyingTransaction, setIsVerifyingTransaction] = useState(false);
 
-  async function getBalanceFn(): Promise<TokenBalances> {
+  async function getBalanceFn(): Promise<TokenBalances | {}> {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = await getBalance(selectedTokensA.tokenB.symbol);
     const updatedBalances = {
