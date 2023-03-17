@@ -130,6 +130,7 @@ export default function BridgeForm({
   const { getBalance } = useCheckBalance();
   const [isBalanceSufficient, setIsBalanceSufficient] = useState(true);
   const [tokenBalances, setTokenBalances] = useState({});
+  const [isVerifyingTransaction, setIsVerifyingTransaction] = useState(false);
 
   async function getBalanceFn() {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
@@ -144,12 +145,13 @@ export default function BridgeForm({
   }
 
   const checkBalance = debounce(async () => {
-    getBalanceFn();
+    await getBalanceFn();
   }, 200);
 
-  function verifyTransferr(currBalance?: {}) {
+  async function verifyTransfer(refetch?: boolean) {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
-    const balance = currBalance ? currBalance[key] : tokenBalances[key];
+    const refetchBalance = refetch ? await getBalanceFn() : tokenBalances;
+    const balance = refetch ? refetchBalance[key] : tokenBalances[key];
 
     if (balance === null) {
       setIsBalanceSufficient(false);
@@ -169,7 +171,7 @@ export default function BridgeForm({
   }
 
   useEffect(() => {
-    verifyTransferr();
+    verifyTransfer();
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
@@ -216,8 +218,9 @@ export default function BridgeForm({
   };
 
   const onTransferTokens = async (): Promise<void> => {
-    const checkHotBalance = await getBalanceFn();
-    const verify = verifyTransferr(checkHotBalance);
+    setIsVerifyingTransaction(true);
+
+    const verify = await verifyTransfer(true);
     if (verify) {
       if (isSendingFromEthNetwork) {
         // Revalidate entered amount after refetching EVM balance
@@ -246,6 +249,7 @@ export default function BridgeForm({
       }
       setShowConfirmModal(true);
     }
+    setIsVerifyingTransaction(false);
   };
 
   const onResetTransferForm = () => {
@@ -545,7 +549,7 @@ export default function BridgeForm({
             <ActionButton
               testId="transfer-btn"
               label={getActionBtnLabel()}
-              isLoading={hasPendingTxn}
+              isLoading={hasPendingTxn || isVerifyingTransaction}
               disabled={
                 (isConnected && !isFormValid) ||
                 hasPendingTxn ||
