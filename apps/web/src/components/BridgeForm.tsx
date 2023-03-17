@@ -153,14 +153,19 @@ export default function BridgeForm({
 
     if (balance === null) {
       setIsBalanceSufficient(false);
-      return true;
+      return false;
     }
-    const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
-      amount !== "" ? amount : 0
-    );
-    setIsBalanceSufficient(isSufficientBalance);
 
-    return isSufficientBalance;
+    if (balance) {
+      const isSufficientBalance = new BigNumber(balance).isGreaterThanOrEqualTo(
+        amount !== "" ? amount : 0
+      );
+
+      setIsBalanceSufficient(isSufficientBalance);
+      return isSufficientBalance;
+    }
+
+    return undefined;
   }
 
   useEffect(() => {
@@ -213,7 +218,6 @@ export default function BridgeForm({
   const onTransferTokens = async (): Promise<void> => {
     const checkHotBalance = await getBalanceFn();
     const verify = verifyTransferr(checkHotBalance);
-
     if (verify) {
       if (isSendingFromEthNetwork) {
         // Revalidate entered amount after refetching EVM balance
@@ -227,7 +231,6 @@ export default function BridgeForm({
           return;
         }
       }
-
       if (!hasUnconfirmedTxn) {
         const newTxn = {
           selectedNetworkA,
