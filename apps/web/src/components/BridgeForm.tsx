@@ -147,7 +147,7 @@ export default function BridgeForm({
     getBalanceFn();
   }, 200);
 
-  function verifyTransferredBalance(currBalance?: {}) {
+  function verifyTransferr(currBalance?: {}) {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = currBalance ? currBalance[key] : tokenBalances[key];
 
@@ -164,7 +164,7 @@ export default function BridgeForm({
   }
 
   useEffect(() => {
-    verifyTransferredBalance();
+    verifyTransferr();
   }, [selectedNetworkA, selectedTokensA, networkEnv, tokenBalances, amount]);
 
   useEffect(() => {
@@ -212,9 +212,9 @@ export default function BridgeForm({
 
   const onTransferTokens = async (): Promise<void> => {
     const checkHotBalance = await getBalanceFn();
-    const verifyTransfer = verifyTransferredBalance(checkHotBalance);
+    const verify = verifyTransferr(checkHotBalance);
 
-    if (verifyTransfer) {
+    if (verify) {
       if (isSendingFromEthNetwork) {
         // Revalidate entered amount after refetching EVM balance
         const refetchedEvmBalance = await refetchEvmBalance();
