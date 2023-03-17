@@ -145,7 +145,7 @@ export default function BridgeForm({
   }
 
   const checkBalance = debounce(async () => {
-    await getBalanceFn();
+    getBalanceFn();
   }, 200);
 
   async function verifyTransfer(refetch?: boolean) {
@@ -219,7 +219,6 @@ export default function BridgeForm({
 
   const onTransferTokens = async (): Promise<void> => {
     setIsVerifyingTransaction(true);
-
     const verify = await verifyTransfer(true);
     if (verify) {
       if (isSendingFromEthNetwork) {
