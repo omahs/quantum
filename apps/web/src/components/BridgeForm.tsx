@@ -154,7 +154,9 @@ export default function BridgeForm({
     await getBalanceFn();
   }, 200);
 
-  async function verifySufficientHWBalance(refetch?: boolean) {
+  async function verifySufficientHWBalance(
+    refetch?: boolean
+  ): Promise<boolean | undefined> {
     const key = `${selectedNetworkA.name}-${selectedTokensA.tokenB.symbol}`;
     const balance = (refetch ? await getBalanceFn() : tokenBalances)[key];
 
