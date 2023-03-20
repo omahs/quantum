@@ -237,6 +237,7 @@ export default function BridgeForm({
             new BigNumber(refetchedEvmBalance.data?.formatted ?? 0)
           )
         ) {
+          setIsVerifyingTransaction(false);
           return;
         }
       }
